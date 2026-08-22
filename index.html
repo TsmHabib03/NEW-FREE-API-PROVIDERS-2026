@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Coding API Credits 2026 | Claude Code & Codex Guide</title>
+  <meta name="description" content="Learn how to configure AI API gateways with Claude Code and Codex CLI in 2026.">
+  <meta property="og:title" content="AI Coding API Credits 2026">
+  <meta property="og:description" content="A practical setup guide for Claude Code, Codex CLI, CC Switch, and compatible API gateways.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#f7f9fc">
+  <link rel="icon" type="image/png" href="assets/gorouterlogo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="site-loader" data-site-loader role="status" aria-live="polite" aria-label="Loading documentation">
+    <div class="loader-shell">
+      <div class="loader-brand"><span></span><span></span></div>
+      <div class="loader-main"><span class="skeleton skeleton-title"></span><span class="skeleton skeleton-line"></span><span class="skeleton skeleton-line short"></span><div class="loader-cards"><span class="skeleton"></span><span class="skeleton"></span><span class="skeleton"></span></div></div>
+    </div>
+  </div>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#getting-started" aria-label="AI Credits 2026 home">
+        <span class="brand-mark"><img src="assets/gorouterlogo.png" alt=""></span>
+        <span>Credits 2026</span>
+      </a>
+      <button class="mobile-menu" type="button" aria-label="Open navigation" aria-expanded="false" data-menu-toggle>
+        <i data-lucide="menu"></i>
+      </button>
+      <nav class="topnav" aria-label="Primary navigation">
+        <a href="#getting-started">Guides</a>
+        <a href="#providers">Providers</a>
+        <a href="#claude-code">Claude Code</a>
+        <a href="#codex">Codex</a>
+        <a href="#cc-switch">CC Switch</a>
+        <a href="#troubleshooting">Troubleshooting</a>
+        <a href="#security">Security</a>
+      </nav>
+      <a class="topbar-cta" href="#getting-started">Get started <i data-lucide="arrow-up-right"></i></a>
+    </div>
+  </header>
+
+  <div class="mobile-panel" data-mobile-panel>
+    <a href="#getting-started">Guides</a>
+    <a href="#providers">Providers</a>
+    <a href="#claude-code">Claude Code</a>
+    <a href="#codex">Codex</a>
+    <a href="#cc-switch">CC Switch</a>
+    <a href="#troubleshooting">Troubleshooting</a>
+    <a href="#security">Security</a>
+  </div>
+
+  <div class="page-shell">
+    <aside class="sidebar" aria-label="On this page">
+      <div class="sidebar-label">On this page</div>
+      <nav class="side-nav">
+        <a class="active" href="#getting-started">Getting started</a>
+        <a href="#gateway">API gateways</a>
+        <a href="#providers">Providers</a>
+        <a href="#claude-code">Claude Code</a>
+        <a href="#codex">Codex CLI</a>
+        <a href="#cc-switch">CC Switch</a>
+        <a href="#credits">Credits and offers</a>
+        <a href="#security">Security</a>
+        <a href="#troubleshooting">Troubleshooting</a>
+      </nav>
+      <div class="progress-box">
+        <div class="progress-head"><span>Reading progress</span><strong data-progress-value>0%</strong></div>
+        <div class="progress-track"><span data-progress-bar></span></div>
+        <small>Progress stays in this browser only.</small>
+      </div>
+    </aside>
+
+    <main class="content" id="main-content">
+      <section class="hero section-anchor" id="getting-started">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> Developer guide <span class="eyebrow-date">Last verified: August 2026</span></div>
+          <h1>AI Coding API<br><span>Credits 2026</span></h1>
+          <p class="hero-lede">A practical guide to using compatible API gateways with Claude Code and Codex CLI.</p>
+          <p class="hero-body">Learn the moving parts, set up a provider, switch between coding agents, and keep your credentials out of public code.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#claude-code">Start Claude Code guide <i data-lucide="arrow-right"></i></a>
+            <a class="button button-quiet" href="#codex">Start Codex guide <i data-lucide="arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="hero-terminal" aria-label="Gateway request flow illustration">
+          <div class="terminal-bar"><span></span><span></span><span></span><b>request-flow.txt</b></div>
+          <div class="terminal-content">
+            <div class="terminal-line muted">01  # a coding agent sends a request</div>
+            <div class="terminal-line"><span class="cyan">client</span> <span class="muted">=&gt;</span> <span class="yellow">gateway</span></div>
+            <div class="terminal-line muted">02  # the gateway maps it to a model</div>
+            <div class="terminal-line"><span class="yellow">gateway</span> <span class="muted">=&gt;</span> <span class="green">provider/model</span></div>
+            <div class="terminal-line muted">03  # response returns through the same path</div>
+            <div class="terminal-line"><span class="green">model</span> <span class="muted">=&gt;</span> <span class="cyan">client</span><span class="cursor"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="notice"><i data-lucide="info"></i><span>Provider pricing, credits, models, endpoints, and availability can change. Verify current details in the provider dashboard before configuring a client.</span></div>
+
+      <section class="provider-launch" aria-labelledby="provider-launch-title">
+        <div class="provider-launch-copy">
+          <div class="section-kicker">Quick access</div>
+          <h2 id="provider-launch-title">Open an AI provider</h2>
+          <p>Choose a provider to open its website. Use its own sign-in options, including GitHub when available. Account eligibility is checked there.</p>
+        </div>
+        <div class="provider-cta-grid">
+          <a class="provider-cta-button" href="https://tabitoken.com/sign-up?aff=chmC" target="_blank" rel="noopener noreferrer"><span class="cta-icon"><img src="assets/gorouterlogo.png" alt=""></span><span><strong>Go to TaBi Token AI</strong><small>Open provider</small></span><i class="cta-arrow" data-lucide="arrow-up-right"></i></a>
+          <a class="provider-cta-button" href="https://api.justwoker.icu/sign-up?aff=8OUO" target="_blank" rel="noopener noreferrer"><span class="cta-icon"><img src="assets/gorouterlogo.png" alt=""></span><span><strong>Go to JustDoWork AI</strong><small>Open provider</small></span><i class="cta-arrow" data-lucide="arrow-up-right"></i></a>
+          <a class="provider-cta-button" href="https://gorouter.app/sign-up?aff=QHSq" target="_blank" rel="noopener noreferrer"><span class="cta-icon"><img src="assets/gorouterlogo.png" alt=""></span><span><strong>Go to GoRouter AI</strong><small>Open provider</small></span><i class="cta-arrow" data-lucide="arrow-up-right"></i></a>
+        </div>
+      </section>
+
+      <section class="doc-section section-anchor" id="gateway" data-searchable>
+        <div class="section-kicker">01 / Foundations</div>
+        <h2>What is an API gateway?</h2>
+        <p class="section-intro">A gateway gives a local coding tool one stable API address while handling authentication and model routing behind it.</p>
+        <div class="flow-grid">
+          <div class="flow-diagram" aria-label="Claude Code to model flow">
+            <div class="flow-node accent-node"><i data-lucide="terminal-square"></i><span>Claude Code<br><small>or Codex CLI</small></span></div>
+            <div class="flow-arrow"><span></span><i data-lucide="arrow-down"></i></div>
+            <div class="flow-node"><i data-lucide="route"></i><span>API gateway<br><small>base URL + token</small></span></div>
+            <div class="flow-arrow"><span></span><i data-lucide="arrow-down"></i></div>
+            <div class="flow-node"><i data-lucide="server"></i><span>Model provider<br><small>model ID + quota</small></span></div>
+          </div>
+          <div class="definition-list">
+            <div><strong>API key</strong><span>A secret token used to authenticate requests.</span></div>
+            <div><strong>Base URL</strong><span>The root address where a client sends API requests.</span></div>
+            <div><strong>Model ID</strong><span>The exact model name accepted by the provider.</span></div>
+            <div><strong>Compatible API</strong><span>An endpoint that follows an Anthropic or OpenAI request shape.</span></div>
+          </div>
+        </div>
+        <div class="endpoint-row">
+          <div><code>/v1/models</code><span>List available models</span></div>
+          <div><code>/v1/messages</code><span>Anthropic-style messages</span></div>
+          <div><code>/v1/responses</code><span>OpenAI Responses API</span></div>
+        </div>
+        <p class="source-note">New API's app documentation describes the common setup inputs as an API address, API key or token, and model name. <a href="https://docs.newapi.pro/en/docs/apps" target="_blank" rel="noopener noreferrer">Read the source documentation <i data-lucide="external-link"></i></a></p>
+      </section>
+
+      <section class="doc-section section-anchor" id="providers" data-searchable>
+        <div class="section-kicker">02 / Providers</div>
+        <h2>Choose a compatible provider</h2>
+        <p class="section-intro">Start with a service that exposes the interface your coding client expects. Similar interfaces do not establish common ownership or backend infrastructure.</p>
+        <div class="provider-grid">
+          <article class="provider-card">
+            <div class="provider-top"><span class="provider-index">01</span><span class="status"><span></span>External service</span></div>
+            <h3>TaBi Token</h3>
+            <p>Open the provider dashboard, locate its API token area, and confirm the model list before configuring your client.</p>
+            <a class="provider-link provider-button" href="https://tabitoken.com/sign-up?aff=chmC" target="_blank" rel="noopener noreferrer"><img class="provider-button-logo" src="assets/gorouterlogo.png" alt=""><span>Go to TaBi Token AI</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
+          </article>
+          <article class="provider-card">
+            <div class="provider-top"><span class="provider-index">02</span><span class="status"><span></span>External service</span></div>
+            <h3>JustDoWork</h3>
+            <p>Check the service's current endpoint and model names. Use placeholders locally until you have verified both values.</p>
+            <a class="provider-link provider-button" href="https://api.justwoker.icu/sign-up?aff=8OUO" target="_blank" rel="noopener noreferrer"><img class="provider-button-logo" src="assets/gorouterlogo.png" alt=""><span>Go to JustDoWork AI</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
+          </article>
+          <article class="provider-card">
+            <div class="provider-top"><span class="provider-index">03</span><span class="status"><span></span>External service</span></div>
+            <h3>GoRouter</h3>
+            <p>Review the provider's own setup instructions, then test the base URL with a model-list request.</p>
+            <a class="provider-link provider-button" href="https://gorouter.app/sign-up?aff=QHSq" target="_blank" rel="noopener noreferrer"><img class="provider-button-logo" src="assets/gorouterlogo.png" alt=""><span>Go to GoRouter AI</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
+          </article>
+        </div>
+        <div class="comparison-wrap">
+          <table class="comparison-table">
+            <caption>Setup surface comparison</caption>
+            <thead><tr><th>Provider</th><th>Claude Code</th><th>Codex CLI</th><th>First check</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">TaBi Token</th><td>Anthropic-compatible base URL</td><td>OpenAI-compatible base URL</td><td><code>/v1/models</code></td></tr>
+              <tr><th scope="row">JustDoWork</th><td>Verify endpoint and model</td><td>Verify endpoint and model</td><td>Dashboard docs</td></tr>
+              <tr><th scope="row">GoRouter</th><td>Verify endpoint and model</td><td>Verify endpoint and model</td><td>Dashboard docs</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="doc-section section-anchor" id="claude-code" data-searchable>
+        <div class="section-kicker">03 / Claude Code</div>
+        <h2>Configure Claude Code</h2>
+        <p class="section-intro">Claude Code can use an Anthropic-compatible gateway when the base URL, token, and model match the provider's documentation.</p>
+        <div class="two-column">
+          <div>
+            <h3 class="subheading">Check prerequisites</h3>
+            <div class="code-block" data-code-block>
+              <div class="code-head"><span>PowerShell</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div>
+              <pre><code>node --version
+npm --version
+claude --version</code></pre>
+            </div>
+            <p class="small-note">Install the client using its official instructions. This guide does not collect credentials or run sign-in flows.</p>
+          </div>
+          <div>
+            <h3 class="subheading">Set session variables</h3>
+            <div class="code-block" data-code-block>
+              <div class="code-head"><span>PowerShell - placeholders</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div>
+              <pre><code>$env:ANTHROPIC_BASE_URL="https://YOUR_PROVIDER/v1"
+$env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
+$env:ANTHROPIC_MODEL="YOUR_MODEL"
+
+claude</code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="tab-shell" data-tabs>
+          <div class="tab-list" role="tablist" aria-label="Claude Code provider examples">
+            <button class="tab active" type="button" role="tab" aria-selected="true" data-tab="tabi">TaBi Token</button>
+            <button class="tab" type="button" role="tab" aria-selected="false" data-tab="justdowork">JustDoWork</button>
+            <button class="tab" type="button" role="tab" aria-selected="false" data-tab="gorouter">GoRouter</button>
+          </div>
+          <div class="tab-panel active" data-panel="tabi"><p>Use the base URL and model shown in the TaBi Token dashboard.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
+$env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
+$env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
+          <div class="tab-panel" data-panel="justdowork"><p>Use the endpoint and model values documented by JustDoWork.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
+$env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
+$env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
+          <div class="tab-panel" data-panel="gorouter"><p>Use the endpoint and model values documented by GoRouter.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
+$env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
+$env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
+        </div>
+        <div class="tip"><i data-lucide="lightbulb"></i><div><strong>Switch models inside Claude Code</strong><p>Use <code>/model</code> to inspect or select a model supported by the active gateway.</p></div></div>
+        <p class="source-note">Reference: <a href="https://docs.newapi.pro/en/docs/apps/claude-code" target="_blank" rel="noopener noreferrer">New API Claude Code documentation <i data-lucide="external-link"></i></a></p>
+      </section>
+
+      <section class="doc-section section-anchor" id="codex" data-searchable>
+        <div class="section-kicker">04 / Codex CLI</div>
+        <h2>Configure Codex CLI</h2>
+        <p class="section-intro">Codex CLI uses an OpenAI-compatible flow. The exact configuration keys depend on the Codex version installed on your machine.</p>
+        <div class="codex-flow"><span>Codex</span><i data-lucide="arrow-right"></i><span>Compatible gateway</span><i data-lucide="arrow-right"></i><span>Provider model</span></div>
+        <div class="two-column codex-columns">
+          <div><h3 class="subheading">Check the installed version</h3><div class="code-block" data-code-block><div class="code-head"><span>PowerShell</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>codex --version</code></pre></div><p class="small-note">Open the documentation for that version before editing a global configuration file.</p></div>
+          <div><h3 class="subheading">Example only</h3><div class="code-block" data-code-block><div class="code-head"><span>config.toml</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code># EXAMPLE ONLY
+# Verify the schema for your Codex version.
+
+[model_providers.example]
+name = "Example Provider"
+base_url = "https://provider.example/v1"
+env_key = "EXAMPLE_API_KEY"</code></pre></div></div>
+        </div>
+        <div class="check-list"><div><i data-lucide="check"></i><span>Confirm the gateway supports the interface required by Codex.</span></div><div><i data-lucide="check"></i><span>Use the exact model ID from the provider's model list.</span></div><div><i data-lucide="check"></i><span>Use the Responses API when the installed client expects it.</span></div></div>
+        <p class="source-note">Reference: <a href="https://docs.newapi.pro/en/docs/apps/codex-cli" target="_blank" rel="noopener noreferrer">New API Codex CLI documentation <i data-lucide="external-link"></i></a></p>
+      </section>
+
+      <section class="doc-section section-anchor" id="cc-switch" data-searchable>
+        <div class="section-kicker">05 / CC Switch</div>
+        <h2>Manage several clients with CC Switch</h2>
+        <p class="section-intro">CC Switch keeps provider settings in one place so you can switch the active configuration for Claude Code, Codex, or Gemini CLI.</p>
+        <div class="switch-layout">
+          <div class="switch-diagram"><div class="switch-root"><i data-lucide="sliders-horizontal"></i><strong>CC Switch</strong></div><div class="switch-branches"><span>Claude Code</span><span>Codex</span><span>Gemini CLI</span></div></div>
+          <div class="switch-fields"><div><span>Provider</span><b>Choose a service</b></div><div><span>API key</span><b>Stored by the local app</b></div><div><span>Base URL</span><b>Gateway endpoint</b></div><div><span>Model</span><b>Provider model ID</b></div><div><span>Application</span><b>Claude, Codex, or Gemini</b></div></div>
+        </div>
+        <p class="small-note">Use the provider's own documentation to validate each field. New API documents one-click provider configuration through CC Switch.</p>
+        <p class="source-note">Reference: <a href="https://docs.newapi.pro/en/docs/apps/cc-switch" target="_blank" rel="noopener noreferrer">New API CC Switch documentation <i data-lucide="external-link"></i></a></p>
+      </section>
+
+      <section class="doc-section section-anchor" id="credits" data-searchable>
+        <div class="section-kicker">06 / Credits</div>
+        <h2>How provider credits work</h2>
+        <p class="section-intro">A provider may offer trial access, signup promotions, or time-limited campaigns. Availability and amounts can change, so check the current offer before creating an account.</p>
+        <div class="offer-grid">
+          <a class="offer-row" href="https://tabitoken.com/sign-up?aff=chmC" target="_blank" rel="noopener noreferrer"><span><b>TaBi Token</b><small>Open provider and continue with GitHub</small></span><img class="offer-row-logo" src="assets/gorouterlogo.png" alt=""><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
+          <a class="offer-row" href="https://api.justwoker.icu/sign-up?aff=8OUO" target="_blank" rel="noopener noreferrer"><span><b>JustDoWork</b><small>Open provider and continue with GitHub</small></span><img class="offer-row-logo" src="assets/gorouterlogo.png" alt=""><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
+          <a class="offer-row" href="https://gorouter.app/sign-up?aff=QHSq" target="_blank" rel="noopener noreferrer"><span><b>GoRouter</b><small>Open provider and continue with GitHub</small></span><img class="offer-row-logo" src="assets/gorouterlogo.png" alt=""><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
+        </div>
+      </section>
+
+      <section class="doc-section section-anchor" id="security" data-searchable>
+        <div class="section-kicker">07 / Security</div>
+        <h2>Keep API keys private</h2>
+        <p class="section-intro">Static frontend code is public. Treat every API token as a secret and keep it in your shell, a secret manager, or an approved local CLI configuration.</p>
+        <div class="security-grid">
+          <div class="security-panel bad"><div class="panel-label"><i data-lucide="x"></i> Never publish</div><pre><code>const API_KEY = "sk-xxxxxxxx";</code></pre><p>Do not put keys in HTML, JavaScript, GitHub, screenshots, chat messages, or public forums.</p></div>
+          <div class="security-panel good"><div class="panel-label"><i data-lucide="check"></i> Use instead</div><ul><li>Environment variables</li><li>Secret managers</li><li>Provider CLI configuration</li><li>Local machine credentials</li></ul><p>Do not store keys in browser localStorage when a safer local option exists.</p></div>
+        </div>
+      </section>
+
+      <section class="doc-section section-anchor" id="troubleshooting" data-searchable>
+        <div class="section-kicker">08 / Troubleshooting</div>
+        <h2>Fix common API errors</h2>
+        <div class="troubleshoot-grid">
+          <article class="trouble-card"><span class="error-code">401</span><h3>Unauthorized</h3><p>Check the token, Authorization header, expiry, and selected provider.</p></article>
+          <article class="trouble-card"><span class="error-code">403</span><h3>Forbidden</h3><p>Check account permissions, model access, provider restrictions, and quota.</p></article>
+          <article class="trouble-card"><span class="error-code">404</span><h3>Not found</h3><p>Check the base URL, the <code>/v1</code> path, endpoint compatibility, and model ID.</p></article>
+          <article class="trouble-card"><span class="error-code">MODEL</span><h3>Model not found</h3><p>Run <code>/v1/models</code> and compare the exact returned model ID.</p></article>
+          <article class="trouble-card"><span class="error-code">CLAUDE</span><h3>Wrong Claude route</h3><p>Check <code>$env:ANTHROPIC_BASE_URL</code> and restart Claude Code after changing it.</p></article>
+          <article class="trouble-card"><span class="error-code">CODEX</span><h3>Wrong Codex provider</h3><p>Check the active Codex provider configuration and restart Codex.</p></article>
+        </div>
+      </section>
+
+      <section class="doc-section section-anchor" id="skills" data-searchable>
+        <div class="section-kicker">09 / Optional</div>
+        <h2>New API Skills</h2>
+        <p class="section-intro">New API Skills can integrate with supported coding agents, including Claude Code and Codex CLI. Support depends on the provider and client.</p>
+        <div class="skill-commands"><code>/newapi models</code><code>/newapi groups</code></div>
+        <p class="source-note">Reference: <a href="https://docs.newapi.pro/en/docs/skills" target="_blank" rel="noopener noreferrer">New API Skills documentation <i data-lucide="external-link"></i></a></p>
+      </section>
+
+      <section class="provider-footer-actions" aria-labelledby="provider-footer-title">
+        <div><div class="section-kicker">Provider shortcuts</div><h2 id="provider-footer-title">Open a provider when you are ready</h2><p>These buttons open the provider pages directly. Complete GitHub sign-in on the destination site.</p></div>
+        <div class="provider-footer-grid">
+          <a class="provider-footer-button" href="https://tabitoken.com/sign-up?aff=chmC" target="_blank" rel="noopener noreferrer"><img src="assets/gorouterlogo.png" alt=""><span>Go to TaBi Token AI</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
+          <a class="provider-footer-button" href="https://api.justwoker.icu/sign-up?aff=8OUO" target="_blank" rel="noopener noreferrer"><img src="assets/gorouterlogo.png" alt=""><span>Go to JustDoWork AI</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
+          <a class="provider-footer-button" href="https://gorouter.app/sign-up?aff=QHSq" target="_blank" rel="noopener noreferrer"><img src="assets/gorouterlogo.png" alt=""><span>Go to GoRouter AI</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
+        </div>
+      </section>
+
+      <footer class="footer"><div><strong>AI Credits 2026</strong><span>Practical notes for compatible coding-agent setups.</span></div><div><span>Last verified: August 2026</span><a href="#getting-started">Back to top <i data-lucide="arrow-up"></i></a></div></footer>
+    </main>
+  </div>
+
+  <div class="search-overlay" data-search-overlay aria-hidden="true">
+    <div class="search-dialog" role="dialog" aria-modal="true" aria-label="Search documentation">
+      <div class="search-input-wrap"><i data-lucide="search"></i><input type="search" placeholder="Search Claude Code, Codex, API key..." data-search-input><button type="button" data-search-close aria-label="Close search"><i data-lucide="x"></i></button></div>
+      <div class="search-results" data-search-results></div>
+    </div>
+  </div>
+  <button class="search-launcher" type="button" data-search-open aria-label="Search documentation"><i data-lucide="search"></i><span>Search docs</span><kbd>⌘ K</kbd></button>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
