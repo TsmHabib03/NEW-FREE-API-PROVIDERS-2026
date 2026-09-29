@@ -125,6 +125,7 @@
           <a class="provider-cta-button" href="https://omnirush.ai/console?ref=CN44FH8H" target="_blank" rel="noopener noreferrer"><span class="cta-icon"><img src="assets/omnirush-logo.png" alt=""></span><span><strong>Go to OmniRush</strong><small>Free provider</small></span><i class="cta-arrow" data-lucide="arrow-up-right"></i></a>
           <a class="provider-cta-button" href="https://api.artbloom.tech/signup?ref=BSJMVGW63Y" target="_blank" rel="noopener noreferrer"><span class="cta-icon"><img src="assets/artbloom-logo.svg" alt=""></span><span><strong>Go to ArtBloom</strong><small>Free provider</small></span><i class="cta-arrow" data-lucide="arrow-up-right"></i></a>
           <a class="provider-cta-button" href="https://tokenforge.ai.studio/sign-up?aff=qvmv" target="_blank" rel="noopener noreferrer"><span class="cta-icon"><img src="assets/tokenforge-logo.png" alt=""></span><span><strong>Go to TokenForge</strong><small>Free provider</small></span><i class="cta-arrow" data-lucide="arrow-up-right"></i></a>
+          <a class="provider-cta-button" href="https://onomeo.com/?ref=AC-EJQKQH" target="_blank" rel="noopener noreferrer"><span class="cta-icon"><img src="assets/onomeo-logo.svg" alt=""></span><span><strong>Go to Onomeo <span class="new-badge">NEW</span></strong><small>Open provider</small></span><i class="cta-arrow" data-lucide="arrow-up-right"></i></a>
           <span class="provider-cta-button is-disabled" aria-disabled="true"><span class="cta-icon"><img src="assets/gorouterlogo.png" alt=""></span><span><strong>TaBi Token AI <span class="off-badge">Unavailable</span></strong><small>Sign-up link disabled</small></span><i class="cta-arrow" data-lucide="ban"></i></span>
           <span class="provider-cta-button is-disabled" aria-disabled="true"><span class="cta-icon"><img src="assets/gorouterlogo.png" alt=""></span><span><strong>GoRouter AI <span class="off-badge">Unavailable</span></strong><small>Sign-up link disabled</small></span><i class="cta-arrow" data-lucide="ban"></i></span>
         </div>
@@ -282,6 +283,12 @@
             <p>Free provider. Open the sign-up page, create an account, then confirm the endpoint and model names in the dashboard.</p>
             <a class="provider-link provider-button" href="https://tokenforge.ai.studio/sign-up?aff=qvmv" target="_blank" rel="noopener noreferrer"><img class="provider-button-logo" src="assets/tokenforge-logo.png" alt=""><span>Go to TokenForge</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
           </article>
+          <article class="provider-card">
+            <div class="provider-top"><span class="provider-index">19</span><span class="status"><span></span>External service</span></div>
+            <h3>Onomeo</h3>
+            <p>Free provider. Open the sign-up page, create an account, then confirm the endpoint and model names in the dashboard.</p>
+            <a class="provider-link provider-button" href="https://onomeo.com/?ref=AC-EJQKQH" target="_blank" rel="noopener noreferrer"><img class="provider-button-logo" src="assets/onomeo-logo.svg" alt=""><span>Go to Onomeo</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
+          </article>
         </div>
         <div class="comparison-wrap">
           <table class="comparison-table">
@@ -306,6 +313,7 @@
               <tr><th scope="row">OmniRush</th><td>Verify endpoint and model</td><td>Verify endpoint and model</td><td>Dashboard docs</td></tr>
               <tr><th scope="row">ArtBloom</th><td>Verify endpoint and model</td><td>Verify endpoint and model</td><td>Dashboard docs</td></tr>
               <tr><th scope="row">TokenForge</th><td>Verify endpoint and model</td><td>Verify endpoint and model</td><td>Dashboard docs</td></tr>
+              <tr><th scope="row">Onomeo <span class="new-badge">NEW</span></th><td>Verify endpoint and model</td><td>Verify endpoint and model</td><td>Dashboard docs</td></tr>
             </tbody>
           </table>
         </div>
@@ -358,6 +366,7 @@ claude</code></pre>
             <button class="tab" type="button" role="tab" aria-selected="false" data-tab="omnirush">OmniRush</button>
             <button class="tab" type="button" role="tab" aria-selected="false" data-tab="artbloom">ArtBloom</button>
             <button class="tab" type="button" role="tab" aria-selected="false" data-tab="tokenforge">TokenForge</button>
+            <button class="tab" type="button" role="tab" aria-selected="false" data-tab="onomeo">Onomeo <span class="new-badge">NEW</span></button>
           </div>
           <div class="tab-panel active" data-panel="agentrouter"><p>GPT 6 Astra can be used for free on AgentRouter. Sign up with GitHub and get started immediately.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
 $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
@@ -407,6 +416,9 @@ $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
  $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
  $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
           <div class="tab-panel" data-panel="tokenforge"><p>Use the endpoint and model values documented by TokenForge. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
+ $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
+ $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
+          <div class="tab-panel" data-panel="onomeo"><p>Use the endpoint and model values documented by Onomeo. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
  $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
  $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
         </div>
@@ -468,6 +480,7 @@ env_key = "EXAMPLE_API_KEY"</code></pre></div></div>
           <a class="offer-row" href="https://omnirush.ai/console?ref=CN44FH8H" target="_blank" rel="noopener noreferrer"><span><b>OmniRush</b><small>Free provider - open sign-up page</small></span><img class="offer-row-logo" src="assets/omnirush-logo.png" alt=""><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
           <a class="offer-row" href="https://api.artbloom.tech/signup?ref=BSJMVGW63Y" target="_blank" rel="noopener noreferrer"><span><b>ArtBloom</b><small>Free provider - open sign-up page</small></span><img class="offer-row-logo" src="assets/artbloom-logo.svg" alt=""><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
           <a class="offer-row" href="https://tokenforge.ai.studio/sign-up?aff=qvmv" target="_blank" rel="noopener noreferrer"><span><b>TokenForge</b><small>Free provider - open sign-up page</small></span><img class="offer-row-logo" src="assets/tokenforge-logo.png" alt=""><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
+          <a class="offer-row" href="https://onomeo.com/?ref=AC-EJQKQH" target="_blank" rel="noopener noreferrer"><span><b>Onomeo <span class="new-badge">NEW</span></b><small>Open provider and continue with GitHub</small></span><img class="offer-row-logo" src="assets/onomeo-logo.svg" alt=""><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
         </div>
         <div class="notice notice-warn"><i data-lucide="triangle-alert"></i><span><strong>Offer notice:</strong> GoRouter and TaBi Token AI offers are paused because those services are offline. Their buttons are disabled and will not open.</span></div>
       </section>
@@ -521,6 +534,7 @@ env_key = "EXAMPLE_API_KEY"</code></pre></div></div>
           <a class="provider-footer-button" href="https://omnirush.ai/console?ref=CN44FH8H" target="_blank" rel="noopener noreferrer"><img src="assets/omnirush-logo.png" alt=""><span>Go to OmniRush</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
           <a class="provider-footer-button" href="https://api.artbloom.tech/signup?ref=BSJMVGW63Y" target="_blank" rel="noopener noreferrer"><img src="assets/artbloom-logo.svg" alt=""><span>Go to ArtBloom</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
           <a class="provider-footer-button" href="https://tokenforge.ai.studio/sign-up?aff=qvmv" target="_blank" rel="noopener noreferrer"><img src="assets/tokenforge-logo.png" alt=""><span>Go to TokenForge</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
+          <a class="provider-footer-button" href="https://onomeo.com/?ref=AC-EJQKQH" target="_blank" rel="noopener noreferrer"><img src="assets/onomeo-logo.svg" alt=""><span>Go to Onomeo <span class="new-badge">NEW</span></span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
           <a class="provider-footer-button" href="https://api.justwoker.icu/sign-up?aff=8OUO" target="_blank" rel="noopener noreferrer"><img src="assets/gorouterlogo.png" alt=""><span>Go to JustDoWork AI</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>
           <span class="provider-footer-button is-disabled" aria-disabled="true"><img src="assets/gorouterlogo.png" alt=""><span>TaBi Token AI - unavailable</span><i class="button-arrow" data-lucide="ban"></i></span>
           <span class="provider-footer-button is-disabled" aria-disabled="true"><img src="assets/gorouterlogo.png" alt=""><span>GoRouter AI - unavailable</span><i class="button-arrow" data-lucide="ban"></i></span>
