@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Orbelis</title>
+  <desc id="desc">An orbital globe mark</desc>
+  <defs>
+    <linearGradient id="bg" x1="64" y1="48" x2="450" y2="472" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9B4A20"/>
+      <stop offset="1" stop-color="#572311"/>
+    </linearGradient>
+    <linearGradient id="orbit" x1="126" y1="116" x2="394" y2="402" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF8EC"/>
+      <stop offset="1" stop-color="#E9B98B"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="136" fill="none" stroke="#FFF8EC" stroke-width="18" opacity=".96"/>
+  <ellipse cx="256" cy="256" rx="191" ry="75" fill="none" stroke="url(#orbit)" stroke-width="17" transform="rotate(-31 256 256)"/>
+  <path d="M130 256h252M150 198h212M150 314h212M256 120c-42 36-65 83-65 136s23 100 65 136M256 120c42 36 65 83 65 136s-23 100-65 136" fill="none" stroke="#F8D9BB" stroke-width="11" stroke-linecap="round" opacity=".92"/>
+  <circle cx="384" cy="144" r="18" fill="#FFF8EC"/>
+  <circle cx="127" cy="352" r="13" fill="#F4C08D"/>
+  <path d="M256 207l12 33 33 12-33 12-12 33-12-33-33-12 33-12z" fill="#FFF8EC"/>
+</svg>
