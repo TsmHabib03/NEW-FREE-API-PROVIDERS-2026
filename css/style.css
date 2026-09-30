@@ -26,8 +26,9 @@
 @media(prefers-reduced-motion:reduce){.skeleton{animation:none}.site-loader{transition:none}}
 
 .brand-mark{overflow:hidden;padding:0;background:var(--ink)}.brand-mark img{display:block;width:100%;height:100%;object-fit:cover}
-.new-badge{display:inline-block;background:linear-gradient(135deg,#ff6b35,#f7c948);color:#fff;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:4px;line-height:1;margin-left:6px;vertical-align:middle;animation:new-pulse 2s ease-in-out infinite}
+.new-badge{display:inline-block;background:linear-gradient(115deg,#ff8a00,#ffb703 28%,#ffe9a8 50%,#ffb703 72%,#ff8a00);background-size:230% 100%;color:#5c2a00;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:4px;line-height:1;margin-left:6px;vertical-align:middle;text-shadow:0 1px 0 rgba(255,255,255,.45);box-shadow:0 0 10px -3px rgba(255,150,0,.85);animation:new-shine 2.6s linear infinite,new-pulse 2s ease-in-out infinite}
 @keyframes new-pulse{0%,100%{opacity:1}50%{opacity:.7}}
+@keyframes new-shine{0%{background-position:130% 0}100%{background-position:-130% 0}}
 .provider-card .new-badge{position:absolute;top:14px;right:14px}
 .provider-card{position:relative}.cta-icon{overflow:hidden}.cta-icon img{display:block;width:100%;height:100%;object-fit:cover}.provider-button-logo{display:block;width:22px;height:22px;object-fit:cover;border-radius:5px;flex:0 0 auto}.offer-row-logo{display:block;width:24px;height:24px;object-fit:cover;border-radius:6px;flex:0 0 auto}.provider-footer-button>img:first-child{display:block;width:20px;height:20px;object-fit:cover;border-radius:5px;flex:0 0 auto}
 
@@ -49,8 +50,13 @@
 .provider-card.is-disabled .provider-button{opacity:1;pointer-events:none}
 .offer-row>span>b{font-size:15px}
 
-.hot-badge{display:inline-block;background:linear-gradient(135deg,#ff2d55,#ff4d3d);color:#fff;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:4px;line-height:1;margin-left:6px;vertical-align:middle;animation:new-pulse 2s ease-in-out infinite}
+.hot-badge{display:inline-block;background:linear-gradient(115deg,#ffcf3f,#ff9f1c 32%,#ff6a00 64%,#f4511e);background-size:220% 100%;color:#fff;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:4px;line-height:1;margin-left:6px;vertical-align:middle;text-shadow:0 1px 2px rgba(140,40,0,.55);box-shadow:0 0 12px -3px rgba(255,120,0,.85);animation:hot-flame 1.5s ease-in-out infinite,hot-shimmer 2.4s linear infinite}
+@keyframes hot-flame{0%,100%{box-shadow:0 0 10px -3px rgba(255,130,0,.8);transform:translateY(0) scale(1)}50%{box-shadow:0 0 18px 1px rgba(255,80,0,.55);transform:translateY(-1px) scale(1.05)}}
+@keyframes hot-shimmer{0%{background-position:120% 0}100%{background-position:-120% 0}}
 .provider-card .hot-badge{position:absolute;top:14px;right:14px;z-index:2}
-.provider-guide{margin-top:10px;padding-top:10px;background:var(--surface);border:1px solid var(--line-strong);border-radius:7px;color:#4d5c71;transition:background .15s ease,border-color .15s ease,color .15s ease}
-.provider-guide:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
-.provider-guide .button-arrow{margin-left:auto}
+.provider-guide{margin-top:10px;padding:10px 12px;min-height:38px;background:linear-gradient(180deg,#f4f9ff,#e7f1ff);border:1px solid #cfe1fb;border-radius:8px;color:#1c5bb8;font-size:12px;line-height:1.2;box-shadow:0 1px 2px rgba(23,105,224,.1);transition:background .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease}
+.provider-guide svg{color:var(--accent)}
+.provider-guide:hover{background:linear-gradient(180deg,#e8f1ff,#dbeaff);border-color:var(--accent);color:#0f56c4;box-shadow:0 8px 16px -10px rgba(23,105,224,.65);transform:translateY(-1px)}
+.provider-guide:active{transform:translateY(0);box-shadow:none}
+.provider-guide .button-arrow{margin-left:auto;transition:transform .18s ease}
+.provider-guide:hover .button-arrow{transform:translate(2px,-2px)}
