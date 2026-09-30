@@ -48,3 +48,9 @@
 .tab-list{flex-wrap:wrap}
 .provider-card.is-disabled .provider-button{opacity:1;pointer-events:none}
 .offer-row>span>b{font-size:15px}
+
+.hot-badge{display:inline-block;background:linear-gradient(135deg,#ff2d55,#ff4d3d);color:#fff;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:4px;line-height:1;margin-left:6px;vertical-align:middle;animation:new-pulse 2s ease-in-out infinite}
+.provider-card .hot-badge{position:absolute;top:14px;right:14px;z-index:2}
+.provider-guide{margin-top:10px;padding-top:10px;background:var(--surface);border:1px solid var(--line-strong);border-radius:7px;color:#4d5c71;transition:background .15s ease,border-color .15s ease,color .15s ease}
+.provider-guide:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.provider-guide .button-arrow{margin-left:auto}
