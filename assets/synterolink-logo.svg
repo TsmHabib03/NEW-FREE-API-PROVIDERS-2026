@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="synterolink logo">
+  <defs>
+    <linearGradient id="syntero-gradient" x1="54" y1="54" x2="202" y2="202" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7CFFE0"/>
+      <stop offset="0.46" stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#3B82F6"/>
+    </linearGradient>
+    <filter id="syntero-shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="14" stdDeviation="11" flood-color="#0891B2" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+  <g filter="url(#syntero-shadow)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M83 151 L67 135 C45 113 45 78 67 56 C89 34 124 34 146 56 L162 72" stroke="url(#syntero-gradient)" stroke-width="26"/>
+    <path d="M173 105 L189 121 C211 143 211 178 189 200 C167 222 132 222 110 200 L94 184" stroke="url(#syntero-gradient)" stroke-width="26"/>
+    <path d="M92 102 L164 174" stroke="#F8FFFF" stroke-opacity="0.88" stroke-width="17"/>
+    <path d="M86 86 L170 170" stroke="url(#syntero-gradient)" stroke-width="20"/>
+    <path d="M104 104 L154 154" stroke="#FFFFFF" stroke-opacity="0.36" stroke-width="5"/>
+    <circle cx="67" cy="56" r="7" fill="#7CFFE0" stroke="none"/>
+    <circle cx="189" cy="200" r="7" fill="#3B82F6" stroke="none"/>
+  </g>
+</svg>
