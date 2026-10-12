@@ -193,6 +193,8 @@
     const fresh = providers.filter(p => p.status === 'live' && p.flags.includes('new')).length;
     if (liveCount) liveCount.textContent = live;
     if (newCount) newCount.textContent = fresh;
+    const totalCount = $('[data-total-count]');
+    if (totalCount) totalCount.textContent = providers.length;
   }
 
   /* Footer shortcuts render from the same data */

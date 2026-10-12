@@ -1,0 +1,10 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TokenLayer favicon">
+  <title>TokenLayer</title>
+  <!-- Solid backing (favicons need contrast at tiny sizes) + hairline edge -->
+  <rect width="64" height="64" rx="16" fill="#0d0d0d"/>
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.25" fill="none" stroke="#ffffff" stroke-opacity="0.1"/>
+  <!-- Mark -->
+  <rect x="10" y="16" width="44" height="12" rx="6" fill="#e6e6e6"/>
+  <path d="M10 36 Q32 43 54 36" stroke="#e6e6e6" stroke-opacity="0.45" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M10 48 Q32 55 54 48" stroke="#e6e6e6" stroke-opacity="0.15" stroke-width="3" stroke-linecap="round" fill="none"/>
+</svg>
