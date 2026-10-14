@@ -1,0 +1,419 @@
+{
+ "agentrouter": {
+  "base": "https://agentrouter.org/",
+  "len": 490,
+  "anthropic_hits": [
+   "claude-code"
+  ],
+  "openai_hits": [
+   "codex"
+  ]
+ },
+ "bluesminds": {
+  "base": "https://api.bluesminds.com/",
+  "len": 271,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "emtf": {
+  "base": "https://emtf.aipm9527.online/",
+  "len": 599,
+  "anthropic_hits": [],
+  "openai_hits": [
+   "openai"
+  ]
+ },
+ "freemodel": {
+  "base": "https://freemodel.dev/",
+  "len": 2256,
+  "anthropic_hits": [
+   "anthropic"
+  ],
+  "openai_hits": [
+   "chat.completions",
+   "openai",
+   "openai-compatible"
+  ]
+ },
+ "geminiapi": {
+  "base": "https://gemini-api.online/",
+  "len": 441,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "justdowork": {
+  "base": "https://api.justwoker.icu/",
+  "len": 483,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "kktoken": {
+  "base": "https://kktoken.cc/",
+  "len": 116,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "seekai": {
+  "base": "https://seekai.cc/",
+  "len": 437,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "aerolink": {
+  "base": "https://aerolink.lat/",
+  "len": 594,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "apimaster": {
+  "base": "https://apimaster.ai/",
+  "len": 305,
+  "anthropic_hits": [],
+  "openai_hits": [
+   "openai"
+  ]
+ },
+ "artbloom": {
+  "base": "https://api.artbloom.tech/",
+  "len": 858,
+  "anthropic_hits": [
+   "anthropic"
+  ],
+  "openai_hits": [
+   "/v1/chat/completions",
+   "openai",
+   "openai-compatible"
+  ]
+ },
+ "ashna": {
+  "base": "https://app.ashna.ai/",
+  "len": 926,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "bearlab": {
+  "base": "https://bearlab.ai/",
+  "len": 665,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "budsai": {
+  "base": "https://apichat.budsin.dev/",
+  "len": 813,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "cleanapis": {
+  "base": "https://cleanapis.com/",
+  "len": 5773,
+  "anthropic_hits": [
+   "claude code"
+  ],
+  "openai_hits": [
+   "chat.completions",
+   "openai",
+   "openai compatible",
+   "openai-compatible"
+  ]
+ },
+ "codecraft": {
+  "base": "https://codecraftapi.com/",
+  "len": 5775,
+  "anthropic_hits": [
+   "claude code"
+  ],
+  "openai_hits": [
+   "chat.completions",
+   "openai",
+   "openai compatible",
+   "openai-compatible"
+  ]
+ },
+ "codexrelay": {
+  "base": "https://codex-relay.codes/",
+  "len": 4039,
+  "anthropic_hits": [],
+  "openai_hits": [
+   "codex",
+   "openai",
+   "openai-compatible"
+  ]
+ },
+ "directrouter": {
+  "base": "https://directrouter.pages.dev/",
+  "len": 1187,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "flushai": {
+  "base": "https://flushapi.fun/",
+  "len": 180,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "freemodelin": {
+  "base": "https://freemodel.in/",
+  "len": 5776,
+  "anthropic_hits": [
+   "claude code"
+  ],
+  "openai_hits": [
+   "chat.completions",
+   "openai",
+   "openai compatible",
+   "openai-compatible"
+  ]
+ },
+ "geaix": {
+  "base": "https://geaix.com/",
+  "len": 130,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "helyx": {
+  "base": "https://helyxai.space/",
+  "len": 2756,
+  "anthropic_hits": [],
+  "openai_hits": [
+   "/v1/chat/completions",
+   "openai-compatible"
+  ]
+ },
+ "ireze": {
+  "base": "https://ireze.site/",
+  "len": 2968,
+  "anthropic_hits": [
+   "anthropic"
+  ],
+  "openai_hits": [
+   "openai"
+  ]
+ },
+ "jasper": {
+  "base": "https://api.yjs.im/",
+  "len": 2174,
+  "anthropic_hits": [],
+  "openai_hits": [
+   "/v1/chat/completions",
+   "openai"
+  ]
+ },
+ "llmsrelay": {
+  "base": "https://llmsrelay.com/",
+  "len": 3058,
+  "anthropic_hits": [
+   "/v1/messages",
+   "anthropic"
+  ],
+  "openai_hits": [
+   "/v1/chat/completions",
+   "openai-compatible"
+  ]
+ },
+ "lmzero": {
+  "base": "https://17.wtf/",
+  "len": 4351,
+  "anthropic_hits": [
+   "anthropic"
+  ],
+  "openai_hits": [
+   "/v1/chat/completions",
+   "openai"
+  ]
+ },
+ "localai": {
+  "base": "https://local.ai/",
+  "len": 546,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "marsai": {
+  "base": "https://marsai.click/",
+  "len": 1515,
+  "anthropic_hits": [
+   "anthropic"
+  ],
+  "openai_hits": [
+   "openai"
+  ]
+ },
+ "miarouter": {
+  "base": "https://www.miarouter.online/",
+  "len": 2175,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "omnirush": {
+  "base": "https://omnirush.ai/",
+  "len": 3914,
+  "anthropic_hits": [
+   "anthropic"
+  ],
+  "openai_hits": [
+   "openai"
+  ]
+ },
+ "onomeo": {
+  "base": "https://onomeo.com/",
+  "len": 11565,
+  "anthropic_hits": [
+   "anthropic",
+   "claude code",
+   "claude-code"
+  ],
+  "openai_hits": [
+   "codex",
+   "openai"
+  ]
+ },
+ "orbelis": {
+  "base": "https://nova.vcrauo.com/",
+  "len": 1847,
+  "anthropic_hits": [],
+  "openai_hits": [
+   "openai"
+  ]
+ },
+ "odyssey": {
+  "base": "https://odysseyapi.tech/",
+  "len": 3424,
+  "anthropic_hits": [
+   "anthropic"
+  ],
+  "openai_hits": [
+   "chat.completions",
+   "openai",
+   "openai-compatible"
+  ]
+ },
+ "orvapi": {
+  "base": "https://www.orvapi.com/",
+  "len": 3303,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "selora": {
+  "base": "https://selora.lol/",
+  "len": 7872,
+  "anthropic_hits": [
+   "anthropic"
+  ],
+  "openai_hits": [
+   "/v1/chat/completions",
+   "chat.completions",
+   "openai"
+  ]
+ },
+ "synterolink": {
+  "base": "https://synterolink.com/",
+  "len": 0,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "tokenbom": {
+  "base": "https://tokenbom.com/",
+  "len": 2979,
+  "anthropic_hits": [
+   "/v1/messages",
+   "anthropic"
+  ],
+  "openai_hits": [
+   "/v1/chat/completions",
+   "chat.completions",
+   "openai",
+   "openai-compatible"
+  ]
+ },
+ "tokenforge": {
+  "base": "https://tokenforge.ai.studio/",
+  "len": 4389,
+  "anthropic_hits": [
+   "/v1/messages",
+   "anthropic"
+  ],
+  "openai_hits": [
+   "/v1/chat/completions",
+   "openai"
+  ]
+ },
+ "tokenlayer": {
+  "base": "https://tokenlayer.net/",
+  "len": 4480,
+  "anthropic_hits": [
+   "anthropic"
+  ],
+  "openai_hits": [
+   "chat.completions",
+   "openai"
+  ]
+ },
+ "tokenreply": {
+  "base": "https://www.tokenreply.com/",
+  "len": 685,
+  "anthropic_hits": [],
+  "openai_hits": [
+   "/v1/chat/completions",
+   "openai"
+  ]
+ },
+ "toptools": {
+  "base": "https://top-tools-ai.com/",
+  "len": 2096,
+  "anthropic_hits": [
+   "anthropic"
+  ],
+  "openai_hits": [
+   "openai"
+  ]
+ },
+ "unorouter": {
+  "base": "https://unorouter.com/",
+  "len": 3035,
+  "anthropic_hits": [
+   "/v1/messages",
+   "anthropic",
+   "claude code"
+  ],
+  "openai_hits": [
+   "/v1/chat/completions",
+   "/v1/responses",
+   "openai",
+   "openai compatible",
+   "openai-compatible"
+  ]
+ },
+ "utim": {
+  "base": "https://utim.dev/",
+  "len": 2986,
+  "anthropic_hits": [
+   "anthropic"
+  ],
+  "openai_hits": [
+   "openai",
+   "openai-compatible"
+  ]
+ },
+ "vyceai": {
+  "base": "https://vyceai.com/",
+  "len": 160,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "vsllm": {
+  "base": "https://vsllm.cc/",
+  "len": 458,
+  "anthropic_hits": [],
+  "openai_hits": []
+ },
+ "zerocat": {
+  "base": "https://zero.cat/",
+  "len": 1850,
+  "anthropic_hits": [
+   "anthropic"
+  ],
+  "openai_hits": [
+   "/v1/chat/completions",
+   "openai"
+  ]
+ }
+}

@@ -1,0 +1,30 @@
+{
+ "emtf": [
+  " ensures millisecond response times OpenAI Claude Gemini DeepSeek Qwen Llama 02 ### Se",
+  "s millisecond response times OpenAI Claude Gemini DeepSeek Qwen Llama 02 ### Secure & Re",
+  "ons 2 ### Connect Connect through OpenAI, Claude, Gemini, and other compatible API rou"
+ ],
+ "apimaster": [
+  ". With APIMaster, one key covers GPT, Claude, and DeepSeek, and pay-as-you-go ends up ch",
+  "laude API keys at up to 85% off official pricing. DeepSeek API is around 30% off. All di",
+  "-compatible tool. Which AI models are available?+ GPT-5.4, GPT-5.5, Claude Sonnet 4.6, ",
+  "le tool. Which AI models are available?+ GPT-5.4, GPT-5.5, Claude Sonnet 4.6, Claude Op",
+  " Sonnet 4.6, Claude Opus 4.7/4.8, Claude Fable 5, DeepSeek V4 Flash, DeepSeek V4 Pro, Mi",
+  " Opus 4.7/4.8, Claude Fable 5, DeepSeek V4 Flash, DeepSeek V4 Pro, MiniMax M3, and GPT-I",
+  "epSeek V4 Flash, DeepSeek V4 Pro, MiniMax M3, and GPT-Image-2. New models are added as they"
+ ],
+ "artbloom": [
+  " \"Content-Type: application/json\" \\ -d '{\"model\":\"gpt-4o-mini\",\"messages\":[{\"role\":\"user\",\""
+ ],
+ "lmzero": [
+  " = client.chat.completions.create( model=\"posiden/deepseek-v4-flash\", messages=[ {\"role\": \"system",
+  "letion\", \"created\": 1759912800, \"model\": \"posiden/deepseek-v4-flash\", \"choices\": [ { \"index\": 0, "
+ ],
+ "tokenlayer": [
+  "eryAImodel \u203a OpenAI alternative with GPT, Claude, Gemini, DeepSeek, Llama and 50+ mode",
+  "el \u203a OpenAI alternative with GPT, Claude, Gemini, DeepSeek, Llama and 50+ models. Transp",
+  "I live \u00b7 OpenAI & Anthropic compatible OpenAI ### GPT-5.4 Input \u00b7 per 1M tokens Officia",
+  " code. \u203a client.chat.completions.create({ model: \"gpt-5.4\" }) Calculate your savings ##",
+  " = await client.chat.completions.create({ model: \"claude-sonnet-4-6\", messages: [{ role: \"user\", "
+ ]
+}

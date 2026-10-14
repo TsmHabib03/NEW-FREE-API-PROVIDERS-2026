@@ -1,0 +1,51 @@
+{
+ "cleanapis": [
+  "ange ) stream = client.chat.completions.create( model=\"claude-opus-4.8\", messages=[{\"role\": \"user\", \"cont",
+  "ming \ud83d\udcc4 JSON Context 8K In /1M $0.115 Out /1M $0.23 ### DeepSeek-V4-Flash-0731 chat `deepseek-v4-flash-0731` Deep",
+  " $0.115 Out /1M $0.23 ### DeepSeek-V4-Flash-0731 chat `deepseek-v4-flash-0731` DeepSeek fast open model. Very af",
+  "# DeepSeek-V4-Flash-0731 chat `deepseek-v4-flash-0731` DeepSeek fast open model. Very affordable w",
+  " \ud83d\udcc4 JSON Context 1049K In /1M $0.115 Out /1M $0.115 ### GPT-5.6 Luna chat `gpt-5.6-luna` OpenAI ef",
+  "9K In /1M $0.115 Out /1M $0.115 ### GPT-5.6 Luna chat `gpt-5.6-luna` OpenAI efficient model. Great val",
+  " \ud83d\udcc4 JSON Context 1050K In /1M $0.357 Out /1M $0.357 ### DeepSeek-V4-Pro-0813 chat `deepseek-v4-pro-0813` DeepSe",
+  "M $0.357 Out /1M $0.357 ### DeepSeek-V4-Pro-0813 chat `deepseek-v4-pro-0813` DeepSeek open-source pro model. E",
+  "7 ### DeepSeek-V4-Pro-0813 chat `deepseek-v4-pro-0813` DeepSeek open-source pro model. Excellent r",
+  " \ud83d\udcc4 JSON Context 1049K In /1M $0.552 Out /1M $0.552 ### Qwen3.8-27B chat `qwen3.8-27b` Alibaba Qwen co"
+ ],
+ "codecraft": [
+  "ange ) stream = client.chat.completions.create( model=\"claude-opus-4.8\", messages=[{\"role\": \"user\", \"cont",
+  "ming \ud83d\udcc4 JSON Context 8K In /1M $0.115 Out /1M $0.23 ### DeepSeek-V4-Flash-0731 chat `deepseek-v4-flash-0731` Deep",
+  " $0.115 Out /1M $0.23 ### DeepSeek-V4-Flash-0731 chat `deepseek-v4-flash-0731` DeepSeek fast open model. Very af",
+  "# DeepSeek-V4-Flash-0731 chat `deepseek-v4-flash-0731` DeepSeek fast open model. Very affordable w",
+  " \ud83d\udcc4 JSON Context 1049K In /1M $0.115 Out /1M $0.115 ### GPT-5.6 Luna chat `gpt-5.6-luna` OpenAI ef",
+  "9K In /1M $0.115 Out /1M $0.115 ### GPT-5.6 Luna chat `gpt-5.6-luna` OpenAI efficient model. Great val",
+  " \ud83d\udcc4 JSON Context 1050K In /1M $0.357 Out /1M $0.357 ### DeepSeek-V4-Pro-0813 chat `deepseek-v4-pro-0813` DeepSe",
+  "M $0.357 Out /1M $0.357 ### DeepSeek-V4-Pro-0813 chat `deepseek-v4-pro-0813` DeepSeek open-source pro model. E",
+  "7 ### DeepSeek-V4-Pro-0813 chat `deepseek-v4-pro-0813` DeepSeek open-source pro model. Excellent r",
+  " \ud83d\udcc4 JSON Context 1049K In /1M $0.552 Out /1M $0.552 ### Qwen3.8-27B chat `qwen3.8-27b` Alibaba Qwen co"
+ ],
+ "codexrelay": [],
+ "freemodelin": [
+  "ange ) stream = client.chat.completions.create( model=\"claude-opus-4.8\", messages=[{\"role\": \"user\", \"cont",
+  "ming \ud83d\udcc4 JSON Context 8K In /1M $0.115 Out /1M $0.23 ### DeepSeek-V4-Flash-0731 chat `deepseek-v4-flash-0731` Deep",
+  " $0.115 Out /1M $0.23 ### DeepSeek-V4-Flash-0731 chat `deepseek-v4-flash-0731` DeepSeek fast open model. Very af",
+  "# DeepSeek-V4-Flash-0731 chat `deepseek-v4-flash-0731` DeepSeek fast open model. Very affordable w",
+  " \ud83d\udcc4 JSON Context 1049K In /1M $0.115 Out /1M $0.115 ### GPT-5.6 Luna chat `gpt-5.6-luna` OpenAI ef",
+  "9K In /1M $0.115 Out /1M $0.115 ### GPT-5.6 Luna chat `gpt-5.6-luna` OpenAI efficient model. Great val",
+  " \ud83d\udcc4 JSON Context 1050K In /1M $0.357 Out /1M $0.357 ### DeepSeek-V4-Pro-0813 chat `deepseek-v4-pro-0813` DeepSe",
+  "M $0.357 Out /1M $0.357 ### DeepSeek-V4-Pro-0813 chat `deepseek-v4-pro-0813` DeepSeek open-source pro model. E",
+  "7 ### DeepSeek-V4-Pro-0813 chat `deepseek-v4-pro-0813` DeepSeek open-source pro model. Excellent r",
+  " \ud83d\udcc4 JSON Context 1049K In /1M $0.552 Out /1M $0.552 ### Qwen3.8-27B chat `qwen3.8-27b` Alibaba Qwen co"
+ ],
+ "llmsrelay": [
+  "| | --- | --- | --- | --- | --- | | Claude Opus 5.5 | `claude-opus-5-5` | 1M | Yes | Claude key groups | ",
+  "| 1M | Yes | Claude key groups | | Claude Fable 5.1 | `claude-fable-5-1` | 1M | Yes | Claude key groups | ",
+  "1` | 1M | Yes | Claude key groups | | Claude Opus 5 | `claude-opus-5` | 1M | Yes | Basic, Pro | | Claud",
+  "-opus-5` | 1M | Yes | Basic, Pro | | Claude Fable 5 | `claude-fable-5` | 1M | Yes | Basic, Pro | | Claud",
+  "able-5` | 1M | Yes | Basic, Pro | | Claude Opus 4.8 | `claude-opus-4.8` | 1M | Yes | Claude key groups | ",
+  " | 1M | Yes | Claude key groups | | Claude Opus 4.7 | `claude-opus-4.7` | 1M | Yes | Claude key groups | ",
+  " | 1M | Yes | Claude key groups | | Claude Opus 4.6 | `claude-opus-4.6` | 1M | Yes | Claude key groups | ",
+  " | 1M | Yes | Claude key groups | | Claude Sonnet 5 | `claude-sonnet-5` | 1M | Yes | Claude key groups | ",
+  " 1M | Yes | Claude key groups | | Claude Sonnet 4.6 | `claude-sonnet-4.6` | 1M | Yes | Claude key groups | ",
+  "| 1M | Yes | Claude key groups | | Claude Haiku 4.5 | `claude-haiku-4.5` | 200K | Yes | Claude key groups "
+ ]
+}

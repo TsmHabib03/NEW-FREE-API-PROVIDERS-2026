@@ -1,0 +1,148 @@
+{
+ "collectedAt": "2026-10-13",
+ "method": "Read-only browser pass. Referral URLs navigated verbatim; no account created, no form submitted, no credential entered. Models come from each instance's own public /api/pricing; gated instances are recorded as unknown, never guessed.",
+ "scope": "the 8 providers carrying flags:[\"newapi\"] in js/providers.js",
+ "providers": {
+  "agentrouter": {
+   "url": "https://agentrouter.org/register?aff=1TUW",
+   "reachable": true,
+   "instanceSoftware": "New API + One API (footer); title '🐴 Agent Router'",
+   "signupFlow": "GitHub or LinuxDO OAuth (no email form)",
+   "modelSource": "/api/pricing HTTP 200 (public)",
+   "endpoints": [
+    "anthropic",
+    "openai"
+   ],
+   "models": [
+    "gpt-6-astra",
+    "claude-opus-4-8",
+    "claude-opus-5",
+    "deepseek-v4-flash"
+   ]
+  },
+  "bluesminds": {
+   "url": "https://api.bluesminds.com/sign-up?aff=7T6I",
+   "reachable": true,
+   "instanceSoftware": "New API; title '🐴 New API'",
+   "modelSource": "/api/pricing HTTP 200 (public)",
+   "endpoints": [
+    "openai"
+   ],
+   "models": [
+    "nvidia/ising-calibration-1.5-31b",
+    "meta/llama-3.2-11b-vision-instruct",
+    "nvidia/nemotron-3-ultra-550b-a55b",
+    "meta/muse-glimmer-30b",
+    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+    "nvidia/riva-translate-4b-instruct-v1.1",
+    "openai/gpt-oss-20b",
+    "nvidia/llama-3.1-nemotron-safety-guard-8b-v3",
+    "nvidia/nemotron-3.5-lightning-30b-a3b",
+    "moonshotai/kimi-k3",
+    "nvidia/nemotron-3.5-content-safety",
+    "google/diffusiongemma-26b-a4b-it",
+    "nvidia/riva-translate-4b-instruct-v2"
+   ]
+  },
+  "emtf": {
+   "url": "https://emtf.aipm9527.online/sign-up?aff=EAWX",
+   "reachable": true,
+   "instanceSoftware": "New API",
+   "modelSource": "/api/pricing HTTP 200 on BOTH old and new host",
+   "endpoints": [
+    "anthropic",
+    "openai"
+   ],
+   "models": [
+    "grok-4.6",
+    "grok-4.7-build-fast",
+    "claude-sonnet-5",
+    "gpt-5.6-sol",
+    "gpt-6-sol",
+    "gpt-6-astra",
+    "claude-opus-4-7",
+    "claude-opus-4-8",
+    "claude-sonnet-4-6-thinking",
+    "gpt-6.1-sol",
+    "claude-fable-5",
+    "claude-opus-4-5",
+    "claude-fable-5-1",
+    "claude-opus-5",
+    "grok-4.7",
+    "claude-opus-4-6",
+    "claude-opus-4-6-thinking",
+    "claude-sonnet-4-6",
+    "claude-opus-5-5"
+   ],
+   "FLAG_domainMigration": {
+    "what": "the old host serves a migration notice: 'current domain emtf.aipm9527.online has stopped operating', auto-redirecting to emtf.aipm9527.site in 10s",
+    "newHost": "https://emtf.aipm9527.site/",
+    "newHostTitle": "AIPM",
+    "modelSetsIdentical": true,
+    "action": "referral URL NOT edited (plan rule); needs a human decision"
+   }
+  },
+  "freemodel": {
+   "url": "https://freemodel.dev/invite/FRE-95523c52",
+   "reachable": true,
+   "instanceSoftware": "custom multi-model gateway (NOT a New API instance)",
+   "modelSource": "/api/pricing HTTP 401 - no IDs published; routing is 'auto'",
+   "pricingStatus": 401,
+   "statusEndpoint": 401,
+   "documentedRoutes": {
+    "openai": [
+     "POST /v1/responses",
+     "POST /v1/chat/completions"
+    ],
+    "anthropic": [
+     "POST /v1/messages"
+    ]
+   },
+   "baseUrl": "https://api.freemodel.dev/v1",
+   "modelPoolFamilies": [
+    "DeepSeek",
+    "GLM",
+    "Qwen",
+    "MiniMax",
+    "Kimi",
+    "Llama"
+   ],
+   "cardWording": "your first API credits land instantly, no card required",
+   "models": []
+  },
+  "geminiapi": {
+   "url": "https://gemini-api.online/sign-up?aff=5eSA",
+   "reachable": true,
+   "instanceSoftware": "New API, branded 'Gemini-Api'",
+   "modelSource": "/api/pricing HTTP 200 (public)",
+   "endpoints": [
+    "gemini",
+    "openai"
+   ],
+   "models": [
+    "gemini-3.8-flash-tiered"
+   ]
+  },
+  "justdowork": {
+   "url": "https://api.justwoker.icu/sign-up?aff=8OUO",
+   "reachable": true,
+   "instanceSoftware": "New API; title '🐴 JustDoWork'",
+   "modelSource": "gated - /api/status reports pricing.requireAuth:true; /api/pricing + /api/models return 401",
+   "models": []
+  },
+  "kktoken": {
+   "url": "https://kktoken.cc/sign-up?aff=J11c",
+   "reachable": true,
+   "instanceSoftware": "New API backend, rebranded 'KKtoken AI'",
+   "modelSource": "gated - pricing.requireAuth:true; /api/pricing + /api/models return 401",
+   "models": []
+  },
+  "seekai": {
+   "url": "https://seekai.cc/sign-up?aff=kwMe",
+   "reachable": true,
+   "instanceSoftware": "New API; home + rankings + about enabled",
+   "modelSource": "gated - pricing.requireAuth:true; /api/pricing + /api/models return 401",
+   "models": []
+  }
+ }
+}

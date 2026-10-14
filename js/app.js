@@ -1,3 +1,9 @@
+/* Provider list — renders js/providers.js into the index.html list surface.
+   No backend, no build step, no modules: this file is loaded with a plain <script>.
+   Rules that must not be broken here:
+     - nothing is invented: a missing field renders as an explicit "unknown"
+     - offline providers stay visible, pinned last, never linked
+     - referral URLs are used verbatim (they come straight from the data file) */
 (() => {
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -5,278 +11,386 @@
   const refreshIcons = () => {
     if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
   };
-  refreshIcons();
-  window.setTimeout(() => document.body.classList.add('is-ready'), 280);
 
+  const esc = value => String(value == null ? '' : value)
+    .replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+
+  const providers = (window.PROVIDERS || []).slice();
+  const byId = new Map(providers.map(p => [p.id, p]));
+
+  /* ---------------- mobile navigation ---------------- */
   const menuToggle = $('[data-menu-toggle]');
   const mobilePanel = $('[data-mobile-panel]');
-  menuToggle?.addEventListener('click', () => {
-    const open = mobilePanel.classList.toggle('open');
+  const setMenu = open => {
+    if (!menuToggle || !mobilePanel) return;
+    mobilePanel.classList.toggle('open', open);
     menuToggle.setAttribute('aria-expanded', String(open));
     menuToggle.innerHTML = open ? '<i data-lucide="x"></i>' : '<i data-lucide="menu"></i>';
     refreshIcons();
+  };
+  menuToggle?.addEventListener('click', event => {
+    event.stopPropagation();
+    setMenu(!mobilePanel.classList.contains('open'));
   });
-  $$('[data-mobile-panel] a').forEach(link => link.addEventListener('click', () => {
-    mobilePanel.classList.remove('open');
-    menuToggle.setAttribute('aria-expanded', 'false');
-    menuToggle.innerHTML = '<i data-lucide="menu"></i>';
-    refreshIcons();
-  }));
+  $$('[data-mobile-panel] a').forEach(link => link.addEventListener('click', () => setMenu(false)));
+  /* tapping the page behind the panel, or Escape, closes it — on touch there is no
+     hover-out and no visible close button beyond the burger itself */
+  document.addEventListener('click', event => {
+    if (!mobilePanel?.classList.contains('open')) return;
+    if (!event.target.closest('[data-mobile-panel]')) setMenu(false);
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && mobilePanel?.classList.contains('open')) setMenu(false);
+  });
 
-  $$('[data-copy]').forEach(button => button.addEventListener('click', async () => {
-    const block = button.closest('[data-code-block]');
-    const text = $('pre', block)?.innerText || '';
-    try {
-      await navigator.clipboard.writeText(text);
-      const original = button.innerHTML;
-      button.innerHTML = '<i data-lucide="check"></i><span>Copied!</span>';
-      refreshIcons();
-      setTimeout(() => { button.innerHTML = original; refreshIcons(); }, 2000);
-    } catch {
-      button.querySelector('span').textContent = 'Select manually';
+  /* ---------------- derived facts ---------------- */
+  const NEW_DAYS = 7;                        // short on purpose: 40 of 46 live rows date from
+  const isNew = p => p.status === 'live'     // late Sep / early Oct 2026, so a 30-day window
+    && !!p.addedAt                           // would badge ~85% of the list — the HOT mistake.
+    && (Date.now() - new Date(`${p.addedAt}T00:00:00`).getTime()) / 864e5 <= NEW_DAYS;
+  const isOff = p => p.status === 'off';
+  const hasProto = (p, key) => (p.protocol || []).includes(key);
+  const hasFlag = (p, flag) => (p.flags || []).includes(flag);
+  const protoLabel = key => (key === 'anthropic' ? 'Anthropic' : key === 'openai' ? 'OpenAI' : key);
+  const FREE_SHAPE = { 'signup-credit': 'signup credit', 'invite-bonus': 'invite bonus', 'free-tier': 'free tier' };
+
+  const STORE = 'aip2026.list.v1';
+  const hasRank = providers.some(p => typeof p.rank === 'number');
+
+  function byName(a, b) {
+    const clean = name => String(name).replace(/\s+AI$/i, '');
+    return clean(a.name).localeCompare(clean(b.name), undefined, { sensitivity: 'base' });
+  }
+  const ORDER_LIVE = {
+    recommended: (a, b) => ((a.rank ?? 1e9) - (b.rank ?? 1e9)) || byName(a, b),
+    newest: (a, b) => String(b.addedAt || '').localeCompare(String(a.addedAt || '')) || byName(a, b),
+    az: (a, b) => byName(a, b),
+    newapi: (a, b) => (hasFlag(b, 'newapi') ? 1 : 0) - (hasFlag(a, 'newapi') ? 1 : 0) || byName(a, b)
+  };
+  const ORDER_LABELS = { recommended: 'Recommended', newest: 'Newest', az: 'A–Z', newapi: 'New API first' };
+
+  const FACETS = [
+    { id: 'all', label: 'All', test: () => true },
+    { id: 'claude', label: 'Works with Claude Code', test: p => !isOff(p) && hasProto(p, 'anthropic') },
+    { id: 'codex', label: 'Works with Codex', test: p => !isOff(p) && hasProto(p, 'openai') },
+    { id: 'newapi', label: 'New API', test: p => !isOff(p) && hasFlag(p, 'newapi') },
+    { id: 'nocard', label: 'No card needed', test: p => !isOff(p) && p.noCard === true },
+    { id: 'guide', label: 'Has setup guide', test: p => !isOff(p) && !!p.guide },
+    { id: 'off', label: 'Unavailable', test: isOff }
+  ];
+  const DENSITIES = ['list', 'compact', 'cards'];
+
+  const state = {
+    q: '',
+    facet: 'all',
+    order: hasRank ? 'recommended' : 'newest',
+    density: 'list',
+    cmp: []
+  };
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORE) || '{}');
+    if (typeof saved.q === 'string') state.q = saved.q;
+    if (FACETS.some(f => f.id === saved.facet)) state.facet = saved.facet;
+    if (ORDER_LIVE[saved.order] && (saved.order !== 'recommended' || hasRank)) state.order = saved.order;
+    if (DENSITIES.includes(saved.density)) state.density = saved.density;
+  } catch {}
+
+  /* ---------------- element handles ---------------- */
+  const list = $('[data-provider-list]');
+  const search = $('[data-list-search]');
+  const facetRow = $('[data-facets]');
+  const orderSelect = $('[data-order]');
+  const densityBtns = $$('[data-density]');
+  const countEl = $('[data-list-count]');
+  const emptyEl = $('[data-list-empty]');
+  const clearBtn = $('[data-clear-search]');
+  const toast = $('[data-toast]');
+  const cmpBar = $('[data-cmp-bar]');
+  const cmpChips = $('[data-cmp-chips]');
+  const cmpCount = $('[data-cmp-count]');
+  const cmpSheet = $('[data-cmp-sheet]');
+  const cmpTable = $('[data-cmp-table]');
+  if (!list) return;
+
+  const persist = () => {
+    try { localStorage.setItem(STORE, JSON.stringify({ q: state.q, facet: state.facet, order: state.order, density: state.density })); } catch {}
+  };
+
+  /* ---------------- controls built once ---------------- */
+  orderSelect.innerHTML = Object.keys(ORDER_LIVE)
+    .filter(key => key !== 'recommended' || hasRank)
+    .map(key => `<option value="${key}">${ORDER_LABELS[key]}</option>`)
+    .join('');
+  orderSelect.value = state.order;
+
+  facetRow.innerHTML = FACETS.map(facet =>
+    `<button type="button" class="filter-chip${facet.id === state.facet ? ' active' : ''}" data-facet="${facet.id}" aria-pressed="${facet.id === state.facet}">${esc(facet.label)}<span class="chip-count" data-facet-count="${facet.id}"></span></button>`
+  ).join('');
+
+  /* ---------------- markup ---------------- */
+  const modelChips = (p, max) => {
+    const models = p.models || [];
+    if (models.length) {
+      const shown = models.slice(0, max).map(m => `<code class="model-chip">${esc(m)}</code>`).join('');
+      const rest = models.length > max ? `<code class="model-chip model-more">+${models.length - max} more</code>` : '';
+      return shown + rest;
     }
-  }));
-
-  const progressBar = $('[data-progress-bar]');
-  const progressValue = $('[data-progress-value]');
-  const updateProgress = () => {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    const value = max > 0 ? Math.min(100, Math.round((window.scrollY / max) * 100)) : 0;
-    progressBar.style.width = `${value}%`;
-    progressValue.textContent = `${value}%`;
-    try { localStorage.setItem('ai-credits-progress', String(value)); } catch {}
+    if (p.modelsNote) return `<code class="model-chip model-more">${esc(p.modelsNote)}</code>`;
+    return '<code class="model-chip model-more">models unknown</code>';
   };
-  window.addEventListener('scroll', updateProgress, { passive: true });
-  updateProgress();
-
-  const sectionLinks = $$('.side-nav a');
-  const sections = $$('.section-anchor');
-  const observer = new IntersectionObserver(entries => entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    sectionLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`));
-  }), { rootMargin: '-18% 0px -68% 0px' });
-  sections.forEach(section => observer.observe(section));
-
-  /* ================= Provider directory ================= */
-  const providers = window.PROVIDERS || [];
-  const escapeHtml = value => String(value).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-  const badgeMarkup = flags => {
-    const out = [];
-    if (flags.includes('new')) out.push('<span class="new-badge">NEW</span>');
-    if (flags.includes('hot')) out.push('<span class="hot-badge">HOT</span>');
-    return out.join('');
+  const facetText = p => {
+    const bits = (p.protocol || []).map(protoLabel);
+    if (!bits.length) bits.push('client route unknown');
+    if (FREE_SHAPE[p.freeShape]) bits.push(FREE_SHAPE[p.freeShape]);
+    if (p.inviteOnly) bits.push('invite only');
+    if (p.noCard) bits.push('no card');
+    if (p.guide) bits.push('setup guide');
+    return bits.join(' · ');
   };
-  const modelsMarkup = provider => {
-    if (provider.models && provider.models.length) {
-      const shown = provider.models.slice(0, 6).map(m => `<code class="model-chip">${escapeHtml(m)}</code>`).join('');
-      const rest = provider.models.length > 6 ? `<code class="model-chip model-more">+${provider.models.length - 6} more</code>` : '';
-      return `${shown}${rest}`;
-    }
-    if (provider.modelsNote) return `<code class="model-chip model-more">${escapeHtml(provider.modelsNote)}</code>`;
-    return '<code class="model-chip model-more">model list in dashboard</code>';
-  };
-  const cardMarkup = provider => {
-    const off = provider.status === 'off';
-    const primary = off
-      ? `<span class="provider-link provider-button is-disabled" aria-disabled="true"><img class="provider-button-logo" src="${escapeHtml(provider.logo)}" alt=""><span>Sign-up disabled</span><i class="button-arrow" data-lucide="ban"></i></span>`
-      : `<a class="provider-link provider-button" href="${escapeHtml(provider.url)}" target="_blank" rel="noopener noreferrer"><img class="provider-button-logo" src="${escapeHtml(provider.logo)}" alt=""><span>Open sign-up link</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>`;
-    const guide = provider.guide && !off
-      ? `<a class="provider-link provider-guide" href="${escapeHtml(provider.guide)}" target="_blank" rel="noopener noreferrer"><i data-lucide="book-open"></i><span>Open setup guide</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>`
+  const ctaMarkup = p => isOff(p)
+    ? '<span class="prow-cta is-off">Unavailable <i data-lucide="ban"></i></span>'
+    : '<span class="prow-cta">Open sign-up <i data-lucide="arrow-up-right"></i></span>';
+  const rowBody = p => `
+        <span class="prow-logo"><img src="${esc(p.logo)}" alt="" loading="lazy"></span>
+        <span class="prow-main">
+          <span class="prow-top">
+            <span class="prow-name">${esc(p.name)}</span>
+            <span class="prow-status${isOff(p) ? ' is-off' : ''}"><span class="prow-dot" aria-hidden="true"></span>${isOff(p) ? 'offline' : 'live'}</span>
+            ${hasFlag(p, 'newapi') ? '<span class="newapi-chip">New API</span>' : ''}${isNew(p) ? '<span class="new-badge">New</span>' : ''}
+          </span>
+          <span class="prow-sub">
+            <span class="prow-models">${modelChips(p, 4)}</span>
+            <span class="prow-facets">${esc(facetText(p))}</span>
+          </span>
+        </span>
+        ${ctaMarkup(p)}`;
+
+  const rowMarkup = p => {
+    const selected = state.cmp.includes(p.id);
+    const pick = isOff(p) ? '' : `<button class="prow-pick" type="button" tabindex="-1" data-cmp-pick="${esc(p.id)}" aria-pressed="${selected}" aria-label="Compare ${esc(p.name)}" title="Add to compare (focus a row and press c)"><i data-lucide="${selected ? 'minus' : 'plus'}"></i></button>`;
+    const guide = p.guide && !isOff(p)
+      ? `<a class="prow-guide" href="${esc(p.guide)}" target="_blank" rel="noopener noreferrer" aria-label="Setup guide for ${esc(p.name)}" title="Provider's own setup guide"><i data-lucide="book-open"></i></a>`
       : '';
-    return `<article class="provider-card${off ? ' is-disabled' : ''}" data-id="${provider.id}" data-name="${escapeHtml(provider.name.toLowerCase())}" data-blurb="${escapeHtml(provider.blurb.toLowerCase())}" data-models="${escapeHtml((provider.models || []).concat(provider.modelsNote ? [provider.modelsNote.toLowerCase()] : []).join(' '))}" data-flags="${provider.flags.join(' ')}" data-status="${provider.status}">
+    const body = isOff(p)
+      ? `<span class="prow-link is-off" role="link" aria-disabled="true" title="${esc(p.blurb)}">${rowBody(p)}</span>`
+      : `<a class="prow-link" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer" title="${esc(p.blurb)}">${rowBody(p)}</a>`;
+    return `<li class="prow${isOff(p) ? ' is-off' : ''}${selected ? ' is-picked' : ''}" data-id="${esc(p.id)}">${pick}${body}${guide}</li>`;
+  };
+
+  const cardMarkup = p => {
+    const off = isOff(p);
+    const primary = off
+      ? '<span class="provider-link provider-button is-disabled" aria-disabled="true"><span>Sign-up disabled</span><i class="button-arrow" data-lucide="ban"></i></span>'
+      : `<a class="provider-link provider-button" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer"><span>Open sign-up link</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>`;
+    const guide = p.guide && !off
+      ? `<a class="provider-link provider-guide" href="${esc(p.guide)}" target="_blank" rel="noopener noreferrer"><i data-lucide="book-open"></i><span>Setup guide</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>`
+      : '';
+    return `<li class="pcard-item"><article class="provider-card${off ? ' is-disabled' : ''}">
       <div class="provider-head">
-        <span class="cta-icon"><img src="${provider.logo}" alt=""></span>
+        <span class="cta-icon"><img src="${esc(p.logo)}" alt="" loading="lazy"></span>
         <div class="provider-title">
-          <h3>${escapeHtml(provider.name)} ${provider.flags.includes('newapi') ? '<span class="newapi-chip">New API</span>' : ''}${badgeMarkup(provider.flags)}</h3>
-          <span class="status${off ? ' status-off' : ''}"><span></span>${off ? 'Service offline' : 'External service'}</span>
+          <h3>${esc(p.name)}${hasFlag(p, 'newapi') ? ' <span class="newapi-chip">New API</span>' : ''}${isNew(p) ? ' <span class="new-badge">New</span>' : ''}${off ? ' <span class="off-badge">Unavailable</span>' : ''}</h3>
+          <span class="status${off ? ' status-off' : ''}"><span></span>${off ? 'Offline' : 'Live'}</span>
         </div>
       </div>
-      <p>${escapeHtml(provider.blurb)}</p>
-      <div class="model-row">${modelsMarkup(provider)}</div>
-      ${off ? '' : '<div class="perk-line"><i data-lucide="star"></i><span>Bonus credit when you sign up through this link.</span></div>'}
+      <div class="model-row">${modelChips(p, 6)}</div>
+      <p class="card-facets">${esc(facetText(p))}</p>
       <div class="provider-actions">${primary}${guide}</div>
-    </article>`;
+    </article></li>`;
   };
 
-  const grid = $('[data-provider-grid]');
-  const heroSearch = $('[data-hero-search]');
-  const dirSearch = $('[data-directory-search]');
-  const chips = $$('[data-filter-chip]');
-  const count = $('[data-directory-count]');
-  const liveCount = $('[data-live-count]');
-  const newCount = $('[data-new-count]');
-  const emptyState = $('[data-directory-empty]');
-  let activeFilter = 'all';
-
-  const visibleOf = p => {
-    if (activeFilter === 'all') return true;
-    if (activeFilter === 'off') return p.status === 'off';
-    if (activeFilter === 'newapi') return p.status === 'live' && p.flags.includes('newapi');
-    return p.status === 'live' && p.flags.includes(activeFilter);
-  };
-
-  const sortProviders = list => {
-    const compareNames = (a, b) => a.name.replace(/\s+AI$/i, '').localeCompare(b.name.replace(/\s+AI$/i, ''), undefined, { sensitivity: 'base' });
-    const newApi = list.filter(p => p.status === 'live' && p.flags.includes('newapi')).sort(compareNames);
-    const rest = list.filter(p => p.status === 'live' && !p.flags.includes('newapi')).sort(compareNames);
-    const off = list.filter(p => p.status === 'off').sort(compareNames);
-    return [...newApi, ...rest, ...off];
-  };
-
-  const matchesQuery = (provider, q) => {
+  /* ---------------- filtering ---------------- */
+  const matchesQuery = (p, q) => {
     if (!q) return true;
-    const hay = `${provider.name} ${provider.blurb} ${(provider.models || []).join(' ')} ${provider.modelsNote || ''} ${provider.flags.join(' ')}`.toLowerCase();
-    return q.toLowerCase().split(/\s+/).filter(Boolean).every(token => hay.includes(token));
+    const hay = [
+      p.name, p.blurb, p.offer, p.kind, p.freeShape, p.addedAt,
+      (p.models || []).join(' '), p.modelsNote || '',
+      (p.protocol || []).join(' '), (p.flags || []).join(' '),
+      p.guide ? 'setup guide' : ''
+    ].join(' ').toLowerCase();
+    return q.split(/\s+/).filter(Boolean).every(token => hay.includes(token));
   };
+  const orderList = listOf => [
+    ...listOf.filter(p => !isOff(p)).sort(ORDER_LIVE[state.order]),
+    ...listOf.filter(isOff).sort(byName)
+  ];
 
-  const render = () => {
-    const q = (dirSearch?.value || '').trim();
-    const shown = sortProviders(providers).filter(p => visibleOf(p) && matchesQuery(p, q));
-    if (grid) grid.innerHTML = shown.map(cardMarkup).join('');
-    if (emptyState) emptyState.hidden = shown.length > 0;
-    if (count) count.textContent = `${providers.length} providers · ${shown.length} shown`;
-    chips.forEach(chip => {
-      const filter = chip.dataset.filterChip;
-      const total = filter === 'all' ? providers.length : filter === 'off' ? providers.filter(p => p.status === 'off').length : providers.filter(p => p.status === 'live' && p.flags.includes(filter)).length;
-      chip.dataset.count = String(total);
-    });
-    const clearBtn = $('[data-clear-search]');
-    if (clearBtn) clearBtn.classList.toggle('visible', q.length > 0);
+  /* ---------------- compare ---------------- */
+  const flash = message => {
+    if (!toast) return;
+    /* lift the toast clear of the compare tray when it is up (the tray height
+       changes when chips wrap on narrow screens, so measure it, don't assume) */
+    if (cmpBar && !cmpBar.hidden) toast.style.bottom = `${cmpBar.offsetHeight + 14}px`;
+    else toast.style.bottom = '';
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(flash.timer);
+    flash.timer = setTimeout(() => toast.classList.remove('show'), 2600);
+  };
+  const pick = id => {
+    const index = state.cmp.indexOf(id);
+    if (index >= 0) state.cmp.splice(index, 1);
+    else {
+      if (state.cmp.length >= 4) { flash('Compare holds 4 providers — remove one first.'); return; }
+      state.cmp.push(id);
+    }
+    render();
+    renderCompare();
+  };
+  const CMP_ROWS = [
+    ['Models', p => (p.models || []).length ? (p.models || []).map(m => `<code>${esc(m)}</code>`).join(' ') : `<em class="unknown">${p.modelsNote ? esc(p.modelsNote) : 'unknown'}</em>`],
+    ['Client route', p => (p.protocol || []).length ? esc((p.protocol || []).map(protoLabel).join(' · ')) : '<em class="unknown">unknown</em>'],
+    ['Kind', p => p.kind === 'unknown' ? '<em class="unknown">unknown</em>' : esc(String(p.kind).replace(/-/g, ' '))],
+    ['Free shape', p => FREE_SHAPE[p.freeShape] ? esc(FREE_SHAPE[p.freeShape]) : '<em class="unknown">unknown</em>'],
+    ['Card', p => p.noCard === true ? 'no card needed' : '<em class="unknown">not documented</em>'],
+    ['Setup guide', p => p.guide ? `<a href="${esc(p.guide)}" target="_blank" rel="noopener noreferrer">provider guide</a>` : '<em class="unknown">none</em>'],
+    ['Added', p => esc(p.addedAt || 'unknown')],
+    ['Sign-up', p => isOff(p) ? '<em class="unknown">unavailable</em>' : `<a href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">open sign-up</a>`]
+  ];
+  /* keep the page clear of the fixed tray: its height changes as chips wrap on
+     narrow screens, so mirror the measured height onto body padding (and re-lift
+     a toast that is already showing) */
+  const syncCmpPad = () => {
+    if (!cmpBar) return;
+    if (cmpBar.hidden) { document.body.style.paddingBottom = ''; return; }
+    document.body.style.paddingBottom = `${cmpBar.offsetHeight}px`;
+    if (toast && toast.classList.contains('show')) toast.style.bottom = `${cmpBar.offsetHeight + 14}px`;
+  };
+  const renderCompare = () => {
+    const chosen = state.cmp.map(id => byId.get(id)).filter(Boolean);
+    if (cmpBar) cmpBar.hidden = chosen.length === 0;
+    document.body.classList.toggle('has-cmp', chosen.length > 0);
+    if (chosen.length === 0 && cmpSheet && !cmpSheet.hidden) {
+      cmpSheet.hidden = true;
+      if (cmpTable) cmpTable.innerHTML = '';
+    }
+    if (cmpCount) cmpCount.textContent = String(chosen.length);
+    if (cmpChips) {
+      cmpChips.innerHTML = chosen.map(p => `<span class="cmp-chip">${esc(p.name)}<button type="button" data-cmp-remove="${esc(p.id)}" aria-label="Remove ${esc(p.name)}"><i data-lucide="x"></i></button></span>`).join('');
+      $$('[data-cmp-remove]', cmpChips).forEach(button => button.addEventListener('click', () => pick(button.dataset.cmpRemove)));
+    }
+    if (cmpTable && cmpSheet && !cmpSheet.hidden && chosen.length) {
+      cmpTable.innerHTML = `<table class="cmp-table">
+        <caption>${chosen.length} provider${chosen.length > 1 ? 's' : ''} compared. “unknown” means the provider does not publish that detail.</caption>
+        <thead><tr><th scope="col">Field</th>${chosen.map(p => `<th scope="col">${esc(p.name)}</th>`).join('')}</tr></thead>
+        <tbody>${CMP_ROWS.map(([label, read]) => `<tr><th scope="row">${esc(label)}</th>${chosen.map(p => `<td>${read(p)}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table>`;
+    }
     refreshIcons();
-    observeCards();
+    syncCmpPad();
   };
 
-  const revealObserver = 'IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches
-    ? new IntersectionObserver(entries => entries.forEach(entry => {
-        if (entry.isIntersecting) { entry.target.classList.add('is-revealed'); revealObserver.unobserve(entry.target); }
-      }), { rootMargin: '0px 0px -6% 0px' })
-    : null;
-  const observeCards = () => {
-    if (!grid) return;
-    $$('.provider-card', grid).forEach((card, i) => {
-      if (!revealObserver) { card.classList.add('is-revealed'); return; }
-      card.style.transitionDelay = `${Math.min(i % 6, 5) * 45}ms`;
-      revealObserver.observe(card);
+  /* ---------------- render ---------------- */
+  let rowLinks = [];
+  const render = () => {
+    const q = state.q.trim().toLowerCase();
+    const facet = FACETS.find(f => f.id === state.facet) || FACETS[0];
+    const searched = providers.filter(p => matchesQuery(p, q));
+    const shown = orderList(searched.filter(facet.test));
+
+    list.className = `plist${state.density === 'cards' ? ' is-cards' : state.density === 'compact' ? ' is-compact' : ''}`;
+    list.innerHTML = state.density === 'cards' ? shown.map(cardMarkup).join('') : shown.map(rowMarkup).join('');
+
+    FACETS.forEach(f => {
+      const counter = $(`[data-facet-count="${f.id}"]`);
+      if (counter) counter.textContent = String(searched.filter(f.test).length);
     });
+    $$('[data-facet]', facetRow).forEach(chip => {
+      const active = chip.dataset.facet === state.facet;
+      chip.classList.toggle('active', active);
+      chip.setAttribute('aria-pressed', String(active));
+    });
+    /* In the mobile scroll strip the active chip can sit off-screen (a facet restored
+       from localStorage, or a keyboard-driven change). Reveal it without moving the
+       page: block:'nearest' keeps the vertical scroll position put. */
+    const activeChip = $(`[data-facet="${state.facet}"]`, facetRow);
+    if (activeChip && facetRow.scrollWidth > facetRow.clientWidth + 1) {
+      const rowBox = facetRow.getBoundingClientRect();
+      const chipBox = activeChip.getBoundingClientRect();
+      if (chipBox.left < rowBox.left - 1 || chipBox.right > rowBox.right + 1) {
+        activeChip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+      }
+    }
+
+    if (countEl) countEl.textContent = `${shown.length} of ${providers.length} providers shown`;
+    if (emptyEl) emptyEl.hidden = shown.length > 0;
+    if (clearBtn) clearBtn.classList.toggle('visible', state.q.length > 0);
+    densityBtns.forEach(button => {
+      const active = button.dataset.density === state.density;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+    $$('[data-cmp-pick]', list).forEach(button => button.addEventListener('click', event => {
+      event.preventDefault();
+      pick(button.dataset.cmpPick);
+    }));
+    rowLinks = $$('.prow-link:not(.is-off)', list);
+    persist();
+    refreshIcons();
   };
 
-  const applySearch = value => {
-    if (dirSearch && dirSearch.value !== value) dirSearch.value = value;
-    if (heroSearch && heroSearch.value !== value) heroSearch.value = value;
+  /* ---------------- wiring ---------------- */
+  const setQuery = value => {
+    state.q = value;
+    if (search.value !== value) search.value = value;
     render();
   };
-
-  chips.forEach(chip => chip.addEventListener('click', () => {
-    activeFilter = chip.dataset.filterChip;
-    chips.forEach(c => { c.classList.toggle('active', c === chip); c.setAttribute('aria-pressed', String(c === chip)); });
+  search.value = state.q;
+  search.addEventListener('input', event => setQuery(event.target.value));
+  if (clearBtn) clearBtn.addEventListener('click', () => setQuery(''));
+  orderSelect.addEventListener('change', () => { state.order = orderSelect.value; render(); });
+  densityBtns.forEach(button => button.addEventListener('click', () => { state.density = button.dataset.density; render(); }));
+  facetRow.addEventListener('click', event => {
+    const chip = event.target.closest('[data-facet]');
+    if (!chip) return;
+    state.facet = chip.dataset.facet;
     render();
-  }));
-  dirSearch?.addEventListener('input', e => applySearch(e.target.value));
-  heroSearch?.addEventListener('input', e => { applySearch(e.target.value); });
-  $('[data-clear-search]')?.addEventListener('click', () => applySearch(''));
-  $('[data-clear-all]')?.addEventListener('click', () => {
-    const allChip = chips.find(c => c.dataset.filterChip === 'all');
-    if (allChip) allChip.click();
-    applySearch('');
-    document.getElementById('providers')?.scrollIntoView({ behavior: 'smooth' });
   });
-  heroSearch?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      document.getElementById('providers')?.scrollIntoView({ behavior: 'smooth' });
+  const clearAll = $('[data-clear-all]');
+  if (clearAll) clearAll.addEventListener('click', () => { state.facet = 'all'; setQuery(''); });
+  const cmpClear = $('[data-cmp-clear]');
+  if (cmpClear) cmpClear.addEventListener('click', () => { state.cmp = []; render(); renderCompare(); });
+  const cmpOpen = $('[data-cmp-open]');
+  if (cmpOpen) cmpOpen.addEventListener('click', () => { cmpSheet.hidden = false; renderCompare(); $('[data-cmp-close]')?.focus(); });
+  const cmpClose = $('[data-cmp-close]');
+  if (cmpClose) cmpClose.addEventListener('click', () => { cmpSheet.hidden = true; });
+  const focusSearch = () => { search.focus(); search.select(); };
+  $$('[data-search-focus]').forEach(button => button.addEventListener('click', focusSearch));
+
+  document.addEventListener('keydown', event => {
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName) || event.target.isContentEditable;
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); focusSearch(); return; }
+    if (event.key === 'Escape') {
+      if (cmpSheet && !cmpSheet.hidden) { cmpSheet.hidden = true; return; }
+      if (state.q) { setQuery(''); return; }
+      if (typing) event.target.blur();
+      return;
+    }
+    if (typing) return;
+    if (event.key === '/') { event.preventDefault(); focusSearch(); return; }
+    if (!rowLinks.length) return;
+    const current = rowLinks.indexOf(document.activeElement);
+    if (event.key === 'j' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      (rowLinks[current + 1] || rowLinks[0]).focus();
+    } else if (event.key === 'k' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      (rowLinks[current - 1] || rowLinks[rowLinks.length - 1]).focus();
+    } else if (event.key === 'c' && current >= 0) {
+      const id = rowLinks[current].closest('.prow')?.dataset.id;
+      if (id) pick(id);
     }
   });
 
-  if (grid) {
-    render();
-    const live = providers.filter(p => p.status === 'live').length;
-    const fresh = providers.filter(p => p.status === 'live' && p.flags.includes('new')).length;
-    if (liveCount) liveCount.textContent = live;
-    if (newCount) newCount.textContent = fresh;
-    const totalCount = $('[data-total-count]');
-    if (totalCount) totalCount.textContent = providers.length;
-  }
+  /* ---------------- header facts ---------------- */
+  const liveCount = $('[data-live-count]');
+  const offCount = $('[data-off-count]');
+  const guideCount = $('[data-guide-count]');
+  if (liveCount) liveCount.textContent = String(providers.filter(p => !isOff(p)).length);
+  if (offCount) offCount.textContent = String(providers.filter(isOff).length);
+  if (guideCount) guideCount.textContent = String(providers.filter(p => p.guide && !isOff(p)).length);
 
-  /* Footer shortcuts render from the same data */
-  const footerGrid = $('[data-provider-footer]');
-  if (footerGrid) {
-    footerGrid.innerHTML = sortProviders(providers).map(p => {
-      const off = p.status === 'off';
-      return off
-        ? `<span class="provider-footer-button is-disabled" aria-disabled="true"><img src="${p.logo}" alt=""><span>${escapeHtml(p.name)} - unavailable</span><i class="button-arrow" data-lucide="ban"></i></span>`
-        : `<a class="provider-footer-button" href="${p.url}" target="_blank" rel="noopener noreferrer"><img src="${p.logo}" alt=""><span>Go to ${escapeHtml(p.name)}</span><i class="button-arrow" data-lucide="arrow-up-right"></i></a>`;
-    }).join('');
-    refreshIcons();
-  }
-
-  /* Credit offers render from the same data */
-  const offerGrid = $('[data-offer-grid]');
-  if (offerGrid) {
-    offerGrid.innerHTML = sortProviders(providers).map(p => {
-      const badges = badgeMarkup(p.flags);
-      if (p.status === 'off') {
-        return `<span class="offer-row is-disabled" aria-disabled="true"><span><b>${escapeHtml(p.name)} <span class="off-badge">Unavailable</span></b><small>${escapeHtml(p.offer)}</small></span><img class="offer-row-logo" src="${escapeHtml(p.logo)}" alt=""><i class="button-arrow" data-lucide="ban"></i></span>`;
-      }
-      return `<a class="offer-row" href="${escapeHtml(p.url)}" target="_blank" rel="noopener noreferrer"><span><b>${escapeHtml(p.name)} ${badges}</b><small>${escapeHtml(p.offer)}</small></span><img class="offer-row-logo" src="${escapeHtml(p.logo)}" alt=""><i class="button-arrow" data-lucide="arrow-up-right"></i></a>`;
-    }).join('');
-    refreshIcons();
-  }
-
-  /* Guide tab strip regenerates to match directory order; panels stay static */
-  $$('[data-tab-strip]').forEach(strip => {
-    const shell = strip.closest('[data-tabs]');
-    if (!shell) return;
-    const panels = $$('[data-panel]', shell);
-    const panelIds = new Set(panels.map(el => el.dataset.panel));
-    const ordered = sortProviders(providers).filter(p => panelIds.has(p.id));
-    const firstLive = ordered.find(p => p.status === 'live');
-    strip.innerHTML = ordered.map(p => {
-      const off = p.status === 'off';
-      const active = p === firstLive;
-      return `<button class="tab${active ? ' active' : ''}" type="button" role="tab" aria-selected="${active}" data-tab="${p.id}"${off ? ' disabled' : ''}>${escapeHtml(p.name)}${p.flags.includes('newapi') ? ' <span class="newapi-chip">New API</span>' : ''}${off ? ' <span class="off-badge">Unavailable</span>' : ' ' + badgeMarkup(p.flags)}</button>`;
-    }).join('');
-    if (firstLive) panels.forEach(panel => panel.classList.toggle('active', panel.dataset.panel === firstLive.id));
-  });
-
-  /* Tab clicking (wired after strip regeneration) */
-  $$('[data-tabs]').forEach(tabShell => {
-    const tabs = $$('[data-tab]', tabShell);
-    const panels = $$('[data-panel]', tabShell);
-    tabs.forEach(tab => tab.addEventListener('click', () => {
-      const key = tab.dataset.tab;
-      tabs.forEach(item => { item.classList.toggle('active', item === tab); item.setAttribute('aria-selected', String(item === tab)); });
-      panels.forEach(panel => panel.classList.toggle('active', panel.dataset.panel === key));
-    }));
-  });
-
-  /* ================= Search overlay (sections + providers) ================= */
-  const overlay = $('[data-search-overlay]');
-  const input = $('[data-search-input]');
-  const results = $('[data-search-results]');
-  const searchable = $$('[data-searchable]');
-  const providerIndex = providers.map(p => ({ id: p.id, name: p.name, blurb: p.blurb, models: (p.models || []).join(' '), note: p.modelsNote || '', status: p.status }));
-  const closeSearch = () => { overlay.classList.remove('open'); overlay.setAttribute('aria-hidden', 'true'); };
-  const openSearch = () => { overlay.classList.add('open'); overlay.setAttribute('aria-hidden', 'false'); input.value = ''; renderResults(''); setTimeout(() => input.focus(), 0); };
-  const renderResults = query => {
-    const normalized = query.trim().toLowerCase();
-    const providerHits = normalized ? providerIndex.filter(p => `${p.name} ${p.blurb} ${p.models} ${p.note}`.toLowerCase().includes(normalized)) : [];
-    const sectionHits = searchable.filter(section => !normalized || section.innerText.toLowerCase().includes(normalized));
-    const items = [
-      ...providerHits.slice(0, 8).map(p => `<a class="search-result" href="#providers"><strong>${escapeHtml(p.name)} <em>${p.status === 'off' ? 'unavailable' : 'provider'}</em></strong><span>${escapeHtml(p.blurb.slice(0, 110))}</span></a>`),
-      ...sectionHits.slice(0, 8).map(section => `<a class="search-result" href="#${section.id}"><strong>${$('h2', section)?.textContent || section.id}</strong><span>${($('p', section)?.textContent || '').slice(0, 110)}</span></a>`)
-    ];
-    results.innerHTML = items.join('') || '<div class="search-result"><strong>No matches</strong><span>Try a provider name, claude, codex, gpt, or 401.</span></div>';
-    $$('.search-result', results).forEach(result => result.addEventListener('click', () => {
-      closeSearch();
-      if (normalized) applySearch(query.trim());
-    }));
-  };
-  $('[data-search-open]')?.addEventListener('click', openSearch);
-  $('[data-search-close]')?.addEventListener('click', closeSearch);
-  input?.addEventListener('input', event => renderResults(event.target.value));
-  overlay?.addEventListener('click', event => { if (event.target === overlay) closeSearch(); });
-  document.addEventListener('keydown', event => {
-    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); openSearch(); }
-    if (event.key === 'Escape') closeSearch();
-  });
+  render();
+  renderCompare();
+  window.addEventListener('resize', syncCmpPad);
 })();

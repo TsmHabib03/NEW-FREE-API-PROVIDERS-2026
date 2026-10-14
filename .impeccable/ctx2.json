@@ -1,0 +1,57 @@
+{
+ "ireze": [],
+ "marsai": [
+  "hen you call them. \u25c6 Premium models - credits per call claude-sonnet-5 claude-opus-5 claude-opus-5-5 clau",
+  "m. \u25c6 Premium models - credits per call claude-sonnet-5 claude-opus-5 claude-opus-5-5 claude-opus-4-7 cl",
+  "odels - credits per call claude-sonnet-5 claude-opus-5 claude-opus-5-5 claude-opus-4-7 claude-opus-4-8 cl",
+  "per call claude-sonnet-5 claude-opus-5 claude-opus-5-5 claude-opus-4-7 claude-opus-4-8 claude-sonnet-4-6 ",
+  "sonnet-5 claude-opus-5 claude-opus-5-5 claude-opus-4-7 claude-opus-4-8 claude-sonnet-4-6 \u25c6 Free models - ",
+  "opus-5 claude-opus-5-5 claude-opus-4-7 claude-opus-4-8 claude-sonnet-4-6 \u25c6 Free models - never drain your c",
+  "gemma-free subagent/llama-3.2-11b-vision-free subagent/gemini-3.8-flash-free subagent/mars-auto-free subagent/g",
+  "gemini-3.8-flash-free subagent/mars-auto-free subagent/glm-4.7-flash-free subagent/Qwen3.8-27B-free suba",
+  "nt/mars-auto-free subagent/glm-4.7-flash-free subagent/Qwen3.8-27B-free subagent/marsai-free subagent/Qwen",
+  "ubagent/Qwen3.8-27B-free subagent/marsai-free subagent/Qwen3.6-27B-free subagent/north-mini-code:free suba"
+ ],
+ "selora": [
+  "ion = await selora.chat.completions.create({ 9 model: 'claude-opus-5-5', 10 messages: [{ role: 'user', co",
+  "e, 12}); 200 OK 142ms TTFT 118 tok/s Response Stream \u00b7 claude-opus-5-5 Streaming Settled Ledger Entry Cop",
+  " Streaming Settled Ledger Entry Copy JSON `{ \"model\": \"claude-opus-5-5\", \"tokens\": 1420, \"charge\": \"$0.01",
+  "immutable per-request accounting. ### Claude Fable 5.1 claude-fable-5-1 $25.00 / 1M out $5.00 / 1M in 96 t",
+  "/ 1M in 96 tok/s 165ms TTFT Healthy ### Claude Fable 5 claude-fable-5 $25.00 / 1M out $5.00 / 1M in 92 t",
+  " / 1M in 92 tok/s 170ms TTFT Healthy ### Claude Opus 5 claude-opus-5 $25.00 / 1M out $5.00 / 1M in 72 t",
+  " 1M in 72 tok/s 210ms TTFT Healthy ### Claude Sonnet 5 claude-sonnet-5 $10.00 / 1M out $2.00 / 1M in 94 t",
+  " 1M in 94 tok/s 175ms TTFT Healthy ### Claude Opus 4.8 claude-opus-4-8 $12.50 / 1M out $2.50 / 1M in 78 t",
+  " 1M in 78 tok/s 200ms TTFT Healthy ### Claude Opus 4.7 claude-opus-4-7 $25.00 / 1M out $5.00 / 1M in 80 t",
+  " 1M in 80 tok/s 195ms TTFT Healthy ### Claude Opus 4.6 claude-opus-4-6 $25.00 / 1M out $5.00 / 1M in 82 t",
+  "1M in 82 tok/s 190ms TTFT Healthy ### Claude Haiku 4.5 claude-haiku-4-5 $2.50 / 1M out $0.50 / 1M in 130 t",
+  "$0.50 / 1M in 130 tok/s 150ms TTFT Healthy ### Kimi K3 kimi-k3 $6.00 / 1M out $3.00 / 1M in 110 t"
+ ],
+ "synterolink": [
+  "/v1/responses Authorization: Bearer sk-\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022 model: claude-fable-5 or claude-fable-5-1 service_tier: ",
+  "orization: Bearer sk-\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022 model: claude-fable-5 or claude-fable-5-1 service_tier: priority curl https:",
+  "es \\ -H \"Authorization: Bearer $KEY\" \\ -d '{ \"model\": \"claude-fable-5\", \"input\": \"hello\" }' Unified requ",
+  "coped access Sign in for your actual scope Anthropic \u00b7 claude-fable-5 Anthropic \u00b7 claude-fable-5-1 Anthr",
+  "ur actual scope Anthropic \u00b7 claude-fable-5 Anthropic \u00b7 claude-fable-5-1 Anthropic \u00b7 claude-opus-4-1-202508",
+  "laude-fable-5 Anthropic \u00b7 claude-fable-5-1 Anthropic \u00b7 claude-opus-4-1-20250805 Anthropic \u00b7 claude-opus-4-20250514",
+  "e-5-1 Anthropic \u00b7 claude-opus-4-1-20250805 Anthropic \u00b7 claude-opus-4-20250514 Anthropic \u00b7 claude-opus-4-5 Anthro",
+  "0250805 Anthropic \u00b7 claude-opus-4-20250514 Anthropic \u00b7 claude-opus-4-5 Anthropic \u00b7 claude-opus-4-5-202511",
+  "pus-4-20250514 Anthropic \u00b7 claude-opus-4-5 Anthropic \u00b7 claude-opus-4-5-20251101 Anthropic \u00b7 claude-opus-4-6 Anthro",
+  "s-4-5 Anthropic \u00b7 claude-opus-4-5-20251101 Anthropic \u00b7 claude-opus-4-6 Anthropic \u00b7 claude-opus-4-6-202602",
+  "s-4-5-20251101 Anthropic \u00b7 claude-opus-4-6 Anthropic \u00b7 claude-opus-4-6-20260205 Anthropic \u00b7 claude-opus-4-6-thinki",
+  "s-4-6 Anthropic \u00b7 claude-opus-4-6-20260205 Anthropic \u00b7 claude-opus-4-6-thinking Anthropic \u00b7 claude-opus-4-7 Anthro"
+ ],
+ "toptools": [
+  "bs | | Qwen-3.8-Max Vision Tool Calls Deep Thinking | `qwen3.8-max` | qwen | 1M | Subs | | GLM-5.2 To",
+  "s Deep Thinking | `qwen3.8-max` | qwen | 1M | Subs | | GLM-5.2 Tool Calls Deep Thinking | `glm-5.",
+  "en | 1M | Subs | | GLM-5.2 Tool Calls Deep Thinking | `glm-5.2` | Z.AI | 1M | Subs | | GLM-5.3 To",
+  "Calls Deep Thinking | `glm-5.2` | Z.AI | 1M | Subs | | GLM-5.3 Tool Calls Deep Thinking | `glm-5.",
+  "AI | 1M | Subs | | GLM-5.3 Tool Calls Deep Thinking | `glm-5.3` | Z.AI | 1M | Subs | | GLM-5.3-Fl",
+  "Calls Deep Thinking | `glm-5.3` | Z.AI | 1M | Subs | | GLM-5.3-Flash Vision Tool Calls Deep Thinking | ",
+  "s | | GLM-5.3-Flash Vision Tool Calls Deep Thinking | `glm-5.3-flash` | Z.AI | 1M | Subs | | MiMo-V2.5 ",
+  "ep Thinking | `mimo-v2.5-pro` | Xiaomi | 1M | Subs | | DeepSeek-V4-Pro Tool Calls Deep Thinking | `deepse",
+  "| Subs | | DeepSeek-V4-Pro Tool Calls Deep Thinking | `deepseek-v4-pro` | DeepSeek | 1M | Subs | | DeepSe",
+  "-V4-Pro Tool Calls Deep Thinking | `deepseek-v4-pro` | DeepSeek | 1M | Subs | | DeepSeek-V4-Flash ",
+  "hinking | `deepseek-v4-pro` | DeepSeek | 1M | Subs | | DeepSeek-V4-Flash Tool Calls Deep Thinking | `deepse",
+  "Subs | | DeepSeek-V4-Flash Tool Calls Deep Thinking | `deepseek-v4-flash` | DeepSeek | 1M | Subs | | DeepSe"
+ ]
+}

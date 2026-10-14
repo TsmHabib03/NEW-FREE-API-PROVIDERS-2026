@@ -1,0 +1,41 @@
+{
+ "codexrelay": [],
+ "helyx": [
+  "er models \u2014 Claude Opus 5, Claude Haiku 4.5, GPT, Gemini, Kimi, DeepSeek, Grok \u2014 behin",
+  "aude Opus 5, Claude Haiku 4.5, GPT, Gemini, Kimi, DeepSeek, Grok \u2014 behind a single OpenA",
+  "Content-Type: application/json\" \\ -d '{ \"model\": \"claude-opus-5\", \"messages\": [ {\"role\": \"use",
+  "rectory \u2192](https://helyxai.space/models-list.php) DeepSeek-V4-Flash **DeepSeek-V4 Flash** DeepSee",
+  "elyxai.space/models-list.php) DeepSeek-V4-Flash **DeepSeek-V4 Flash** DeepSeek \u00b7 text gemma",
+  "list.php) DeepSeek-V4-Flash **DeepSeek-V4 Flash** DeepSeek \u00b7 text gemma-4-31B-it **Gemma",
+  " text gemma-4-31B-it **Gemma4 31B** Google \u00b7 text gemini-3.1-flash-lite **Gemini 3.1 Flash Lite** Goo",
+  "emma4 31B** Google \u00b7 text gemini-3.1-flash-lite **Gemini 3.1 Flash Lite** Google \u00b7 tex",
+  "e \u00b7 text MiniMax-M3 **MiniMax M3** MiniMax \u00b7 text DeepSeek-V4-Pro **DeepSeek-V4 Pro** DeepSeek "
+ ],
+ "ireze": [
+  "dev/v1 API Key: sk-dir-\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022 Supported Models: claude-opus-5-5, gpt-6-astra, claude-opus-5-5",
+  "k-dir-\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022 Supported Models: claude-opus-5-5, gpt-6-astra, claude-opus-5-5, gemini-3.7-",
+  "\u2022 Supported Models: claude-opus-5-5, gpt-6-astra, claude-opus-5-5, gemini-3.7-flash, glm-5.3-fl",
+  "s: claude-opus-5-5, gpt-6-astra, claude-opus-5-5, gemini-3.7-flash, glm-5.3-flash-online ... # D",
+  ", gpt-6-astra, claude-opus-5-5, gemini-3.7-flash, glm-5.3-flash-online ... # Developer Docs & ",
+  "ient.chat.completions.create( model=\"codex\", # or claude-opus-5-5, claude-opus-5, gemini-3.7-fl",
+  "ions.create( model=\"codex\", # or claude-opus-5-5, claude-opus-5, gemini-3.7-flash messages=[ ",
+  "del=\"codex\", # or claude-opus-5-5, claude-opus-5, gemini-3.7-flash messages=[ {\"role\": \"system\",",
+  "uthorization: Bearer {API_KEY}\" \\ -d '{ \"model\": \"gpt-6-astra\", \"instructions\": \"You are a "
+ ],
+ "jasper": [
+  "# \u8b93\u6bcf\u4e00\u6b21\u547c\u53eb \u90fd _\u8f15 \u76c8 \u62b5 \u9054_ \u4e00\u500b Key \u9023\u63a5 DeepSeek\u3001Claude\u3001GPT\u3001GLM \u7b49\u524d\u6cbf\u6a21\u578b\u3002\u5354\u5b9a\u3001\u9a57\u8b49\u3001\u8a08\u8cbb",
+  "\u5206\u767c\u8207\u6545\u969c\u8f49\u79fb\uff0c\u55ae\u9ede\u6ce2\u52d5\u4e0d\u6703\u50b3\u5c0e\u5230\u4f60\u7684\u696d\u52d9\u3002 ii. \u4e09\u5354\u5b9a\u76f8\u5bb9 OpenAI\u3001Anthropic\u3001Gemini \u4e09\u7a2e\u8acb\u6c42\u683c\u5f0f\u540c\u6642\u53ef\u7528\uff0c\u9077\u79fb\u53ea\u9700\u66ff\u63db Base URL\u3002 i",
+  "\u3002 02 ## \u53ef\u4ee5\u76f4\u63a5\u547c\u53eb\u7684\u6a21\u578b \u6e05\u55ae\u6301\u7e8c\u64f4\u5145\u4e2d\u3002\u4ee5\u4e0b\u662f\u76ee\u524d\u4e0a\u67b6\u7684\u90e8\u5206\u6a21\u578b\uff0c\u5b8c\u6574\u5217\u8868\u8acb\u898b\u63a7\u5236\u53f0\u3002 deepseek-v4.1-flash _\u2192_ \u5c0d\u8a71 / \u63a8\u7406 claude-opus-4-8 _",
+  "\u67b6\u7684\u90e8\u5206\u6a21\u578b\uff0c\u5b8c\u6574\u5217\u8868\u8acb\u898b\u63a7\u5236\u53f0\u3002 deepseek-v4.1-flash _\u2192_ \u5c0d\u8a71 / \u63a8\u7406 claude-opus-4-8 _\u2192_ \u9577\u4e0a\u4e0b\u6587 glm-5.3-flash _\u2192_ \u901a\u7528",
+  "k-v4.1-flash _\u2192_ \u5c0d\u8a71 / \u63a8\u7406 claude-opus-4-8 _\u2192_ \u9577\u4e0a\u4e0b\u6587 glm-5.3-flash _\u2192_ \u901a\u7528 agnes-3.0-flash _\u2192_ \u591a\u6a21",
+  "-3.0-flash _\u2192_ \u591a\u6a21\u614b agnes-image-2.5-flash _\u2192_ \u5716\u50cf\u751f\u6210 gpt-5-series _\u2192_ \u901a\u7528 gemini-3-pro _\u2192_ \u591a\u6a21\u614b 9",
+  "gnes-image-2.5-flash _\u2192_ \u5716\u50cf\u751f\u6210 gpt-5-series _\u2192_ \u901a\u7528 gemini-3-pro _\u2192_ \u591a\u6a21\u614b 99.9 % \u670d\u52d9\u53ef\u7528\u6027 18Gbps \u53e2"
+ ],
+ "odyssey": [
+  "chat . completions . create ({ model : \"anthropic/claude-sonnet-5\" , messages : [{ role : \"user",
+  "ier model, one namespace. * [GPT 5.6 Terra openai/gpt-5.6-terra Context 1M Input per 1M token",
+  "x output \u2014](https://odysseyapi.tech/models/openai/gpt-5.6-terra) * [Claude Fable 5 anthropic/",
+  "openai/gpt-5.6-terra) * [Claude Fable 5 anthropic/claude-fable-5 Context 1M Input per 1M token",
+  "utput \u2014](https://odysseyapi.tech/models/anthropic/claude-fable-5) ... ## Pay per token, or pic"
+ ]
+}
