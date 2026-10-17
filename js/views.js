@@ -29,6 +29,12 @@
   };
   let lastFocus = null;
 
+  /* the modal shows the provider's own bundled logo; missing files fall back
+     to the shared brand mark (guarded so it can never loop) */
+  if (modal.logo) modal.logo.addEventListener('error', () => {
+    if (!String(modal.logo.src).includes('gorouterlogo.png')) modal.logo.src = 'assets/gorouterlogo.png';
+  });
+
   /* the free-credit line is DERIVED from documented fields only (never invented) */
   function creditNote(p) {
     const offer = (p.offer || '').trim();
@@ -110,40 +116,36 @@
     else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
   }
 
-  /* ---------------- card grid ---------------- */
-  function modelLine(p) {
-    const list = p.models || [];
-    if (list.length) {
-      const chips = list.slice(0, 4).map(m => `<code class="model-chip">${esc(m)}</code>`).join('');
-      const rest = list.length > 4 ? `<code class="model-chip model-more">+${list.length - 4}</code>` : '';
-      return chips + rest;
-    }
-    if (p.modelsNote) return `<code class="model-chip model-more">${esc(p.modelsNote)}</code>`;
-    return '<code class="model-chip model-more">models unknown</code>';
-  }
+  /* ---------------- card grid ----------------
+     Every tile wears the shared brand mark (assets/gorouterlogo.png) as its
+     logo; the provider's own logo shows up inside the details modal. */
+  const CARD_LOGO = 'assets/gorouterlogo.png';
 
   function cardMarkup(p, index) {
     const off = A.isOff(p);
+    const models = p.models || [];
+    const badge = models.length
+      ? `<b>${models.length}</b><span>models</span>`
+      : '<b>\u2014</b><span>models</span>';
     const meta = [
+      off ? 'offline' : 'live',
       A.kindLabel(p),
       (p.protocol || []).map(protoLabel).join(' · '),
       FREE_SHAPE[p.freeShape]
     ].filter(Boolean).join('  ·  ');
+    const action = off
+      ? '<span class="api-btn" aria-disabled="true"><i data-lucide="circle-off"></i>Unavailable</span>'
+      : `<a class="api-btn" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">Get API <i data-lucide="arrow-up-right"></i></a>`;
     return `<li class="api-card ${PALETTE[index % PALETTE.length]}${off ? ' is-off' : ''}">
       <button type="button" class="api-card-btn" data-prov-open="${esc(p.id)}"
         aria-label="${off ? 'Unavailable — details for' : 'Open details for'} ${esc(p.name)}">
-        <span class="api-card-top">
-          <span class="api-logo"><img src="${A.logo(p)}" alt="" loading="lazy"></span>
-          <span class="api-head-text">
-            <span class="api-title">${esc(p.name)}${A.isNew(p) ? '<span class="api-chip">New</span>' : ''}</span>
-            <span class="api-status${off ? ' is-off' : ''}"><span class="api-dot" aria-hidden="true"></span>${off ? 'offline' : 'live'}</span>
-          </span>
-          <span class="api-go" aria-hidden="true"><i data-lucide="arrow-up-right"></i></span>
-        </span>
-        <span class="api-models">${modelLine(p)}</span>
+        <span class="api-logo"><img src="${CARD_LOGO}" alt="" loading="lazy"></span>
+        <span class="api-title">${esc(p.name)}${A.isNew(p) ? '<span class="api-chip">New</span>' : ''}</span>
         <span class="api-desc">${esc(p.blurb || '')}</span>
         ${meta ? `<span class="api-meta">${esc(meta)}</span>` : ''}
       </button>
+      <span class="api-badge" aria-hidden="true">${badge}</span>
+      <div class="api-actions">${action}</div>
     </li>`;
   }
 
