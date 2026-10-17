@@ -15,6 +15,53 @@
   const PALETTE = ['', 'v--violet', 'v--amber', 'v--coral'];
   const MODEL_PREVIEW = 4;
 
+  /* ---------------- hero glass band ----------------
+     Decorative, staggered columns of frosted tiles carrying the providers'
+     own bundled logos (the shared brand mark is never repeated here).
+     'blank' leaves a tile empty so the composition stays airy, and --dy
+     staggers each column vertically. The band is masked in CSS so it fades
+     into the page instead of ending on a hard edge. */
+  const HERO_COLUMNS = [
+    { dy: 46, tiles: ['logo', 'blank', 'logo'] },
+    { dy: 0, tiles: ['logo', 'logo', 'logo'] },
+    { dy: 60, tiles: ['blank', 'logo', 'blank'] },
+    { dy: 18, tiles: ['logo', 'logo'] },
+    { dy: 70, tiles: ['logo', 'blank', 'logo'] },
+    { dy: 28, tiles: ['blank', 'logo'] },
+    { dy: 52, tiles: ['logo', 'logo'] },
+    { dy: 10, tiles: ['logo', 'blank', 'logo'] },
+    { dy: 64, tiles: ['logo', 'logo'] },
+    { dy: 34, tiles: ['blank', 'logo', 'logo'] }
+  ];
+
+  function heroLogos() {
+    const seen = new Set();
+    const out = [];
+    A.providers.forEach(p => {
+      const src = A.logo(p);
+      if (src.includes('gorouterlogo') || seen.has(src)) return;
+      seen.add(src);
+      out.push(src);
+    });
+    return out;
+  }
+
+  function renderHero() {
+    const stack = $('[data-hero-stack]');
+    if (!stack) return;
+    const logos = heroLogos();
+    let next = 0;
+    stack.innerHTML = HERO_COLUMNS.map(col => `
+      <div class="hero-col" style="--dy:${col.dy}px">${
+        col.tiles.map(kind => {
+          const src = kind === 'logo' ? logos[next++] : '';
+          return src
+            ? `<span class="hero-tile"><img src="${esc(src)}" alt="" loading="lazy" decoding="async"></span>`
+            : '<span class="hero-tile is-blank"></span>';
+        }).join('')
+      }</div>`).join('');
+  }
+
   /* ---------------- provider details modal ---------------- */
   const modal = {
     veil: $('[data-prov-modal]'),
@@ -198,6 +245,7 @@
 
   renderGrid();
   renderStats();
+  renderHero();
   wireClicks();
   refreshIcons();
 })();
