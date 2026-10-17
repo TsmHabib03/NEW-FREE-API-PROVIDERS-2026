@@ -1,4 +1,4 @@
-/* theme — dark (default) ⇄ light, persisted to localStorage, no FOUC because
+/* theme — light (default) ⇄ dark, persisted to localStorage, no FOUC because
    index.html applies the saved theme in a pre-paint inline script. */
 (() => {
   const root = document.documentElement;
@@ -24,10 +24,8 @@
   }
 
   try {
-    if (!localStorage.getItem('aip2026.theme')) {
-      /* first visit with no stored preference: honor the OS setting */
-      if (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches) root.dataset.theme = 'light';
-    }
+    /* first visit with no stored preference: default to light */
+    if (!localStorage.getItem('aip2026.theme')) root.dataset.theme = 'light';
   } catch {}
 
   function toggle() {

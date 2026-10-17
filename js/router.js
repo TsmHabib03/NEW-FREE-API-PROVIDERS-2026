@@ -1,12 +1,14 @@
-/* router — hash-based view switching for the shell. Errors recorded as
-   comments only; no extra DOM elements are allowed to be injected. */
+/* router — hash-based view switching for the hub. The hub has a single view
+   ("providers"); the router is kept so the nav link and deep-link keep working. */
 (() => {
-  const VIEWS = ['dashboard', 'providers', 'categories', 'tools', 'saved'];
+  const VIEWS = ['providers'];
   const sections = () => [...document.querySelectorAll('[data-view]')];
   const navs = () => [...document.querySelectorAll('[data-nav]')];
 
+  const TITLES = { providers: 'Free AI API providers | API Hub 2026' };
+
   function show(id, options = {}) {
-    if (!VIEWS.includes(id)) id = 'dashboard';
+    if (!VIEWS.includes(id)) id = 'providers';
     sections().forEach(section => {
       const active = section.dataset.view === id;
       section.hidden = !active;
@@ -22,28 +24,17 @@
     });
     /* keep the hash a plain string id without triggering scrolling */
     if (location.hash !== `#${id}`) {
-      const previous = location.hash;
-      const optionsBefore = history.state;
-      history.replaceState(optionsBefore, '', `#${id}`);
-      /* hashchange fired by the browser? no — replaceState does not fire it */
-      void previous;
+      history.replaceState(history.state, '', `#${id}`);
     }
-    if (window.aipList && id === 'providers') window.aipList.renderDown?.();
-    document.title = ({
-      dashboard: 'Free AI API providers | API Hub 2026',
-      providers: 'Providers | API Hub 2026',
-      categories: 'Categories | API Hub 2026',
-      tools: 'Tools & SDKs | API Hub 2026',
-      saved: 'Saved providers | API Hub 2026'
-    })[id];
+    document.title = TITLES[id] || TITLES.providers;
   }
 
   function fromHash() {
-    const id = location.hash.replace(/^#\//, '');
-    show(VIEWS.includes(id) ? id : 'dashboard');
+    const id = location.hash.replace(/^#\/?/, '');
+    show(VIEWS.includes(id) ? id : 'providers');
   }
 
   window.addEventListener('hashchange', fromHash);
-  window.AipRouter = { show, current: () => location.hash.replace(/^#\//, '') || 'dashboard' };
+  window.AipRouter = { show, current: () => location.hash.replace(/^#\/?/, '') || 'providers' };
   fromHash();
 })();

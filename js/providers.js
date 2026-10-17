@@ -1,5 +1,5 @@
 /* Provider directory data — the single source of truth for index.html and setup.html.
-   Rendered by js/app.js (the list) and js/setup.js (the guides). Nothing else is hardcoded.
+   Rendered by js/views.js (the card grid + modal) and js/setup.js (the guides). Nothing else is hardcoded.
 
    FIELD RULES — never guess; leave "unknown":
      url           referral link, VERBATIM. Never edited, cleaned, trimmed or re-encoded.

@@ -1,18 +1,18 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Free AI API providers for Claude Code &amp; Codex | API Hub 2026</title>
-  <meta name="description" content="A searchable dashboard of 47 free and free-credit AI API providers for Claude Code and Codex CLI — with documented models, client routes and setup guides.">
+  <meta name="description" content="A directory of 47 free and free-credit AI API providers for Claude Code and Codex CLI — documented models, client routes and setup guides, one tap away.">
   <meta property="og:title" content="Free AI API providers for Claude Code &amp; Codex">
-  <meta property="og:description" content="50 providers in one dashboard: filter by Claude Code, Codex, New API, no card needed or setup guide.">
+  <meta property="og:description" content="50 providers in one place: 47 live, 3 offline. Tap any card for its models, client route and free-credit note.">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#070b14">
+  <meta name="theme-color" content="#eef1f7">
   <link rel="icon" type="image/png" href="assets/gorouterlogo.png">
   <script>
-    /* apply the saved theme before first paint (no FOUC) */
-    try { if (localStorage.getItem('aip2026.theme') === 'light') document.documentElement.dataset.theme = 'light'; } catch {}
+    /* default to light; apply a saved dark preference before first paint (no FOUC) */
+    try { document.documentElement.dataset.theme = localStorage.getItem('aip2026.theme') === 'dark' ? 'dark' : 'light'; } catch {}
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,210 +23,65 @@
   <link rel="stylesheet" href="css/shell.css">
 </head>
 <body class="page-list">
-<div class="shell">
-  <button class="sidebar-veil" data-veil hidden aria-label="Close menu"></button>
-
-  <!-- ======= LEFT SIDEBAR ======= -->
-  <aside class="sidebar" data-sidebar aria-label="Primary navigation">
-    <div class="sidebar-head">
-      <img src="assets/gorouterlogo.png" alt="">
-      <span>API Hub</span>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="./" aria-label="API Hub home">
+        <span class="brand-mark"><img src="assets/gorouterlogo.png" alt=""></span>
+        API Hub
+      </a>
+      <nav class="topnav" aria-label="Sections">
+        <a data-nav="providers" href="#providers" aria-current="page">Providers</a>
+        <a href="setup.html">Setup guides</a>
+      </nav>
+      <button type="button" class="topbar-cta" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode" title="Dark mode (T)">
+        <i data-lucide="moon"></i><span data-theme-label>Dark mode</span>
+      </button>
     </div>
-    <nav>
-      <button type="button" class="vlink" data-nav="dashboard">
-        <span class="vlink-ico"><i data-lucide="layout-dashboard"></i></span>Dashboard
-      </button>
-      <button type="button" class="vlink" data-nav="providers">
-        <span class="vlink-ico"><i data-lucide="list"></i></span>Providers
-      </button>
-      <button type="button" class="vlink" data-nav="categories">
-        <span class="vlink-ico"><i data-lucide="layers"></i></span>Categories
-      </button>
-      <button type="button" class="vlink" data-nav="tools">
-        <span class="vlink-ico"><i data-lucide="wrench"></i></span>Tools &amp; SDKs
-      </button>
-      <button type="button" class="vlink" data-nav="saved">
-        <span class="vlink-ico"><i data-lucide="bookmark"></i></span>Saved
-      </button>
-    </nav>
-    <div class="sidebar-foot">
-      <button type="button" class="theme-btn" data-theme-toggle>
-        <i data-lucide="sun" data-theme-icon></i>
-        <span data-theme-label>Light mode</span>
-        <kbd style="margin-left:auto" class="search-key">T</kbd>
-      </button>
-      <div class="submit-card">
-        <strong>Submit an API</strong>
-        <p>Know a free or free-credit gateway? Send it in — every submission is verified end-to-end.</p>
-        <a class="submit-btn" href="https://github.com/TsmHabib03/NEW-FREE-API-PROVIDERS-2026/issues/new?title=%5BAPI+submission%5D" target="_blank" rel="noopener noreferrer">
-          Open submission <i data-lucide="arrow-up-right"></i>
-        </a>
+  </header>
+
+  <main class="hub-main" id="main-content">
+    <section class="view" data-view="providers" id="view-providers">
+      <div class="hero">
+        <p class="section-kicker">Free &amp; free-credit gateways</p>
+        <h1 class="view-title">Free API providers</h1>
+        <p class="view-lede"><strong data-live-count>47</strong> live providers, <strong data-off-count>3</strong> offline, <strong data-guide-count>7</strong> with a setup guide. Tap any card for its models, client route and the free-credit note — the card is the button, and the provider's own sign-up page is inside.</p>
+        <ul class="stat-chips" data-stat-chips></ul>
       </div>
-    </div>
-  </aside>
 
-  <!-- mobile slim topbar -->
-  <div class="vcol vcol-main">
-    <header class="main-card mobile-top">
-      <button type="button" class="mobile-menu" aria-label="Open navigation" aria-expanded="false" data-burger>
-        <i data-lucide="menu"></i>
-      </button>
-      <span style="display:flex;align-items:center;gap:9px;font:700 14.5px var(--font-display);color:var(--ink)">
-        <img src="assets/gorouterlogo.png" alt="" style="width:26px;height:26px;border-radius:8px;background:var(--logo-tile);padding:2px">API Hub
-      </span>
-      <button type="button" class="order-control" style="margin-left:auto;border:1px solid var(--line);border-radius:9px" data-theme-toggle aria-label="Toggle theme">
-        <i data-lucide="sun" data-theme-icon style="width:17px;height:17px"></i>
-      </button>
-    </header>
+      <ol class="api-grid" data-provider-grid></ol>
 
-    <!-- ======= MIDDLE COLUMN ======= -->
-    <section class="main-card" id="main-content">
+      <p class="list-note">Provider pricing, credits, models, endpoints and availability change — verify current details in the provider's dashboard before configuring a client. A card marked <em>models unknown</em> means the provider does not publish its model IDs; that is not a guess.</p>
 
-      <!-- Dashboard -->
-      <section class="view" data-view="dashboard" id="view-dashboard">
-        <div class="view-head">
-          <div>
-            <h1 class="view-title">Free API providers</h1>
-            <p class="view-sub" data-dash-date></p>
-            <p class="view-lede"><strong data-live-count>47</strong> live providers, <strong data-off-count>3</strong> offline, <strong data-guide-count>7</strong> with a setup guide. Every card opens the provider's own sign-up page.</p>
-          </div>
-          <a class="fab" href="https://github.com/TsmHabib03/NEW-FREE-API-PROVIDERS-2026/issues/new?title=%5BAPI+submission%5D" target="_blank" rel="noopener noreferrer" aria-label="Submit an API provider" title="Submit an API provider">
-            <i data-lucide="plus"></i>
-          </a>
-        </div>
-        <ol class="api-grid" data-featured-grid></ol>
-        <p style="text-align:center;margin:22px 0 0">
-          <button type="button" class="button button-primary" data-goto="providers">Browse all providers <i data-lucide="arrow-right"></i></button>
-        </p>
-      </section>
-
-      <!-- Providers -->
-      <section class="view" data-view="providers" id="view-providers" hidden>
-        <div class="view-head">
-          <div>
-            <h1 class="view-title">Providers</h1>
-            <p class="view-lede">Search, sort and filter the full directory. Add cards with <kbd class="search-key">c</kbd> to compare up to four side by side.</p>
-          </div>
-        </div>
-        <div class="list-section" id="providers" aria-label="Provider list">
-          <div class="list-sticky">
-            <div class="list-toolbar">
-              <div class="list-search" role="search">
-                <i data-lucide="search"></i>
-                <input id="list-search" type="search" data-list-search autocomplete="off" placeholder="Search name, model, protocol…" aria-label="Search providers">
-                <button type="button" class="clear-search" data-clear-search aria-label="Clear search"><i data-lucide="x"></i></button>
-                <kbd class="search-key">/</kbd>
-              </div>
-              <div class="list-controls">
-                <label class="order-control"><span>Order</span>
-                  <select data-order aria-label="Sort providers"></select>
-                </label>
-                <div class="density-control" role="group" aria-label="Row density">
-                  <button type="button" data-density="list" aria-pressed="true">List</button>
-                  <button type="button" data-density="compact" aria-pressed="false">Compact</button>
-                  <button type="button" data-density="cards" aria-pressed="false">Cards</button>
-                </div>
-              </div>
-            </div>
-            <div class="filter-row" role="group" aria-label="Filter providers" data-facets></div>
-          </div>
-          <p class="list-count" aria-live="polite" data-list-count></p>
-          <ol class="plist" data-provider-list></ol>
-          <div class="list-empty" data-list-empty hidden>
-            <i data-lucide="search-x"></i>
-            <strong>No providers match</strong>
-            <span>Try claude, gpt, relay — or clear the search and filters.</span>
-            <button type="button" class="button button-quiet" data-clear-all>Clear search &amp; filters</button>
-          </div>
-          <p class="list-note">Provider pricing, credits, models, endpoints and availability change — verify current details in the provider's dashboard before configuring a client. A row marked <em>models unknown</em> means the provider does not publish its model IDs; that is not a guess.</p>
-          <footer class="footer">
-            <div><strong>API Hub</strong><span>Practical notes for compatible coding-agent setups.</span></div>
-            <div><span>Provider data verified 2026-10-13</span><a href="setup.html">Setup guides <i data-lucide="arrow-right"></i></a></div>
-          </footer>
-        </div>
-      </section>
-
-      <!-- Categories -->
-      <section class="view" data-view="categories" id="view-categories" hidden>
-        <div class="view-head">
-          <div>
-            <h1 class="view-title">Categories</h1>
-            <p class="view-lede">Every category is derived from documented provider fields — nothing is inferred. Selecting a category opens the providers view with that filter applied.</p>
-          </div>
-        </div>
-        <ol class="cat-grid" data-cat-grid></ol>
-      </section>
-
-      <!-- Tools & SDKs -->
-      <section class="view" data-view="tools" id="view-tools" hidden>
-        <div class="view-head">
-          <div>
-            <h1 class="view-title">Tools &amp; SDKs</h1>
-            <p class="view-lede">Setup guides for the clients these gateways are built for. All commands on the guides page use placeholders — the site never stores keys.</p>
-          </div>
-        </div>
-        <ol class="tool-grid" data-tool-grid></ol>
-      </section>
-
-      <!-- Saved -->
-      <section class="view" data-view="saved" id="view-saved" hidden>
-        <div class="view-head">
-          <div>
-            <h1 class="view-title">Saved providers</h1>
-            <p class="view-lede">Your bookmarks, stored in this browser only (localStorage). Rings show <strong>documentation completeness</strong> — how much of a provider is actually documented — not usage.</p>
-          </div>
-        </div>
-        <p class="view-lede" data-saved-empty hidden>No saved providers yet. Use the bookmark button on a provider card.</p>
-        <ol class="saved-grid" data-saved-grid></ol>
-      </section>
+      <footer class="footer">
+        <div><strong>API Hub</strong><span>Practical notes for compatible coding-agent setups.</span></div>
+        <div><span>Provider data verified 2026-10-13</span><a href="setup.html">Setup guides <i data-lucide="arrow-right"></i></a></div>
+      </footer>
     </section>
-  </div>
+  </main>
 
-  <!-- ======= RIGHT COLUMN ======= -->
-  <div class="vcol rcol" aria-label="Analytics">
-    <section class="rcard">
-      <div class="rhead">
-        <span class="rava"><i data-lucide="user-round"></i></span>
-        <div><b>Guest developer</b><span data-tracked-count>50 providers tracked</span></div>
+  <div class="prov-veil" data-prov-modal hidden role="dialog" aria-modal="true" aria-labelledby="prov-name">
+    <div class="prov-card" data-prov-card>
+      <button type="button" class="prov-close" data-prov-close aria-label="Close details"><i data-lucide="x"></i></button>
+      <div class="prov-top">
+        <span class="prov-logo"><img src="" data-prov-modal-logo alt=""></span>
+        <div class="prov-top-text">
+          <h2 id="prov-name" data-prov-modal-name></h2>
+          <p class="prov-kind" data-prov-modal-kind></p>
+        </div>
       </div>
-    </section>
-
-    <section class="rcard">
-      <h2 class="rtitle">Saved providers</h2>
-      <div data-saved-mini></div>
-    </section>
-
-    <section class="rcard">
-      <h2 class="rtitle">Coverage</h2>
-      <div data-coverage></div>
-    </section>
-  </div>
-</div>
-
-  <div class="cmp-bar" data-cmp-bar hidden>
-    <div class="cmp-bar-inner">
-      <span class="cmp-bar-label">Compare <b data-cmp-count>0</b>/4</span>
-      <div class="cmp-chips" data-cmp-chips></div>
-      <button type="button" class="button button-primary" data-cmp-open>Compare <i data-lucide="columns-3"></i></button>
-      <button type="button" class="cmp-clear" data-cmp-clear>Clear</button>
+      <p class="prov-blurb" data-prov-modal-blurb></p>
+      <p class="prov-credit" data-prov-modal-credit hidden></p>
+      <div class="prov-block">
+        <h3 class="prov-block-title">Models you can reach</h3>
+        <div class="prov-models"></div>
+      </div>
+      <dl class="prov-facts"></dl>
+      <div class="prov-act"></div>
     </div>
   </div>
-
-  <section class="cmp-sheet" data-cmp-sheet hidden aria-label="Provider comparison">
-    <div class="cmp-sheet-inner">
-      <div class="cmp-sheet-head">
-        <h2>Side by side</h2>
-        <button type="button" class="cmp-close" data-cmp-close aria-label="Close comparison"><i data-lucide="x"></i></button>
-      </div>
-      <div class="cmp-wrap" data-cmp-table></div>
-    </div>
-  </section>
-
-  <div class="toast" data-toast role="status" aria-live="polite"></div>
 
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="js/providers.js"></script>
-  <script src="js/app.js"></script>
   <script src="js/adapters.js"></script>
   <script src="js/views.js"></script>
   <script src="js/router.js"></script>
