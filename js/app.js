@@ -359,7 +359,13 @@
 
   document.addEventListener('keydown', event => {
     const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(event.target.tagName) || event.target.isContentEditable;
-    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); focusSearch(); return; }
+    const providersView = document.querySelector('[data-view="providers"]');
+    const listHidden = () => !providersView || providersView.hidden;
+    const goSearch = () => {
+      if (listHidden() && window.AipRouter) window.AipRouter.show('providers');
+      focusSearch();
+    };
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); goSearch(); return; }
     if (event.key === 'Escape') {
       if (cmpSheet && !cmpSheet.hidden) { cmpSheet.hidden = true; return; }
       if (state.q) { setQuery(''); return; }
@@ -367,8 +373,8 @@
       return;
     }
     if (typing) return;
-    if (event.key === '/') { event.preventDefault(); focusSearch(); return; }
-    if (!rowLinks.length) return;
+    if (event.key === '/') { event.preventDefault(); goSearch(); return; }
+    if (listHidden() || !rowLinks.length) return;
     const current = rowLinks.indexOf(document.activeElement);
     if (event.key === 'j' || event.key === 'ArrowDown') {
       event.preventDefault();
@@ -393,4 +399,17 @@
   render();
   renderCompare();
   window.addEventListener('resize', syncCmpPad);
+
+  /* shell API — used by js/views.js (category tiles, coverage rows) */
+  window.aipList = {
+    setFacet: id => {
+      const facet = FACETS.find(f => f.id === id);
+      if (!facet) return;
+      state.facet = facet.id;
+      render();
+    },
+    setQuery: value => setQuery(value),
+    clearAll: () => { state.facet = 'all'; setQuery(''); },
+    pick
+  };
 })();

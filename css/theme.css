@@ -1,0 +1,43 @@
+/* Light theme tokens — dark (default) lives in style.css :root.
+   Every component color runs through these variables, so flipping
+   [data-theme] on <html> is the whole switch. */
+:root[data-theme="light"]{
+  --bg:#eef1f7;
+  --surface:#ffffff;
+  --surface-2:#f4f6fb;
+  --ink:#141c2e;
+  --ink-dim:#33425e;
+  --muted:#5c6b88;
+  --faint:#8d99b1;
+  --line:rgba(22,40,80,.13);
+  --line-strong:rgba(22,40,80,.26);
+  --accent:#1668e3;
+  --accent-ink:#ffffff;
+  --accent-soft:rgba(22,104,227,.08);
+  --accent-line:rgba(22,104,227,.35);
+  --violet:#7a5cff;
+  --violet-soft:rgba(122,92,255,.08);
+  --violet-line:rgba(122,92,255,.32);
+  --green:#0f9d6a;
+  --green-soft:rgba(15,157,106,.08);
+  --green-line:rgba(15,157,106,.3);
+  --amber:#c77c04;
+  --amber-soft:rgba(199,124,4,.09);
+  --amber-line:rgba(199,124,4,.3);
+  --red:#dc4a51;
+  --red-soft:rgba(220,74,81,.07);
+  --red-line:rgba(220,74,81,.26);
+  --code:#f4f6fb;
+  --logo-tile:#f0f3fa;
+  --shadow:0 24px 60px rgba(22,40,80,.14);
+  --shadow-sm:0 10px 28px rgba(22,40,80,.1);
+  color-scheme:light;
+}
+
+/* vivid card gradients (shared by both themes, white text) */
+:root{
+  --card-blue:linear-gradient(135deg,#1e6ff2 0%,#3fb5ff 100%);
+  --card-violet:linear-gradient(135deg,#8a5cf6 0%,#c084fc 100%);
+  --card-amber:linear-gradient(135deg,#e88a06 0%,#fbbf24 100%);
+  --card-coral:linear-gradient(135deg,#ef4444 0%,#fb7185 100%);
+}
