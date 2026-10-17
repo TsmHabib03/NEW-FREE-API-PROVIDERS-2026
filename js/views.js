@@ -13,6 +13,7 @@
   const protoLabel = key => (key === 'anthropic' ? 'Anthropic' : key === 'openai' ? 'OpenAI' : key);
   const FREE_SHAPE = { 'signup-credit': 'signup credit', 'invite-bonus': 'invite bonus', 'free-tier': 'free tier' };
   const PALETTE = ['', 'v--violet', 'v--amber', 'v--coral'];
+  const MODEL_PREVIEW = 4;
 
   /* ---------------- provider details modal ---------------- */
   const modal = {
@@ -47,6 +48,7 @@
   function fillProvider(p) {
     modal.logo.src = A.logo(p);
     modal.logo.alt = '';
+    modal.card.classList.toggle('is-off', A.isOff(p));
     modal.name.textContent = p.name;
 
     const protos = (p.protocol || []).map(protoLabel).join(' · ');
@@ -84,7 +86,7 @@
 
     modal.act().innerHTML = A.isOff(p)
       ? '<span class="prov-offline" aria-disabled="true"><i data-lucide="circle-off"></i>Unavailable — this provider is offline</span>'
-      : `<a class="prov-signin" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">Sign in &amp; get API <i data-lucide="arrow-up-right"></i></a>`;
+      : `<a class="prov-signin" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">Get API <i data-lucide="arrow-up-right"></i></a>`;
     refreshIcons();
   }
 
@@ -121,12 +123,18 @@
      logo; the provider's own logo shows up inside the details modal. */
   const CARD_LOGO = 'assets/gorouterlogo.png';
 
+  /* the models a provider documents, listed under its name (never invented) */
+  function modelList(p) {
+    const list = p.models || [];
+    if (!list.length) return '<ul class="api-models"><li class="more">models unknown</li></ul>';
+    const shown = list.slice(0, MODEL_PREVIEW);
+    const rest = list.length - shown.length;
+    return `<ul class="api-models">${shown.map(m => `<li>${esc(m)}</li>`).join('')}${
+      rest ? `<li class="more">+${rest} more</li>` : ''}</ul>`;
+  }
+
   function cardMarkup(p, index) {
     const off = A.isOff(p);
-    const models = p.models || [];
-    const badge = models.length
-      ? `<b>${models.length}</b><span>models</span>`
-      : '<b>\u2014</b><span>models</span>';
     const meta = [
       off ? 'offline' : 'live',
       A.kindLabel(p),
@@ -141,10 +149,10 @@
         aria-label="${off ? 'Unavailable — details for' : 'Open details for'} ${esc(p.name)}">
         <span class="api-logo"><img src="${CARD_LOGO}" alt="" loading="lazy"></span>
         <span class="api-title">${esc(p.name)}${A.isNew(p) ? '<span class="api-chip">New</span>' : ''}</span>
+        ${modelList(p)}
         <span class="api-desc">${esc(p.blurb || '')}</span>
         ${meta ? `<span class="api-meta">${esc(meta)}</span>` : ''}
       </button>
-      <span class="api-badge" aria-hidden="true">${badge}</span>
       <div class="api-actions">${action}</div>
     </li>`;
   }
