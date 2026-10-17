@@ -291,10 +291,3 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
   .skeleton{animation:none}
   .site-loader{transition:none}
 }
-@media(max-width:580px){
-  /* provider details modal — comfortable on small phones */
-  .prov-veil{padding:14px}
-  .prov-card{padding:20px 16px;border-radius:20px}
-  .prov-card h2{font-size:19px}
-  .prov-close{top:10px;right:10px}
-}

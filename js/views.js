@@ -217,9 +217,16 @@
     setText('[data-live-count]', s.live);
     setText('[data-off-count]', s.off);
     setText('[data-guide-count]', s.guides);
-    const chips = $('[data-stat-chips]');
-    if (chips) chips.innerHTML = s.chips
-      .map(c => `<li class="stat-chip ${c.tone}"><i data-lucide="${c.icon}"></i>${esc(c.label)}</li>`).join('');
+    /* a divided stat line, not badges: the number carries the tone, the
+       words stay quiet, and the row wraps cleanly on narrow screens */
+    const line = $('[data-stat-chips]');
+    if (line) line.innerHTML = s.chips
+      .map(c => {
+        const parts = String(c.label).match(/^(\S+)\s+(.*)$/);
+        const value = parts ? parts[1] : c.label;
+        const text = parts ? parts[2] : '';
+        return `<li class="${c.tone}"><b>${esc(value)}</b>${text ? `<span>${esc(text)}</span>` : ''}</li>`;
+      }).join('');
   }
 
   /* ---------------- global click delegation ---------------- */
