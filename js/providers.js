@@ -2,9 +2,18 @@
    Rendered by js/views.js (the card grid + modal) and js/setup.js (the guides). Nothing else is hardcoded.
 
    FIELD RULES — never guess; leave "unknown":
-     url           referral link, VERBATIM. Never edited, cleaned, trimmed or re-encoded.
-                   null = provider offline, link disabled.
-     status        "live" | "off". Offline providers stay visible, disabled, never deleted.
+     url           referral link, VERBATIM. Never edited, cleaned, trimmed or re-encoded,
+                    not even for a provider that has gone dark, so any row can be re-enabled
+                    by flipping status alone. null = no link was ever captured.
+     status        the authoritative availability field:
+                      "live"       reachable and usable right now.
+                      "restricted" reachable, but the free quota/plan is blocked by the provider.
+                      "auth"       reachable, but sign-in / account access is failing.
+                      "off"        the provider itself is gone (404 / host dead).
+                    A non-live row stays visible, is clearly flagged, and is never deleted.
+                    Only "off" disables the link; "restricted"/"auth" keep it.
+     statusNote    one plain sentence saying WHY a row is not live. Shown on the card and in
+                    the details modal. Required for "restricted"/"auth"/"off"; omitted when live.
      flags         "newapi" only. HOT is retired: at 76% of the set it signalled nothing.
      addedAt       date the provider first appeared in this repo (git history). Drives the
                    NEW badge (<= 7 days) and the Newest sort, so NEW decays on its own.
@@ -33,7 +42,9 @@
      blurb/offer   verbatim provider-facing copy, shown on row expand, not in the row.
      guide         the provider's own setup guide URL, or null.
 
-   Verified 2026-10-13. URLs and offer wording are untouched from the previous data file. */
+   Verified 2026-10-18. URLs and offer wording are untouched from the previous data file; the only
+   changes are the status/statusNote fields on five rows (Odyssey + ArtBloom -> off, BearLab AI +
+   DirectRouter -> auth, TokenLayer -> restricted). */
 window.PROVIDERS = [
   { id: "agentrouter", name: "AgentRouter", url: "https://agentrouter.org/register?aff=1TUW", logo: "assets/gorouterlogo.png",
     status: "live", flags: ["newapi"], addedAt: "2026-09-11", rank: null,
@@ -106,7 +117,8 @@ window.PROVIDERS = [
     blurb: "Bundles several model providers behind one key with a sign-up offer. Register, copy your key, and set the base URL in your coding client.",
     offer: "Free models - one key, many providers", guide: null },
   { id: "artbloom", name: "ArtBloom", url: "https://api.artbloom.tech/signup?ref=BSJMVGW63Y", logo: "assets/artbloom-logo.svg",
-    status: "live", flags: [], addedAt: "2026-09-29", rank: null,
+    status: "off", flags: [], addedAt: "2026-09-29", rank: null,
+    statusNote: "Sign-up host stopped responding - treated as offline.",
     kind: "gateway", protocol: ["openai"], freeShape: "free-tier",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,
@@ -120,7 +132,8 @@ window.PROVIDERS = [
     blurb: "Free models after a quick sign-up. Create an account, then use the endpoint and model shown in your dashboard.",
     offer: "Free models - sign up for instant access", guide: null },
   { id: "bearlab", name: "Bearlab AI", url: "https://bearlab.ai/sign-up?aff=nIHI", logo: "assets/bearlab-logo.png",
-    status: "live", flags: [], addedAt: "2026-10-10", rank: null,
+    status: "auth", flags: [], addedAt: "2026-10-10", rank: null,
+    statusNote: "Sign-in is failing (invalid credentials / possible account ban).",
     kind: "gateway", protocol: [], freeShape: "invite-bonus",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,
@@ -155,7 +168,8 @@ window.PROVIDERS = [
     blurb: "OpenAI-compatible endpoints behind one relay key. Register, grab your token, then set the base URL in Claude Code or Codex CLI.",
     offer: "Free models - register in under a minute", guide: null },
   { id: "directrouter", name: "DirectRouter", url: "https://directrouter.pages.dev/?ref=REF_82fa33b7", logo: "assets/directrouter-logo.png",
-    status: "live", flags: [], addedAt: "2026-10-02", rank: null,
+    status: "auth", flags: [], addedAt: "2026-10-02", rank: null,
+    statusNote: "Discord sign-in returns \"external account not found\" - the provider is up.",
     kind: "gateway", protocol: [], freeShape: "free-tier",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,
@@ -260,7 +274,8 @@ window.PROVIDERS = [
     blurb: "Free model access with a short sign-up flow. Create an account, then confirm the endpoint and model names in the dashboard.",
     offer: "Free models - full setup guide included", guide: "https://orbelis-ai-free-models.vercel.app/?fbclid=IwY2xjawUoYnRleHRuA2FlbQIxMABwZG9mBWJyaWQRMTJNT1dhejNZZjVQSTJjNjRzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEeyU57cQt5UceoPNb2ERDtkaaHE9Y5U28za5AOSkjvnHP5lv1fV0WILYTBZpg_aem_Mw5NxYIKkiO7veyqvHXOeA" },
   { id: "odyssey", name: "Odyssey", url: "https://odysseyapi.tech/invite/VGCJ8CKX", logo: "assets/odyssey-logo.svg",
-    status: "live", flags: [], addedAt: "2026-10-11", rank: null,
+    status: "off", flags: [], addedAt: "2026-10-11", rank: null,
+    statusNote: "Homepage returns 404 - link disabled.",
     kind: "gateway", protocol: ["openai"], freeShape: "invite-bonus",
     noCard: false, signupCredit: false, inviteOnly: true,
     models: ["anthropic/claude-sonnet-5", "anthropic/claude-fable-5", "openai/gpt-5.6-terra"], modelsNote: null,
@@ -302,7 +317,8 @@ window.PROVIDERS = [
     blurb: "Free models with quick account setup. Register, then copy the endpoint, API key, and model ID from the dashboard.",
     offer: "Free models - full setup guide included", guide: "https://tokenforge-ai-two.vercel.app/" },
   { id: "tokenlayer", name: "TokenLayer", url: "https://tokenlayer.net/signup?ref=VMEETFKB", logo: "assets/tokenlayer-logo.svg",
-    status: "live", flags: [], addedAt: "2026-10-12", rank: null,
+    status: "restricted", flags: [], addedAt: "2026-10-12", rank: null,
+    statusNote: "Free quota exceeded - the project is blocked by the provider.",
     kind: "gateway", protocol: ["openai"], freeShape: "unknown",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: ["gpt-5.4", "claude-sonnet-4-6"], modelsNote: null,

@@ -12,8 +12,18 @@
 
   const protoLabel = key => (key === 'anthropic' ? 'Anthropic' : key === 'openai' ? 'OpenAI' : key);
   const FREE_SHAPE = { 'signup-credit': 'signup credit', 'invite-bonus': 'invite bonus', 'free-tier': 'free tier' };
-  const PALETTE = ['', 'v--violet', 'v--amber', 'v--coral'];
-  const MODEL_PREVIEW = 4;
+  const PALETTE = ['v--blue', 'v--teal', 'v--violet', 'v--amber', 'v--rose', 'v--green'];
+const MODEL_PREVIEW = 4;
+/* model chips wrap to one per row once the ids are long, so the visible count
+   has to shrink with the viewport or the details sheet stops fitting a phone */
+const modalModelCap = () => {
+  const w = window.innerWidth, h = window.innerHeight;
+  if (w <= 380 || h <= 620) return 4;
+  if (w <= 900 || h <= 760) return 6;
+  return 12;
+};
+  /* stride the palette so no two neighbours ever share a tone */
+  const toneFor = index => PALETTE[(index * 2 + Math.floor(index / 3)) % PALETTE.length];
 
   /* ---------------- hero glass band ----------------
      Decorative, staggered columns of frosted tiles carrying the providers'
@@ -71,6 +81,7 @@
     kind: $('[data-prov-modal-kind]'),
     blurb: $('[data-prov-modal-blurb]'),
     credit: $('[data-prov-modal-credit]'),
+    notice: $('[data-prov-modal-notice]'),
     models: () => $('.prov-models', $('[data-prov-modal]')),
     facts: () => $('.prov-facts', $('[data-prov-modal]')),
     act: () => $('.prov-act', $('[data-prov-modal]'))
@@ -96,25 +107,31 @@
     modal.logo.src = A.logo(p);
     modal.logo.alt = '';
     modal.card.classList.toggle('is-off', A.isOff(p));
+    modal.card.classList.toggle('is-flagged', A.isCaveat(p));
     modal.name.textContent = p.name;
 
     const protos = (p.protocol || []).map(protoLabel).join(' · ');
     const kind = A.kindLabel(p);
-    const bits = [A.isOff(p) ? 'offline' : 'live now'];
+    const bits = [A.isOff(p) ? 'offline' : A.isCaveat(p) ? A.statusLabel(p).toLowerCase() : 'live now'];
     if (kind) bits.push(kind);
     if (protos) bits.push(`${protos} route${(p.protocol || []).length > 1 ? 's' : ''}`);
     if (FREE_SHAPE[p.freeShape]) bits.push(FREE_SHAPE[p.freeShape]);
     modal.kind.textContent = bits.join('  ·  ');
     modal.kind.classList.toggle('is-off', A.isOff(p));
+    modal.kind.classList.toggle('is-flagged', A.isCaveat(p));
 
     modal.blurb.textContent = p.blurb || '';
+
+    const caveat = A.isCaveat(p) ? (p.statusNote || '') : '';
+    modal.notice.textContent = caveat;
+    modal.notice.hidden = !caveat;
 
     const note = creditNote(p);
     modal.credit.textContent = note;
     modal.credit.hidden = !note;
 
     const list = p.models || [];
-    const shown = list.slice(0, 24);
+    const shown = list.slice(0, modalModelCap());
     modal.models().innerHTML = shown.length
       ? shown.map(m => `<code>${esc(m)}</code>`).join('') +
         (list.length > shown.length ? `<code class="more">+${list.length - shown.length} more</code>` : '')
@@ -122,14 +139,15 @@
         : '<code class="more">models unknown — the provider does not publish its model IDs</code>');
 
     const rows = [
-      ['Client route', protos ? esc(protos) : 'not documented'],
-      ['Kind', kind ? esc(kind) : 'unknown'],
-      ['Card', p.noCard === true ? 'no card needed' : 'check the provider\u2019s own wording'],
-      ['Pricing', p.offer ? esc(p.offer) : 'see the provider\u2019s sign-up page'],
-      ['Setup guide', p.guide ? `<a href="${esc(p.guide)}" target="_blank" rel="noopener noreferrer">open provider guide</a>` : 'none'],
-      ['Added', esc(p.addedAt || 'unknown')]
+      ['Client route', protos ? esc(protos) : 'not documented', !!(kind || protos)],
+      ['Kind', kind ? esc(kind) : 'unknown', !!(kind || protos)],
+      ['Card', p.noCard === true ? 'no card needed' : 'check the provider\u2019s own wording', false],
+      ['Pricing', p.offer ? esc(p.offer) : 'see the provider\u2019s sign-up page', false],
+      ['Setup guide', p.guide ? `<a href="${esc(p.guide)}" target="_blank" rel="noopener noreferrer">open provider guide</a>` : 'none', false],
+      ['Added', esc(p.addedAt || 'unknown'), false]
     ];
-    modal.facts().innerHTML = rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+    modal.facts().innerHTML = rows.map(([k, v, redundant]) =>
+      `<div${redundant ? ' class="is-redundant"' : ''}><dt>${k}</dt><dd>${v}</dd></div>`).join('');
 
     modal.act().innerHTML = A.isOff(p)
       ? '<span class="prov-offline" aria-disabled="true"><i data-lucide="circle-off"></i>Unavailable — this provider is offline</span>'
@@ -182,8 +200,9 @@
 
   function cardMarkup(p, index) {
     const off = A.isOff(p);
+    const caveat = A.isCaveat(p);
     const meta = [
-      off ? 'offline' : 'live',
+      off ? 'offline' : caveat ? A.statusLabel(p).toLowerCase() : 'live',
       A.kindLabel(p),
       (p.protocol || []).map(protoLabel).join(' · '),
       FREE_SHAPE[p.freeShape]
@@ -191,13 +210,18 @@
     const action = off
       ? '<span class="api-btn" aria-disabled="true"><i data-lucide="circle-off"></i>Unavailable</span>'
       : `<a class="api-btn" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">Get API <i data-lucide="arrow-up-right"></i></a>`;
-    return `<li class="api-card ${PALETTE[index % PALETTE.length]}${off ? ' is-off' : ''}">
+    /* a flagged row leads with its status instead of the New chip */
+    const chip = caveat ? `<span class="api-chip is-warn">${esc(A.statusLabel(p))}</span>`
+      : (!off && A.isNew(p)) ? '<span class="api-chip">New</span>' : '';
+    const note = caveat && p.statusNote ? `<span class="api-note">${esc(p.statusNote)}</span>` : '';
+    return `<li class="api-card ${toneFor(index)}${off ? ' is-off' : ''}${caveat ? ' is-flagged' : ''}">
       <button type="button" class="api-card-btn" data-prov-open="${esc(p.id)}"
         aria-label="${off ? 'Unavailable — details for' : 'Open details for'} ${esc(p.name)}">
         <span class="api-logo"><img src="${CARD_LOGO}" alt="" loading="lazy"></span>
-        <span class="api-title">${esc(p.name)}${A.isNew(p) ? '<span class="api-chip">New</span>' : ''}</span>
+        <span class="api-title">${esc(p.name)}${chip}</span>
         ${modelList(p)}
         <span class="api-desc">${esc(p.blurb || '')}</span>
+        ${note}
         ${meta ? `<span class="api-meta">${esc(meta)}</span>` : ''}
       </button>
       <div class="api-actions">${action}</div>

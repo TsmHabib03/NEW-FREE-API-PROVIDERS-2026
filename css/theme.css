@@ -34,10 +34,15 @@
   color-scheme:light;
 }
 
-/* vivid card gradients (shared by both themes, white text) */
+/* Card gradients (shared by both themes, white text). Six coordinated hues,
+   each running from a deep shade to a mid tone — every stop keeps white text
+   at >=5:1 contrast, so the card copy stays WCAG AA readable while the grid
+   still reads as a set of distinct colours. */
 :root{
-  --card-blue:linear-gradient(135deg,#1e6ff2 0%,#3fb5ff 100%);
-  --card-violet:linear-gradient(135deg,#8a5cf6 0%,#c084fc 100%);
-  --card-amber:linear-gradient(135deg,#e88a06 0%,#fbbf24 100%);
-  --card-coral:linear-gradient(135deg,#ef4444 0%,#fb7185 100%);
+  --card-blue:linear-gradient(135deg,#123a86 0%,#1d4ed8 58%,#2563eb 100%);
+  --card-teal:linear-gradient(135deg,#083f3b 0%,#0f5f59 56%,#0f766e 100%);
+  --card-violet:linear-gradient(135deg,#3b1580 0%,#5b21b6 56%,#6d28d9 100%);
+  --card-amber:linear-gradient(135deg,#7c3a06 0%,#9a3412 52%,#b45309 100%);
+  --card-rose:linear-gradient(135deg,#7f1030 0%,#9f1239 54%,#be123c 100%);
+  --card-green:linear-gradient(135deg,#0a4d24 0%,#15803d 60%,#15803d 100%);
 }

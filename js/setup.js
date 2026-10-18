@@ -89,20 +89,23 @@
   /* provider example tabs: strip is generated from the same data file as the list,
      so names, New API chips and offline states can never drift from it. */
   const byName = (a, b) => a.name.replace(/\s+AI$/i, '').localeCompare(b.name.replace(/\s+AI$/i, ''), undefined, { sensitivity: 'base' });
+  /* status ranks: usable first, then flagged-but-reachable, offline last */
+  const statusRank = p => p.status === 'off' ? 2 : (p.status === 'restricted' || p.status === 'auth') ? 1 : 0;
+  const statusBadge = p => p.status === 'off' ? ' <span class="off-badge">Unavailable</span>'
+    : p.status === 'auth' ? ' <span class="warn-badge">Login issue</span>'
+      : p.status === 'restricted' ? ' <span class="warn-badge">Restricted</span>' : '';
   $$('[data-tabs]').forEach(shell => {
     const strip = $('[data-tab-strip]', shell);
     const panels = $$('[data-panel]', shell);
     const panelIds = new Set(panels.map(panel => panel.dataset.panel));
-    const ordered = providers.filter(p => panelIds.has(p.id)).sort((a, b) => {
-      const off = p => (p.status === 'off' ? 1 : 0);
-      return off(a) - off(b) || byName(a, b);
-    });
-    const firstLive = ordered.find(p => p.status !== 'off');
+    const ordered = providers.filter(p => panelIds.has(p.id))
+      .sort((a, b) => statusRank(a) - statusRank(b) || byName(a, b));
+    const firstLive = ordered.find(p => statusRank(p) === 0) || ordered[0];
     if (strip) {
       strip.innerHTML = ordered.map(p => {
         const off = p.status === 'off';
         const active = p === firstLive;
-        return `<button class="tab${active ? ' active' : ''}" type="button" role="tab" aria-selected="${active}" data-tab="${p.id}"${off ? ' disabled' : ''}>${p.name}${p.flags.includes('newapi') ? ' <span class="newapi-chip">New API</span>' : ''}${off ? ' <span class="off-badge">Unavailable</span>' : ''}</button>`;
+        return `<button class="tab${active ? ' active' : ''}" type="button" role="tab" aria-selected="${active}" data-tab="${p.id}"${off ? ' disabled' : ''}>${p.name}${p.flags.includes('newapi') ? ' <span class="newapi-chip">New API</span>' : ''}${statusBadge(p)}</button>`;
       }).join('');
     }
     if (firstLive) panels.forEach(panel => panel.classList.toggle('active', panel.dataset.panel === firstLive.id));

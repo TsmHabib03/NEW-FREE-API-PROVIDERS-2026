@@ -225,6 +225,8 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
 
 /* ---------- Badges ---------- */
 .off-badge{display:inline-block;background:rgba(150,168,199,.08);color:#93a0b6;border:1px dashed rgba(150,168,199,.4);font:800 9px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:5px;line-height:1;vertical-align:middle}
+/* reachable-but-flagged guides (restricted quota / login issue) */
+.warn-badge{display:inline-block;background:var(--amber-soft);color:var(--amber);border:1px solid var(--amber-line);font:800 9px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:3px 7px;border-radius:5px;line-height:1;vertical-align:middle}
 .newapi-chip{display:inline-flex;align-items:center;gap:5px;font:800 9px/1 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:#8fd4ff;background:rgba(77,201,255,.09);border:1px solid rgba(77,201,255,.3);border-radius:999px;padding:3px 8px;line-height:1;vertical-align:middle}
 .newapi-chip::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px rgba(77,201,255,.85)}
 

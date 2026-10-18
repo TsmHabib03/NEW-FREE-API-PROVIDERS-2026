@@ -54,7 +54,19 @@ html{-webkit-text-size-adjust:100%;scroll-padding-top:84px}
 .stat-line li.green b{color:var(--green)}
 .stat-line li.accent b{color:var(--accent)}
 .stat-line li.violet b{color:var(--violet)}
+.stat-line li.amber b{color:var(--amber)}
 .stat-line li.muted b{color:var(--ink-dim)}
+
+/* narrow desktops: the hero copy column no longer fits three stat columns,
+   so drop to two (the hairlines below follow the 2-column rhythm) */
+@media (max-width:1180px){
+  .stat-line{--stat-gap:18px;grid-template-columns:repeat(2,max-content);row-gap:10px}
+  .stat-line li:nth-child(3n+1){padding-left:var(--stat-gap)}
+  .stat-line li:nth-child(odd){padding-left:0}
+  .stat-line li:nth-child(3n+2),.stat-line li:nth-child(3n){border-left:0}
+  .stat-line li:nth-child(even){border-left:1px solid var(--line)}
+  .stat-line li:nth-child(2){padding-right:0}
+}
 
 .hero-stack{
   display:flex;gap:var(--tile-gap);align-items:flex-start;width:max-content;
@@ -82,10 +94,15 @@ html{-webkit-text-size-adjust:100%;scroll-padding-top:84px}
   background:var(--card-blue);
   transition:transform .16s ease,box-shadow .18s ease;
 }
+.api-card.v--blue{background:var(--card-blue)}
+.api-card.v--teal{background:var(--card-teal)}
 .api-card.v--violet{background:var(--card-violet)}
 .api-card.v--amber{background:var(--card-amber)}
-.api-card.v--coral{background:var(--card-coral)}
+.api-card.v--rose{background:var(--card-rose)}
+.api-card.v--green{background:var(--card-green)}
 .api-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(10,16,30,.26)}
+/* reachable but flagged (restricted / login issue): dimmed a notch, never hidden */
+.api-card.is-flagged{filter:saturate(.8)}
 .api-card.is-off{filter:grayscale(.85);opacity:.62}
 .api-card.is-off:hover{transform:none;box-shadow:none}
 
@@ -106,6 +123,9 @@ html{-webkit-text-size-adjust:100%;scroll-padding-top:84px}
 .api-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   font:700 17px/1.3 var(--font-display);letter-spacing:-.015em;color:#fff}
 .api-chip{flex:none;font:800 9px/1 var(--font-mono);letter-spacing:.09em;text-transform:uppercase;color:#fff;background:rgba(255,255,255,.24);border-radius:999px;padding:4px 8px}
+/* the status chip replaces the New chip on a flagged card, so it has to win
+   against a saturated gradient: solid amber with dark ink */
+.api-chip.is-warn{background:#ffd166;color:#3a2600}
 
 /* the documented model IDs, listed under the provider name (no chips, no counts) */
 .api-models{list-style:none;display:flex;flex-wrap:wrap;gap:2px 0;margin:0;padding:0;min-width:0}
@@ -116,6 +136,10 @@ html{-webkit-text-size-adjust:100%;scroll-padding-top:84px}
 
 .api-desc{margin:0;font:500 12.5px/1.55 var(--font-body);color:rgba(255,255,255,.92);
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+/* why a flagged row is not live — a quiet inset strip on the tile */
+.api-note{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  padding:8px 11px;border-radius:11px;background:rgba(6,10,20,.34);border:1px solid rgba(255,255,255,.3);
+  font:600 11.5px/1.5 var(--font-body);color:#fff}
 .api-meta{margin-top:auto;font:700 9.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.82)}
 
 .api-actions{display:flex;gap:10px;align-items:center}
@@ -147,6 +171,7 @@ body.modal-open{overflow:hidden}
   background:linear-gradient(180deg,rgba(77,201,255,.22) 0%,rgba(77,201,255,.07) 46%,var(--surface) 100%)}
 :root[data-theme="light"] .prov-hero{background:linear-gradient(180deg,rgba(22,104,227,.19) 0%,rgba(22,104,227,.06) 46%,var(--surface) 100%)}
 .prov-card.is-off .prov-hero{background:linear-gradient(180deg,rgba(126,140,166,.22) 0%,rgba(126,140,166,.06) 46%,var(--surface) 100%)}
+.prov-card.is-flagged .prov-hero{background:linear-gradient(180deg,rgba(199,124,4,.2) 0%,rgba(199,124,4,.07) 46%,var(--surface) 100%)}
 .prov-hero-logo{display:grid;place-items:center;width:104px;height:104px;padding:14px;border-radius:30px;
   background:var(--logo-tile);border:1px solid var(--line);box-shadow:0 18px 40px rgba(10,16,30,.18)}
 .prov-hero-logo img{display:block;width:100%;height:100%;object-fit:contain}
@@ -154,14 +179,18 @@ body.modal-open{overflow:hidden}
 /* only this column scrolls, so the hero and its close control stay put */
 .prov-body{min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
   padding:24px 26px 26px;padding-bottom:max(26px,env(safe-area-inset-bottom));
-  scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
-.prov-body::-webkit-scrollbar{width:8px}
-.prov-body::-webkit-scrollbar-track{background:transparent}
-.prov-body::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:999px}
+  scrollbar-width:none;-ms-overflow-style:none}
+/* no visible scrollbar in the dialog: it would be the one piece of chrome
+   that made a compact sheet feel cramped. Scrolling still works. */
+.prov-body::-webkit-scrollbar{width:0;height:0}
 .prov-card h2{font:800 24px/1.2 var(--font-display);letter-spacing:-.025em;color:var(--ink);margin:0 0 10px;text-align:left}
 .prov-blurb{font:500 13.5px/1.65 var(--font-body);color:var(--muted);margin:0 0 12px;text-align:left}
 .prov-kind{font:600 11px var(--font-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--accent);margin:0 0 18px}
 .prov-kind.is-off{color:var(--red)}
+.prov-kind.is-flagged{color:var(--amber)}
+/* the plain-language reason a row is restricted / has a login issue */
+.prov-notice{margin:0 0 18px;padding:11px 13px;border-radius:13px;border:1px solid var(--amber-line);background:var(--amber-soft);color:var(--amber);font:600 12.5px/1.5 var(--font-body)}
+.prov-notice[hidden]{display:none}
 .prov-credit{margin:0 0 18px;padding:12px 14px;border-radius:14px;border:1px solid var(--green-line);background:var(--green-soft);color:var(--green);font:600 12.5px/1.5 var(--font-body)}
 .prov-credit[hidden]{display:none}
 .prov-block{margin:0 0 18px}
@@ -216,16 +245,29 @@ body.modal-open{overflow:hidden}
 @media (max-width:820px){
   .page-list .topbar-cta{display:inline-flex;margin-left:auto}
 }
-/* details modal becomes a bottom sheet once the dialog no longer fits */
+/* details modal becomes a bottom sheet once the dialog no longer fits;
+   everything tightens so a typical provider fits without scrolling */
 @media (max-width:640px){
   .prov-veil{padding:0;place-items:end stretch}
-  .prov-card{width:100%;max-height:92dvh;border-radius:24px 24px 0 0;border-bottom:0}
-  .prov-hero{padding:30px 20px 24px}
-  .prov-hero-logo{width:88px;height:88px;padding:12px;border-radius:26px}
-  .prov-body{padding:20px 18px 28px;padding-bottom:max(28px,env(safe-area-inset-bottom))}
-  .prov-card h2{font-size:20px}
-  .prov-facts div{flex-direction:column;gap:2px}
-  .prov-facts dt{flex-basis:auto}
+  .prov-card{width:100%;max-height:94dvh;border-radius:22px 22px 0 0;border-bottom:0}
+  .prov-hero{padding:20px 18px 14px}
+  .prov-hero-logo{width:72px;height:72px;padding:11px;border-radius:22px}
+  .prov-body{padding:16px 16px 22px;padding-bottom:max(22px,env(safe-area-inset-bottom))}
+  .prov-card h2{font-size:19px;margin-bottom:7px}
+  /* the blurb is a summary, not the guide: two lines are enough on a phone */
+  .prov-blurb{font-size:12.5px;line-height:1.55;margin-bottom:9px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .prov-kind{margin-bottom:13px}
+  .prov-notice,.prov-credit{margin-bottom:13px;padding:10px 12px}
+  .prov-block{margin-bottom:13px}
+  .prov-block-title{margin-bottom:7px}
+  .prov-models{gap:5px 6px}
+  .prov-models code{padding:3px 9px}
+  .prov-facts div{gap:10px;padding:6px 0}
+  .prov-facts dt{flex:0 0 88px}
+  .prov-facts dd{overflow-wrap:anywhere}
+  .prov-act{margin-top:16px}
+  .prov-signin,.prov-offline{min-height:50px}
 }
 /* compact band: one crisp row of tiles, no stagger, fading off the right edge */
 @media (max-width:640px){
@@ -245,13 +287,8 @@ body.modal-open{overflow:hidden}
   .hero .view-title{margin-bottom:12px}
   .hero .view-lede{font-size:14.5px}
 
-  .stat-line{--stat-gap:20px;grid-template-columns:repeat(2,max-content);row-gap:10px}
+  .stat-line{--stat-gap:18px;row-gap:9px}
   .stat-line li{font-size:12.5px}
-  .stat-line li:nth-child(3n+1){padding-left:var(--stat-gap)}
-  .stat-line li:nth-child(odd){padding-left:0}
-  .stat-line li:nth-child(3n+2),.stat-line li:nth-child(3n){border-left:0}
-  .stat-line li:nth-child(even){border-left:1px solid var(--line)}
-  .stat-line li:nth-child(2){padding-right:0}
 
   .api-grid{grid-template-columns:1fr;gap:12px}
   .api-card{min-height:0;padding:18px;border-radius:20px}
@@ -261,17 +298,42 @@ body.modal-open{overflow:hidden}
   .hero{--tile:52px;--tile-gap:8px;padding:22px 0 16px}
   .hero .view-title{font-size:29px}
   .hero .view-lede{font-size:14px}
-  .stat-line{--stat-gap:15px}
-  .stat-line li{font-size:12px}
+  .stat-line{--stat-gap:13px}
+  .stat-line li{font-size:11.5px}
+  .stat-line b{font-size:14px}
   .api-card{padding:16px}
+}
+/* short viewports (small phones held upright, any landscape phone): spend the
+   scarce height on content instead of padding, so the common providers still
+   fit whole and the action stays above the fold */
+@media (max-height:700px){
+  .prov-card{max-height:min(94dvh,760px)}
+  .prov-hero{padding:16px 18px 12px}
+  .prov-hero-logo{width:60px;height:60px;padding:8px;border-radius:19px}
+  .prov-body{padding:14px 18px 16px;padding-bottom:max(16px,env(safe-area-inset-bottom))}
+  .prov-card h2{font-size:18px;margin-bottom:6px}
+  .prov-blurb{font-size:12.5px;line-height:1.5;margin-bottom:8px;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .prov-kind{margin-bottom:11px}
+  .prov-notice,.prov-credit{margin-bottom:11px;padding:9px 11px}
+  .prov-block{margin-bottom:11px}
+  .prov-block-title{margin-bottom:6px}
+  .prov-models{gap:5px 6px}
+  .prov-models code{padding:3px 9px}
+  .prov-facts div{gap:10px;padding:6px 0}
+  .prov-facts dt{flex:0 0 84px}
+  /* the kind line above already states the route and the kind */
+  .prov-facts div.is-redundant{display:none}
+  .prov-act{margin-top:12px}
+  .prov-signin,.prov-offline{min-height:46px}
 }
 /* short, landscape phones: keep the dialog usable instead of a squashed sheet */
 @media (max-height:560px) and (orientation:landscape){
   .prov-veil{place-items:center stretch;padding:10px calc(10px + env(safe-area-inset-right)) 10px calc(10px + env(safe-area-inset-left))}
   .prov-card{max-height:100%;width:min(760px,100%);border-radius:22px;border-bottom:1px solid var(--line)}
-  .prov-hero{padding:16px 22px 12px}
-  .prov-hero-logo{width:52px;height:52px;padding:7px;border-radius:16px}
-  .prov-body{padding:16px 20px 18px;padding-bottom:max(18px,env(safe-area-inset-bottom))}
+  .prov-hero{padding:14px 20px 10px}
+  .prov-hero-logo{width:48px;height:48px;padding:6px;border-radius:14px}
+  .prov-body{padding:14px 20px 16px;padding-bottom:max(16px,env(safe-area-inset-bottom))}
 }
 @media (prefers-reduced-motion:reduce){
   .api-card,.api-card-btn,.api-btn,.prov-signin,.prov-close{transition:none}
