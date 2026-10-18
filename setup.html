@@ -73,7 +73,7 @@
         <p class="cta-row"><a class="button button-primary" href="index.html">Open the provider list <i data-lucide="arrow-right"></i></a></p>
       </section>
 
-      <div class="notice notice-warn"><i data-lucide="triangle-alert"></i><span><strong>Provider notice:</strong> GoRouter, TaBi Token AI, Inference AI, Odyssey and ArtBloom are no longer accessible, so their sign-up links are disabled and their guides are closed. TokenLayer is quota-restricted, and BearLab AI and DirectRouter currently have sign-in problems - those three keep their links but are flagged in the provider list. Every live provider there is an alternative.</span></div>
+      <div class="notice notice-warn"><i data-lucide="triangle-alert"></i><span><strong>Provider notice:</strong> GoRouter, TaBi Token AI, Inference AI, Odyssey, ArtBloom, BearLab AI, DirectRouter and TokenLayer are not usable right now, so their sign-up links are disabled and their guides are closed. Every live provider there is an alternative.</span></div>
 
       <section class="doc-section section-anchor" id="gateway" data-searchable>
         <div class="section-kicker">01 / Foundations</div>
@@ -180,9 +180,7 @@ $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
           <div class="tab-panel" data-panel="onomeo"><p>Use the endpoint and model values documented by Onomeo. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
  $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
  $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
-          <div class="tab-panel" data-panel="bearlab"><p>Use the endpoint and model values documented by Bearlab AI. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
- $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
- $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
+          <div class="tab-panel" data-panel="bearlab"><div class="notice notice-warn"><i data-lucide="triangle-alert"></i><span>BearLab AI sign-in is failing (invalid credentials / possible account ban). This setup guide is disabled - use any live provider tab instead.</span></div></div>
           <div class="tab-panel" data-panel="ireze"><p>Use the endpoint and model values documented by Ireze. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
  $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
  $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
@@ -204,9 +202,7 @@ $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
           <div class="tab-panel" data-panel="tokenreply"><p>Use the endpoint and model values documented by tokenreply. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
  $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
  $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
-          <div class="tab-panel" data-panel="directrouter"><p>Use the endpoint and model values documented by DirectRouter. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
- $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
- $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
+          <div class="tab-panel" data-panel="directrouter"><div class="notice notice-warn"><i data-lucide="triangle-alert"></i><span>DirectRouter sign-in returns "external account not found". This setup guide is disabled - use any live provider tab instead.</span></div></div>
           <div class="tab-panel" data-panel="vsllm"><p>Use the endpoint and model values documented by Vsllm. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
  $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
  $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>

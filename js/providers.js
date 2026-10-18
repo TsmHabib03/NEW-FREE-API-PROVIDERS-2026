@@ -43,8 +43,8 @@
      guide         the provider's own setup guide URL, or null.
 
    Verified 2026-10-18. URLs and offer wording are untouched from the previous data file; the only
-   changes are the status/statusNote fields on five rows (Odyssey + ArtBloom -> off, BearLab AI +
-   DirectRouter -> auth, TokenLayer -> restricted). */
+   changes are the status/statusNote fields on five rows (Odyssey, ArtBloom, BearLab AI, DirectRouter
+   and TokenLayer all -> off). */
 window.PROVIDERS = [
   { id: "agentrouter", name: "AgentRouter", url: "https://agentrouter.org/register?aff=1TUW", logo: "assets/gorouterlogo.png",
     status: "live", flags: ["newapi"], addedAt: "2026-09-11", rank: null,
@@ -132,8 +132,8 @@ window.PROVIDERS = [
     blurb: "Free models after a quick sign-up. Create an account, then use the endpoint and model shown in your dashboard.",
     offer: "Free models - sign up for instant access", guide: null },
   { id: "bearlab", name: "Bearlab AI", url: "https://bearlab.ai/sign-up?aff=nIHI", logo: "assets/bearlab-logo.png",
-    status: "auth", flags: [], addedAt: "2026-10-10", rank: null,
-    statusNote: "Sign-in is failing (invalid credentials / possible account ban).",
+    status: "off", flags: [], addedAt: "2026-10-10", rank: null,
+    statusNote: "Sign-in is failing (invalid credentials / possible account ban) - link disabled.",
     kind: "gateway", protocol: [], freeShape: "invite-bonus",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,
@@ -168,8 +168,8 @@ window.PROVIDERS = [
     blurb: "OpenAI-compatible endpoints behind one relay key. Register, grab your token, then set the base URL in Claude Code or Codex CLI.",
     offer: "Free models - register in under a minute", guide: null },
   { id: "directrouter", name: "DirectRouter", url: "https://directrouter.pages.dev/?ref=REF_82fa33b7", logo: "assets/directrouter-logo.png",
-    status: "auth", flags: [], addedAt: "2026-10-02", rank: null,
-    statusNote: "Discord sign-in returns \"external account not found\" - the provider is up.",
+    status: "off", flags: [], addedAt: "2026-10-02", rank: null,
+    statusNote: "Discord sign-in returns \"external account not found\" - link disabled.",
     kind: "gateway", protocol: [], freeShape: "free-tier",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,
@@ -317,8 +317,8 @@ window.PROVIDERS = [
     blurb: "Free models with quick account setup. Register, then copy the endpoint, API key, and model ID from the dashboard.",
     offer: "Free models - full setup guide included", guide: "https://tokenforge-ai-two.vercel.app/" },
   { id: "tokenlayer", name: "TokenLayer", url: "https://tokenlayer.net/signup?ref=VMEETFKB", logo: "assets/tokenlayer-logo.svg",
-    status: "restricted", flags: [], addedAt: "2026-10-12", rank: null,
-    statusNote: "Free quota exceeded - the project is blocked by the provider.",
+    status: "off", flags: [], addedAt: "2026-10-12", rank: null,
+    statusNote: "Free quota exceeded - the project is blocked by the provider. Link disabled.",
     kind: "gateway", protocol: ["openai"], freeShape: "unknown",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: ["gpt-5.4", "claude-sonnet-4-6"], modelsNote: null,
