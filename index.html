@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Free AI API providers for Claude Code &amp; Codex | API Hub 2026</title>
-  <meta name="description" content="A directory of 42 free and free-credit AI API providers for Claude Code and Codex CLI — documented models, client routes and setup guides, one tap away.">
+  <meta name="description" content="A directory of 48 free and free-credit AI API providers for Claude Code and Codex CLI — documented models, client routes and setup guides, one tap away.">
   <meta property="og:title" content="Free AI API providers for Claude Code &amp; Codex">
-  <meta property="og:description" content="50 providers in one place: 42 live and 8 offline. Tap any card for its models, client route and free-credit note.">
+  <meta property="og:description" content="56 providers in one place: 48 live and 8 offline. Tap any card for its models, client route and free-credit note.">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#eef1f7">
   <link rel="icon" type="image/png" href="assets/gorouterlogo.png">
@@ -57,7 +57,7 @@
 
       <footer class="footer">
         <div><strong>API Hub</strong><span>Practical notes for compatible coding-agent setups.</span></div>
-        <div><span>Provider data verified 2026-10-18</span><a href="setup.html">Setup guides <i data-lucide="arrow-right"></i></a></div>
+        <div><span>Provider data verified 2026-10-20</span><a href="setup.html">Setup guides <i data-lucide="arrow-right"></i></a></div>
       </footer>
     </section>
   </main>
@@ -79,7 +79,42 @@
           <div class="prov-models"></div>
         </div>
         <dl class="prov-facts"></dl>
+        <div class="prov-guide" data-prov-guide hidden>
+          <button type="button" class="prov-guide-btn" data-guide-open>
+            <i data-lucide="list-checks"></i><span>Open the 7-step claim guide</span>
+          </button>
+        </div>
         <div class="prov-act"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="prov-veil guide-veil" data-guide-modal hidden role="dialog" aria-modal="true" aria-labelledby="guide-title">
+    <div class="prov-card guide-card" data-guide-card>
+      <button type="button" class="prov-close" data-guide-close aria-label="Close the claim guide"><i data-lucide="x"></i></button>
+      <div class="prov-hero">
+        <span class="prov-hero-logo"><img src="assets/museai-logo.png" alt=""></span>
+      </div>
+      <div class="prov-body guide-body">
+        <div class="guide-scroll">
+          <p class="guide-kicker">MuseAI onboarding</p>
+          <h2 id="guide-title" data-guide-title></h2>
+          <p class="guide-intro" data-guide-intro></p>
+          <p class="guide-window" data-guide-window></p>
+          <ol class="guide-steps" data-guide-steps></ol>
+        </div>
+        <div class="guide-foot">
+          <div class="guide-code">
+            <span class="guide-code-label">Invitation code</span>
+            <button type="button" class="guide-code-btn" data-copy-code="M0J1WF">
+              <code>M0J1WF</code><span data-copy-label>Copy</span>
+            </button>
+          </div>
+          <p class="guide-copied" data-copy-status role="status" aria-live="polite"></p>
+          <div class="guide-act">
+            <a class="prov-signin" data-guide-link href="https://muse.ai/join" target="_blank" rel="noopener noreferrer">Open the MuseAI join page <i data-lucide="arrow-up-right"></i></a>
+          </div>
+        </div>
       </div>
     </div>
   </div>

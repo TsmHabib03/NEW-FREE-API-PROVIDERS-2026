@@ -87,6 +87,7 @@ const modalModelCap = () => {
     act: () => $('.prov-act', $('[data-prov-modal]'))
   };
   let lastFocus = null;
+  let currentId = null;
 
   /* the modal shows the provider's own bundled logo; missing files fall back
      to the shared brand mark (guarded so it can never loop) */
@@ -104,6 +105,7 @@ const modalModelCap = () => {
   }
 
   function fillProvider(p) {
+    currentId = p.id;
     modal.logo.src = A.logo(p);
     modal.logo.alt = '';
     modal.card.classList.toggle('is-off', A.isOff(p));
@@ -152,6 +154,9 @@ const modalModelCap = () => {
     modal.act().innerHTML = A.isOff(p)
       ? '<span class="prov-offline" aria-disabled="true"><i data-lucide="circle-off"></i>Unavailable — this provider is offline</span>'
       : `<a class="prov-signin" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">Get API <i data-lucide="arrow-up-right"></i></a>`;
+
+    const guideBox = $('[data-prov-guide]');
+    if (guideBox) guideBox.hidden = !p.onboarding;
     refreshIcons();
   }
 
@@ -166,15 +171,98 @@ const modalModelCap = () => {
   }
 
   function closeModal() {
+    if (guide.veil && !guide.veil.hidden) closeGuide();
     if (!modal.veil || modal.veil.hidden) return;
     modal.veil.hidden = true;
     document.body.classList.remove('modal-open');
     if (lastFocus instanceof HTMLElement) { lastFocus.focus(); lastFocus = null; }
   }
 
+  /* ---------------- provider onboarding guide ----------------
+     A second dialog stacked over the details modal. Its content comes from
+     p.onboarding in providers.js, so no step or link is duplicated in HTML. */
+  const guide = {
+    veil: $('[data-guide-modal]'),
+    title: $('[data-guide-title]'),
+    intro: $('[data-guide-intro]'),
+    window: $('[data-guide-window]'),
+    steps: $('[data-guide-steps]'),
+    codeBtn: $('[data-copy-code]'),
+    codeLabel: $('[data-copy-label]'),
+    status: $('[data-copy-status]'),
+    link: $('[data-guide-link]')
+  };
+  let guideFocus = null;
+  let copyTimer = null;
+
+  function fillGuide(p) {
+    const on = p.onboarding;
+    guide.title.textContent = on.title;
+    guide.intro.textContent = on.intro;
+    guide.window.textContent = on.window;
+    guide.steps.innerHTML = on.steps.map(step => `<li><span>${esc(step.text)}</span>${
+      step.link ? ` <a href="${esc(step.link.href)}" target="_blank" rel="noopener noreferrer">${esc(step.link.label)}</a>` : ''
+    }</li>`).join('');
+    guide.codeBtn.dataset.copyCode = on.code;
+    $('code', guide.codeBtn).textContent = on.code;
+    guide.codeLabel.textContent = 'Copy';
+    guide.status.textContent = '';
+    guide.link.href = on.link.href;
+    guide.link.innerHTML = `Open ${esc(on.link.label)} <i data-lucide="arrow-up-right"></i>`;
+  }
+
+  function openGuide() {
+    const p = A.providers.find(x => x.id === currentId);
+    if (!p || !p.onboarding || !guide.veil) return;
+    fillGuide(p);
+    guideFocus = document.activeElement;
+    guide.veil.hidden = false;
+    refreshIcons();
+    $('[data-guide-close]', guide.veil)?.focus();
+  }
+
+  function closeGuide() {
+    if (!guide.veil || guide.veil.hidden) return;
+    guide.veil.hidden = true;
+    if (guideFocus instanceof HTMLElement && guideFocus.offsetParent !== null) guideFocus.focus();
+    guideFocus = null;
+  }
+
+  function copyGuideCode(button) {
+    const text = button.dataset.copyCode || '';
+    const fallback = () => {
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.setAttribute('readonly', '');
+      area.style.cssText = 'position:fixed;top:0;left:-9999px;opacity:0';
+      document.body.appendChild(area);
+      area.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch {}
+      area.remove();
+      return ok;
+    };
+    const settle = ok => {
+      guide.codeLabel.textContent = ok ? 'Copied' : 'Select manually';
+      guide.status.textContent = ok
+        ? 'Invitation code copied to the clipboard.'
+        : 'Copy failed — select the code and copy it manually.';
+      clearTimeout(copyTimer);
+      copyTimer = setTimeout(() => {
+        guide.codeLabel.textContent = 'Copy';
+        guide.status.textContent = '';
+      }, 2400);
+    };
+    if (!navigator.clipboard?.writeText) { settle(fallback()); return; }
+    navigator.clipboard.writeText(text).then(() => settle(true), () => settle(fallback()));
+  }
+
   function trapFocus(event) {
-    if (!modal.veil || modal.veil.hidden || event.key !== 'Tab') return;
-    const focusables = $$('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])', modal.veil)
+    if (event.key !== 'Tab') return;
+    const veil = guide.veil && !guide.veil.hidden ? guide.veil
+      : modal.veil && !modal.veil.hidden ? modal.veil : null;
+    if (!veil) return;
+    const focusables = $$('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])', veil)
       .filter(el => el.offsetParent !== null);
     if (!focusables.length) return;
     const first = focusables[0];
@@ -262,13 +350,22 @@ const modalModelCap = () => {
       const opener = event.target.closest('[data-prov-open]');
       if (opener) { event.preventDefault(); openProvider(opener.dataset.provOpen); return; }
 
+      if (event.target.closest('[data-guide-open]')) { openGuide(); return; }
+      if (event.target.closest('[data-guide-close]')) { closeGuide(); return; }
+      const copyBtn = event.target.closest('[data-copy-code]');
+      if (copyBtn) { copyGuideCode(copyBtn); return; }
+      if (event.target === guide.veil) { closeGuide(); return; }
+
       if (event.target.closest('[data-prov-close]')) { closeModal(); return; }
       if (event.target === modal.veil) { closeModal(); return; }
     });
   }
 
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && modal.veil && !modal.veil.hidden) { closeModal(); return; }
+    if (event.key === 'Escape') {
+      if (guide.veil && !guide.veil.hidden) { closeGuide(); return; }
+      if (modal.veil && !modal.veil.hidden) { closeModal(); return; }
+    }
     trapFocus(event);
   });
 

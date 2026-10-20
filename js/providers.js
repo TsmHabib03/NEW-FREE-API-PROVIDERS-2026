@@ -42,10 +42,69 @@
      blurb/offer   verbatim provider-facing copy, shown on row expand, not in the row.
      guide         the provider's own setup guide URL, or null.
 
-   Verified 2026-10-18. URLs and offer wording are untouched from the previous data file; the only
-   changes are the status/statusNote fields on five rows (Odyssey, ArtBloom, BearLab AI, DirectRouter
-   and TokenLayer all -> off). */
+   Verified 2026-10-20. Round 10 appends six invite/referral entries (Yzmao, Qianxing, HCNsec,
+   Foundable, ZCode, MuseAI); MuseAI also carries the seven-step onboarding shown in its modal.
+   Earlier rounds only flipped status/statusNote on rows that went dark. */
 window.PROVIDERS = [
+  /* Round 10 additions — invite links supplied 2026-10-20. */
+  { id: "yzmao", name: "Yzmao", url: "https://api.yzmao.cn/sign-up?aff=3aO8", logo: "assets/yzmao-logo.webp",
+    status: "live", flags: [], addedAt: "2026-10-20", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Invite sign-up for a free API gateway. Create an account, then take the base URL, key and model ID from the dashboard before your first request.",
+    offer: "Invite sign-up - check the dashboard for current free-tier terms", guide: null },
+  { id: "qianxing", name: "Qianxing", url: "https://fast.qianxing.pro/sign-up?aff=5cFdcwpR", logo: "assets/qianxing-logo.svg",
+    status: "live", flags: [], addedAt: "2026-10-20", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Invite sign-up for a fast API gateway. Register, then copy the base URL, key and model shown in the dashboard.",
+    offer: "Invite sign-up - check the dashboard for current terms", guide: null },
+  { id: "hcnsec", name: "HCNsec", url: "https://api.hcnsec.cn/sign-up?aff=4sOL", logo: "assets/hcnsec-logo.png",
+    status: "live", flags: [], addedAt: "2026-10-20", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Invite sign-up for an API gateway. Register, then confirm the base URL, key and model in the dashboard before your first request.",
+    offer: "Invite sign-up - check the dashboard for current terms", guide: null },
+  { id: "foundable", name: "Foundable", url: "https://foundable.com/r/7R77XQ2", logo: "assets/foundable-logo.ico",
+    status: "live", flags: [], addedAt: "2026-10-20", rank: null,
+    kind: "unknown", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Referral sign-up. Create an account, then check the dashboard for the current offer and setup details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
+  { id: "zcode", name: "ZCode", url: "https://zcode.z.ai/invite/H8LA24X9", logo: "assets/zcode-logo.ico",
+    status: "live", flags: [], addedAt: "2026-10-20", rank: null,
+    kind: "unknown", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Invite sign-up for ZCode. Register through the link, then follow the onboarding steps in the dashboard.",
+    offer: "Invite sign-up - check the dashboard for current terms", guide: null },
+  { id: "museai", name: "MuseAI", url: "https://muse.ai/join", logo: "assets/museai-logo.png",
+    status: "live", flags: [], addedAt: "2026-10-20", rank: null,
+    kind: "unknown", protocol: [], freeShape: "invite-bonus",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Invite-based token offer. Follow the seven-step onboarding (USA VPN, Incognito window, email sign-up), then redeem the invitation code within 48 hours.",
+    offer: "1 billion tokens advertised - invite code M0J1WF, 48-hour redemption window", guide: null,
+    onboarding: {
+      title: "Claim the MuseAI invite",
+      intro: "Seven steps open the account and claim the advertised 1 billion tokens.",
+      code: "M0J1WF",
+      window: "Redeem the invitation within 48 hours of starting - finish all seven steps in one sitting.",
+      link: { href: "https://muse.ai/join", label: "muse.ai/join" },
+      steps: [
+        { text: "Install the free VPN extension in Chrome.", link: { href: "https://chromewebstore.google.com/detail/majdfhpaihoncoakbjgbdhglocklcgno?utm_source=item-share-cb", label: "Chrome Web Store" } },
+        { text: "Connect the extension to a USA server." },
+        { text: "Open a new Incognito window." },
+        { text: "Visit the MuseAI join page.", link: { href: "https://muse.ai/join", label: "muse.ai/join" } },
+        { text: "Register with an email address." },
+        { text: "Complete identity verification through Facebook or Instagram if the site requires it." },
+        { text: "Enter the invitation code M0J1WF to claim the advertised 1 billion tokens." }
+      ]
+    } },
   { id: "agentrouter", name: "AgentRouter", url: "https://agentrouter.org/register?aff=1TUW", logo: "assets/gorouterlogo.png",
     status: "live", flags: ["newapi"], addedAt: "2026-09-11", rank: null,
     kind: "newapi-gateway", protocol: ["anthropic", "openai"], freeShape: "free-tier",

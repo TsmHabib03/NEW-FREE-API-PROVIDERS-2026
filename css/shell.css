@@ -215,6 +215,50 @@ body.modal-open{overflow:hidden}
 .prov-offline{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;padding:8px 18px;
   color:var(--red);font:600 13px var(--font-body);border:1px dashed var(--line-strong);border-radius:999px}
 
+/* ---------- provider onboarding guide (stacked over the details modal) ---------- */
+.prov-guide{margin:16px 0 0}
+.prov-guide[hidden]{display:none}
+.prov-guide-btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:50px;padding:10px 18px;
+  border:1px solid var(--accent-line);border-radius:14px;background:var(--accent-soft);color:var(--accent);
+  font:800 13px var(--font-body);cursor:pointer;transition:border-color .15s ease,background .15s ease}
+.prov-guide-btn:hover{border-color:var(--accent)}
+.prov-guide-btn svg{width:17px;height:17px}
+
+.guide-veil{z-index:90}
+.guide-card{width:min(560px,100%)}
+.guide-card .prov-hero{padding:30px 24px 24px}
+.guide-card .prov-hero-logo{width:88px;height:88px;padding:12px;border-radius:26px}
+/* the steps scroll, the code + action stay put so the claim never hides below the fold */
+.guide-body{display:flex;flex-direction:column;overflow:hidden}
+.guide-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;-ms-overflow-style:none}
+.guide-scroll::-webkit-scrollbar{width:0;height:0}
+.guide-foot{position:relative;flex:0 0 auto;margin-top:2px;padding-top:12px;border-top:1px solid var(--line)}
+/* soft cue that the step list continues behind the pinned code + action */
+.guide-foot::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:26px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,0),var(--surface))}
+.guide-kicker{margin:0 0 6px;font:700 10px var(--font-mono);text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
+.guide-intro{margin:0 0 12px;font:500 13.5px/1.65 var(--font-body);color:var(--muted);text-align:left}
+.guide-window{margin:0 0 16px;padding:11px 13px;border-radius:13px;border:1px solid var(--amber-line);
+  background:var(--amber-soft);color:var(--amber);font:600 12.5px/1.5 var(--font-body)}
+.guide-steps{list-style:none;counter-reset:step;display:grid;gap:8px;margin:0 0 16px;padding:0}
+.guide-steps li{counter-increment:step;position:relative;padding:11px 13px 11px 42px;border:1px solid var(--line);
+  border-radius:14px;background:var(--surface-2);font:500 12.5px/1.55 var(--font-body);color:var(--ink)}
+.guide-steps li::before{content:counter(step);position:absolute;top:11px;left:12px;display:grid;place-items:center;
+  width:20px;height:20px;border-radius:999px;background:var(--accent-soft);border:1px solid var(--accent-line);
+  color:var(--accent);font:700 10px var(--font-mono)}
+.guide-steps a{color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.guide-code{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin:0 0 6px;
+  padding:12px 14px;border:1px dashed var(--accent-line);border-radius:16px;background:var(--surface-2)}
+.guide-code-label{font:700 10px var(--font-mono);text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.guide-code-btn{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:8px 16px;border:1px solid var(--line);
+  border-radius:12px;background:var(--surface);color:var(--ink);cursor:pointer}
+.guide-code-btn:hover{border-color:var(--accent)}
+.guide-code-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.guide-code-btn code{font:700 15px var(--font-mono);letter-spacing:.16em}
+.guide-code-btn span{font:700 11px var(--font-body);color:var(--accent);text-transform:uppercase;letter-spacing:.06em}
+.guide-copied{margin:0 0 10px;min-height:16px;font:600 11.5px var(--font-body);color:var(--green)}
+.guide-act{margin-top:8px}
+
 /* small translucent close control floating in the hero corner (44px target) */
 .prov-close{position:absolute;top:12px;right:12px;z-index:2;width:44px;height:44px;padding:0;border:0;border-radius:999px;
   background:rgba(9,14,26,.45);color:#fff;cursor:pointer;display:grid;place-items:center;
@@ -268,6 +312,11 @@ body.modal-open{overflow:hidden}
   .prov-facts dd{overflow-wrap:anywhere}
   .prov-act{margin-top:16px}
   .prov-signin,.prov-offline{min-height:50px}
+  .guide-intro{font-size:12.5px;line-height:1.55}
+  .guide-steps li{padding:9px 11px 9px 38px;font-size:12px}
+  .guide-steps li::before{top:9px;left:10px;width:19px;height:19px}
+  .guide-code{padding:10px 12px}
+  .guide-code-btn{min-height:44px}
 }
 /* compact band: one crisp row of tiles, no stagger, fading off the right edge */
 @media (max-width:640px){
@@ -326,6 +375,16 @@ body.modal-open{overflow:hidden}
   .prov-facts div.is-redundant{display:none}
   .prov-act{margin-top:12px}
   .prov-signin,.prov-offline{min-height:46px}
+  .prov-guide{margin-top:12px}
+  .guide-window{margin-bottom:12px;padding:9px 11px}
+  .guide-steps{gap:6px;margin-bottom:12px}
+  .guide-steps li{padding:8px 10px 8px 36px}
+  .guide-steps li::before{top:8px}
+  .guide-card .prov-hero{padding:14px 18px 10px}
+  .guide-card .prov-hero-logo{width:54px;height:54px;padding:7px;border-radius:18px}
+  .guide-foot{padding-top:9px}
+  .guide-code{padding:8px 11px}
+  .guide-copied{min-height:14px;margin-bottom:6px}
 }
 /* short, landscape phones: keep the dialog usable instead of a squashed sheet */
 @media (max-height:560px) and (orientation:landscape){
@@ -334,7 +393,15 @@ body.modal-open{overflow:hidden}
   .prov-hero{padding:14px 20px 10px}
   .prov-hero-logo{width:48px;height:48px;padding:6px;border-radius:14px}
   .prov-body{padding:14px 20px 16px;padding-bottom:max(16px,env(safe-area-inset-bottom))}
+  /* landscape phones have no height to spare: the guide drops the logo band
+     and puts the code + action beside the steps instead of under them */
+  .guide-card .prov-hero{display:none}
+  .guide-card .guide-body{flex-direction:row;gap:18px}
+  .guide-card .guide-scroll{flex:1 1 auto}
+  .guide-card .guide-foot{flex:0 0 250px;margin:0;padding:0 0 0 18px;
+    border-top:0;border-left:1px solid var(--line)}
+  .guide-card .guide-foot::before{display:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .api-card,.api-card-btn,.api-btn,.prov-signin,.prov-close{transition:none}
+  .api-card,.api-card-btn,.api-btn,.prov-signin,.prov-close,.prov-guide-btn{transition:none}
 }
