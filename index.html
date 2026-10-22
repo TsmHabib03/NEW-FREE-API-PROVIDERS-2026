@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Free AI API providers for Claude Code &amp; Codex | API Hub 2026</title>
-  <meta name="description" content="A directory of 48 free and free-credit AI API providers for Claude Code and Codex CLI — documented models, client routes and setup guides, one tap away.">
+  <meta name="description" content="A directory of 43 free and free-credit AI API providers for Claude Code and Codex CLI — documented models, client routes and setup guides, one tap away.">
   <meta property="og:title" content="Free AI API providers for Claude Code &amp; Codex">
-  <meta property="og:description" content="56 providers in one place: 48 live and 8 offline. Tap any card for its models, client route and free-credit note.">
+  <meta property="og:description" content="56 providers in one place: 43 live and 13 offline. Tap any card for its models, client route and free-credit note.">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#eef1f7">
   <link rel="icon" type="image/png" href="assets/gorouterlogo.png">
@@ -51,13 +51,31 @@
         <div class="hero-stack" data-hero-stack aria-hidden="true"></div>
       </div>
 
-      <ol class="api-grid" data-provider-grid></ol>
+      <div class="prov-tools" role="search">
+        <div class="prov-search">
+          <i data-lucide="search" aria-hidden="true"></i>
+          <input type="search" data-search-input placeholder="Search a model or provider"
+            aria-label="Search live providers by model ID or name" autocomplete="off" spellcheck="false">
+          <button type="button" class="prov-search-clear" data-search-clear aria-label="Clear search" hidden>
+            <i data-lucide="x" aria-hidden="true"></i>
+          </button>
+        </div>
+        <p class="prov-search-meta" data-search-meta role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="prov-sections" data-provider-grid></div>
+
+      <div class="prov-empty" data-search-empty hidden>
+        <p><strong>No live provider lists that model.</strong></p>
+        <p>Only published model IDs are searchable — try the provider name instead.</p>
+        <button type="button" class="prov-empty-clear" data-search-clear>Clear search</button>
+      </div>
 
       <p class="list-note">Provider pricing, credits, models, endpoints and availability change — verify current details in the provider's dashboard before configuring a client. Inside a card's details, <em>models unknown</em> means the provider does not publish its model IDs; that is not a guess.</p>
 
       <footer class="footer">
         <div><strong>API Hub</strong><span>Practical notes for compatible coding-agent setups.</span></div>
-        <div><span>Provider data verified 2026-10-20</span><a href="setup.html">Setup guides <i data-lucide="arrow-right"></i></a></div>
+        <div><span>Provider data verified 2026-10-22</span><a href="setup.html">Setup guides <i data-lucide="arrow-right"></i></a></div>
       </footer>
     </section>
   </main>

@@ -45,18 +45,43 @@
     ]
   };
 
-  /* grid order = ALL providers: live newest first, offline last */
-  const featured = [
-    ...providers.filter(p => !isOff(p))
-      .sort((a, b) => String(b.addedAt || '').localeCompare(String(a.addedAt || '')) ||
-        String(a.name).replace(/\s+AI$/i, '').localeCompare(String(b.name).replace(/\s+AI$/i, ''), undefined, { sensitivity: 'base' })),
-    ...providers.filter(isOff)
-      .sort((a, b) => String(a.name).replace(/\s+AI$/i, '').localeCompare(String(b.name).replace(/\s+AI$/i, ''), undefined, { sensitivity: 'base' }))
+  /* curated rows: the four quick-start providers, then the recommended set.
+     Ids stay here (not in providers.js) so ordering is a presentation concern
+     and every row can still be turned off by flipping status alone. */
+  const PINNED = ['foundable', 'museai', 'geaix', 'zcode'];
+  const RECOMMENDED = ['agentrouter', 'emtf', 'kktoken', 'seekai', 'justdowork',
+    'bluesminds', 'budsai', 'flushai', 'geminiapi'];
+  const byId = new Map(providers.map(p => [p.id, p]));
+  const liveSorted = providers.filter(p => !isOff(p))
+    .sort((a, b) => String(b.addedAt || '').localeCompare(String(a.addedAt || '')) ||
+      String(a.name).replace(/\s+AI$/i, '').localeCompare(String(b.name).replace(/\s+AI$/i, ''), undefined, { sensitivity: 'base' }));
+  const curated = new Set([...PINNED, ...RECOMMENDED]);
+  /* status is the only gate: a curated row that goes dark is dropped from its
+     section and reappears in the offline list at the bottom. */
+  const pick = ids => ids.map(id => byId.get(id)).filter(p => p && isLive(p));
+
+  const sections = [
+    { key: 'picks', title: 'Top picks', items: pick(PINNED) },
+    { key: 'recommended', title: 'Recommended', items: pick(RECOMMENDED) },
+    { key: 'more', title: 'More providers', items: liveSorted.filter(p => !curated.has(p.id)) },
+    { key: 'offline', title: 'Offline', items: providers.filter(isOff)
+      .sort((a, b) => String(a.name).replace(/\s+AI$/i, '').localeCompare(String(b.name).replace(/\s+AI$/i, ''), undefined, { sensitivity: 'base' })) }
   ];
+
+  /* search corpus: live providers only, name + id + documented model IDs */
+  const searchable = providers.filter(isLive).map(p => ({
+    provider: p,
+    haystack: [p.name, p.id, ...(p.models || [])].join(' ').toLowerCase()
+  }));
+  const modelIds = new Set(providers.filter(isLive).flatMap(p => p.models || []).map(m => m.toLowerCase()));
+
+  /* grid order = ALL providers: live newest first, offline last */
+  const featured = [...liveSorted, ...sections[3].items];
 
   window.Adapters = {
     providers, isNew, isOff, isRestricted, isAuth, isLive, isCaveat, statusLabel,
-    hasProto, hasFlag, kindLabel, stats, featured,
+    hasProto, hasFlag, kindLabel, stats, featured, sections, searchable,
+    modelStats: { providers: searchable.filter(s => (s.provider.models || []).length).length, ids: modelIds.size },
     esc: value => String(value == null ? '' : value)
       .replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch])),
     logo: p => p.logo || PROVIDER_FALLBACK

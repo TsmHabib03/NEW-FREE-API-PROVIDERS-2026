@@ -319,7 +319,94 @@ const modalModelCap = () => {
   function renderGrid() {
     const grid = $('[data-provider-grid]');
     if (!grid) return;
-    grid.innerHTML = A.featured.map(cardMarkup).join('');
+    let index = 0;
+    grid.innerHTML = A.sections.filter(section => section.items.length).map(section => {
+      const start = index;
+      index += section.items.length;
+      return `<section class="prov-section" data-section="${esc(section.key)}">
+        <div class="prov-section-head">
+          <h2 class="prov-section-title">${esc(section.title)}</h2>
+          <span class="prov-section-count">${section.items.length}</span>
+        </div>
+        <ol class="api-grid">${section.items.map((p, i) => cardMarkup(p, start + i)).join('')}</ol>
+      </section>`;
+    }).join('');
+    refreshIcons();
+    setSearchMeta();
+  }
+
+  /* ---------------- model search ----------------
+     Filters the cards by live provider name, id or a documented model ID.
+     Offline rows are never returned, so every result is clickable. */
+  const searchInput = $('[data-search-input]');
+  const emptyState = $('[data-search-empty]');
+  let searchTimer = 0;
+
+  const isTyping = target => !!target && (
+    /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable);
+
+  function setSearchMeta(count, query) {
+    const meta = $('[data-search-meta]');
+    if (!meta) return;
+    const m = A.modelStats;
+    meta.textContent = query
+      ? `${count} live provider${count === 1 ? '' : 's'} match "${query}".`
+      : `Search ${m.ids} model IDs from ${m.providers} live providers.`;
+  }
+
+  function applySearch(value) {
+    const grid = $('[data-provider-grid]');
+    if (!grid) return;
+    const query = String(value || '').trim();
+    const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const clear = $('[data-search-clear]');
+    if (clear) clear.hidden = !query;
+    if (!tokens.length) {
+      if (emptyState) emptyState.hidden = true;
+      renderGrid();
+      return;
+    }
+    const matches = A.searchable
+      .filter(entry => tokens.every(token => entry.haystack.includes(token)))
+      .map(entry => entry.provider);
+    grid.innerHTML = matches.length
+      ? `<section class="prov-section" data-section="results">
+          <div class="prov-section-head">
+            <h2 class="prov-section-title">Results</h2>
+            <span class="prov-section-count">${matches.length}</span>
+          </div>
+          <ol class="api-grid">${matches.map((p, i) => cardMarkup(p, i)).join('')}</ol>
+        </section>`
+      : '';
+    if (emptyState) emptyState.hidden = matches.length > 0;
+    setSearchMeta(matches.length, query);
+    refreshIcons();
+  }
+
+  function wireSearch() {
+    if (!searchInput) return;
+    searchInput.addEventListener('input', () => {
+      window.clearTimeout(searchTimer);
+      searchTimer = window.setTimeout(() => applySearch(searchInput.value), 100);
+    });
+    searchInput.addEventListener('keydown', event => {
+      if (event.key !== 'Escape') return;
+      event.stopPropagation();
+      searchInput.value = '';
+      applySearch('');
+    });
+    $$('[data-search-clear]').forEach(button => button.addEventListener('click', () => {
+      searchInput.value = '';
+      applySearch('');
+      searchInput.focus();
+    }));
+    document.addEventListener('keydown', event => {
+      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (isTyping(event.target)) return;
+      if ((modal.veil && !modal.veil.hidden) || (guide.veil && !guide.veil.hidden)) return;
+      event.preventDefault();
+      searchInput.focus();
+    });
   }
 
   /* ---------------- hero stats ---------------- */
@@ -375,5 +462,6 @@ const modalModelCap = () => {
   renderStats();
   renderHero();
   wireClicks();
+  wireSearch();
   refreshIcons();
 })();

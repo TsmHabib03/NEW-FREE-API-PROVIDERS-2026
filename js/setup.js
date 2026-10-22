@@ -89,6 +89,13 @@
   /* provider example tabs: strip is generated from the same data file as the list,
      so names, New API chips and offline states can never drift from it. */
   const byName = (a, b) => a.name.replace(/\s+AI$/i, '').localeCompare(b.name.replace(/\s+AI$/i, ''), undefined, { sensitivity: 'base' });
+  /* the offline notice is generated so the list can never drift from the data */
+  const offlineText = $('[data-offline-text]');
+  if (offlineText) {
+    const names = providers.filter(p => p.status === 'off').sort(byName).map(p => p.name);
+    const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
+    if (list) offlineText.textContent = `${list} are not usable right now, so their sign-up links are disabled and their guides are closed.`;
+  }
   /* status ranks: usable first, then flagged-but-reachable, offline last */
   const statusRank = p => p.status === 'off' ? 2 : (p.status === 'restricted' || p.status === 'auth') ? 1 : 0;
   const statusBadge = p => p.status === 'off' ? ' <span class="off-badge">Unavailable</span>'
