@@ -45,11 +45,11 @@
     ]
   };
 
-  /* curated rows: the four quick-start providers, then the recommended set.
-     Ids stay here (not in providers.js) so ordering is a presentation concern
-     and every row can still be turned off by flipping status alone. */
-  const PINNED = ['foundable', 'museai', 'geaix', 'zcode'];
-  const RECOMMENDED = ['agentrouter', 'emtf', 'kktoken', 'seekai', 'justdowork',
+  /* curated rows: the five hot picks, then the recommended set (MIA Router sits
+     next to AgentRouter). Ids stay here (not in providers.js) so ordering is a
+     presentation concern and every row can still be turned off by flipping status alone. */
+  const PINNED = ['hcnsec', 'qianxing', 'yzmao', 'qronos', 'freemodelin'];
+  const RECOMMENDED = ['agentrouter', 'miarouter', 'emtf', 'kktoken', 'seekai', 'justdowork',
     'bluesminds', 'budsai', 'flushai', 'geminiapi'];
   const byId = new Map(providers.map(p => [p.id, p]));
   const liveSorted = providers.filter(p => !isOff(p))

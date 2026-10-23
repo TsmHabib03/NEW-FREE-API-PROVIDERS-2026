@@ -42,8 +42,9 @@
      blurb/offer   verbatim provider-facing copy, shown on row expand, not in the row.
      guide         the provider's own setup guide URL, or null.
 
-   Verified 2026-10-22. Round 11 turns off five rows at the maintainer's request (Ashna AI,
-   Onomeo, Jasper AI, Orbelis AI, ZeroCat); every URL is kept so a row can be re-enabled by
+   Verified 2026-10-23. Round 12 turns off Geaix (provider down). Round 11 turned off five rows
+   at the maintainer's request (Ashna AI, Onomeo, Jasper AI, Orbelis AI, ZeroCat); every URL is
+   kept so a row can be re-enabled by
    flipping status alone. Round 10 added six invite/referral entries (Yzmao, Qianxing, HCNsec,
    Foundable, ZCode, MuseAI); MuseAI also carries the seven-step onboarding shown in its modal.
    Earlier rounds only flipped status/statusNote on rows that went dark. */
@@ -252,7 +253,8 @@ window.PROVIDERS = [
     blurb: "Cheap token quota plus free credit on register. Create an account, copy your endpoint and key, then paste them into the client.",
     offer: "Free models - 31 AI models on sign-up", guide: null },
   { id: "geaix", name: "Geaix", url: "https://geaix.com/signup?ref=habibjaudi-5618", logo: "assets/geaix-logo.svg",
-    status: "live", flags: [], addedAt: "2026-10-02", rank: null,
+    status: "off", flags: [], addedAt: "2026-10-02", rank: null,
+    statusNote: "Disabled by the maintainer - the provider is down; sign-up link is off until it is rechecked.",
     kind: "gateway", protocol: [], freeShape: "free-tier",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,
