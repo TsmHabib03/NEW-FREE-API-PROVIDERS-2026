@@ -42,7 +42,8 @@
      blurb/offer   verbatim provider-facing copy, shown on row expand, not in the row.
      guide         the provider's own setup guide URL, or null.
 
-   Verified 2026-10-23. Round 12 turns off Geaix (provider down). Round 11 turned off five rows
+   Verified 2026-10-23. Round 13 added PixRouter (owner-requested invite link). Round 12 turns
+   off Geaix (provider down). Round 11 turned off five rows
    at the maintainer's request (Ashna AI, Onomeo, Jasper AI, Orbelis AI, ZeroCat); every URL is
    kept so a row can be re-enabled by
    flipping status alone. Round 10 added six invite/referral entries (Yzmao, Qianxing, HCNsec,
@@ -448,6 +449,14 @@ window.PROVIDERS = [
     models: [], modelsNote: null,
     blurb: "Universal LLM gateway behind a simple sign-up. Create an account, then check the dashboard for the base URL, available models, and current free-tier terms.",
     offer: "Gateway sign-up - check the dashboard for current terms", guide: null },
+  /* Round 13 — PixRouter, added at the owner's request 2026-10-25. */
+  { id: "pixrouter", name: "PixRouter", url: "https://pixrouter.com/sign-up?aff=gzbr", logo: "assets/pixrouter-logo.png",
+    status: "live", flags: [], addedAt: "2026-10-25", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "AI API routing platform for developers - one place to explore and integrate AI capabilities into your projects. Register through the invite link, then take the base URL, key and model from the dashboard.",
+    offer: "Invite sign-up - check the dashboard for current terms", guide: null },
   { id: "gorouter", name: "GoRouter", url: null, logo: "assets/gorouterlogo.png",
     status: "off", flags: [], addedAt: "2026-08-22", rank: null,
     kind: "unknown", protocol: [], freeShape: "unknown",
