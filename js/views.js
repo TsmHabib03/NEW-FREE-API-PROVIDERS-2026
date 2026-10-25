@@ -272,8 +272,8 @@ const modalModelCap = () => {
   }
 
   /* ---------------- card grid ----------------
-     Every tile wears the shared brand mark (assets/gorouterlogo.png) as its
-     logo; the provider's own logo shows up inside the details modal. */
+     Each tile wears the provider's own bundled logo; providers without one
+     fall back to the shared brand mark (assets/gorouterlogo.png). */
   const CARD_LOGO = 'assets/gorouterlogo.png';
 
   /* the models a provider documents, listed under its name (never invented) */
@@ -305,7 +305,7 @@ const modalModelCap = () => {
     return `<li class="api-card ${toneFor(index)}${off ? ' is-off' : ''}${caveat ? ' is-flagged' : ''}">
       <button type="button" class="api-card-btn" data-prov-open="${esc(p.id)}"
         aria-label="${off ? 'Unavailable — details for' : 'Open details for'} ${esc(p.name)}">
-        <span class="api-logo"><img src="${CARD_LOGO}" alt="" loading="lazy"></span>
+        <span class="api-logo"><img src="${esc(A.logo(p))}" alt="" loading="lazy"></span>
         <span class="api-title">${esc(p.name)}${chip}</span>
         ${modelList(p)}
         <span class="api-desc">${esc(p.blurb || '')}</span>
