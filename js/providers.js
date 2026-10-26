@@ -42,7 +42,8 @@
      blurb/offer   verbatim provider-facing copy, shown on row expand, not in the row.
      guide         the provider's own setup guide URL, or null.
 
-   Verified 2026-10-23. Round 13 added PixRouter (owner-requested invite link). Round 12 turns
+   Verified 2026-10-26. Round 14 added HyxAPI, xKiro and Three Router (owner-requested referral links).
+   Round 13 added PixRouter (owner-requested invite link). Round 12 turns
    off Geaix (provider down). Round 11 turned off five rows
    at the maintainer's request (Ashna AI, Onomeo, Jasper AI, Orbelis AI, ZeroCat); every URL is
    kept so a row can be re-enabled by
@@ -457,6 +458,28 @@ window.PROVIDERS = [
     models: [], modelsNote: null,
     blurb: "AI API routing platform for developers - one place to explore and integrate AI capabilities into your projects. Register through the invite link, then take the base URL, key and model from the dashboard.",
     offer: "Invite sign-up - check the dashboard for current terms", guide: null },
+  /* Round 14 — owner-requested referral links added 2026-10-26. */
+  { id: "hyxapi", name: "HyxAPI", url: "https://hyxware.com/auth?mode=register&aff=ICTh", logo: "assets/hyxapi-logo.png",
+    status: "live", flags: [], addedAt: "2026-10-26", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Referral sign-up for an API gateway. Create an account, then check the dashboard for the current endpoint, key and model details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
+  { id: "xkiro", name: "xKiro", url: "https://xkiro.com/ref/GPTURPB", logo: "assets/xkiro-logo.png",
+    status: "live", flags: [], addedAt: "2026-10-26", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Referral sign-up for an AI API gateway. Register, then check the dashboard for the current endpoint, key and model details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
+  { id: "threerouter", name: "Three Router", url: "https://www.threerouter.com/register?aff=DB35EA93EF6G", logo: "assets/three-router-logo.webp",
+    status: "live", flags: [], addedAt: "2026-10-26", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Referral sign-up for an AI API router. Register, then check the dashboard for the current endpoint, key and model details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
   { id: "gorouter", name: "GoRouter", url: null, logo: "assets/gorouterlogo.png",
     status: "off", flags: [], addedAt: "2026-08-22", rank: null,
     kind: "unknown", protocol: [], freeShape: "unknown",
