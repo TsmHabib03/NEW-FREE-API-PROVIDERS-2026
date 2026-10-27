@@ -42,7 +42,8 @@
      blurb/offer   verbatim provider-facing copy, shown on row expand, not in the row.
      guide         the provider's own setup guide URL, or null.
 
-   Verified 2026-10-26. Round 14 added HyxAPI, xKiro and Three Router (owner-requested referral links).
+   Verified 2026-10-27. Round 15 added MegaNova AI and Plugsky (owner-requested referral links).
+   Round 14 added HyxAPI, xKiro and Three Router (owner-requested referral links).
    Round 13 added PixRouter (owner-requested invite link). Round 12 turns
    off Geaix (provider down). Round 11 turned off five rows
    at the maintainer's request (Ashna AI, Onomeo, Jasper AI, Orbelis AI, ZeroCat); every URL is
@@ -458,6 +459,21 @@ window.PROVIDERS = [
     models: [], modelsNote: null,
     blurb: "AI API routing platform for developers - one place to explore and integrate AI capabilities into your projects. Register through the invite link, then take the base URL, key and model from the dashboard.",
     offer: "Invite sign-up - check the dashboard for current terms", guide: null },
+  /* Round 15 — owner-requested referral links added 2026-10-27. */
+  { id: "meganova", name: "MegaNova AI", url: "https://console.meganova.ai/register?referral=fd942e7d", logo: "assets/meganova-logo.jpg",
+    status: "live", flags: [], addedAt: "2026-10-27", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "AI API provider with account registration through the MegaNova console. Create an account, then check the dashboard for the current endpoint, key and model details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
+  { id: "plugsky", name: "Plugsky", url: "https://plugsky.com/?ref=PL9B6AB317", logo: "assets/plugsky-logo.jpg",
+    status: "live", flags: [], addedAt: "2026-10-27", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "AI API provider with account registration through Plugsky. Create an account, then check the dashboard for the current endpoint, key and model details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
   /* Round 14 — owner-requested referral links added 2026-10-26. */
   { id: "hyxapi", name: "HyxAPI", url: "https://hyxware.com/auth?mode=register&aff=ICTh", logo: "assets/hyxapi-logo.png",
     status: "live", flags: [], addedAt: "2026-10-26", rank: null,
