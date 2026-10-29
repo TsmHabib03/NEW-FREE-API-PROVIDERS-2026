@@ -48,7 +48,7 @@
   /* curated rows: the top picks, then the recommended set (MIA Router sits
      next to AgentRouter). Ids stay here (not in providers.js) so ordering is a
      presentation concern and every row can still be turned off by flipping status alone. */
-  const PINNED = ['pixrouter', 'meganova', 'plugsky', 'hyxapi', 'xkiro', 'threerouter', 'foundable', 'museai', 'zcode', 'hcnsec', 'qronos', 'freemodelin'];
+  const PINNED = ['pixrouter', 'floodgate', 'fxqidian', 'kiosapi', 'hyxapi', 'xkiro', 'threerouter', 'foundable', 'museai', 'zcode', 'hcnsec', 'qronos', 'freemodelin'];
   const RECOMMENDED = ['agentrouter', 'miarouter', 'emtf', 'kktoken', 'seekai', 'justdowork',
     'bluesminds', 'budsai', 'flushai', 'geminiapi'];
   const byId = new Map(providers.map(p => [p.id, p]));
