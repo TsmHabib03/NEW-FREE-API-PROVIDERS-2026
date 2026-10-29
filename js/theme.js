@@ -10,15 +10,15 @@
     const icon = light ? 'moon' : 'sun';
     $$('[data-theme-toggle]').forEach(button => {
       const hasText = button.querySelector('[data-theme-label]');
-      button.setAttribute('aria-pressed', String(light));
+      button.setAttribute('aria-pressed', String(!light));
       button.setAttribute('aria-label', `Switch to ${label}`);
-      button.title = `${label} (T)`;
+      button.title = label;
       button.innerHTML = hasText
         ? `<i data-lucide="${icon}"></i><span data-theme-label>${label}</span>`
         : `<i data-lucide="${icon}"></i>`;
     });
     document.querySelectorAll('meta[name="theme-color"]').forEach(meta => {
-      meta.setAttribute('content', light ? '#eef1f7' : '#070b14');
+      meta.setAttribute('content', light ? '#a49aeb' : '#302951');
     });
     if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
   }
@@ -37,13 +37,6 @@
 
   [...document.querySelectorAll('[data-theme-toggle]')].forEach(button =>
     button.addEventListener('click', event => { event.preventDefault(); toggle(); }));
-
-  document.addEventListener('keydown', event => {
-    const target = event.target;
-    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable;
-    if (typing || event.metaKey || event.ctrlKey || event.altKey) return;
-    if (event.key === 't' || event.key === 'T') { event.preventDefault(); toggle(); }
-  });
 
   paint();
 })();

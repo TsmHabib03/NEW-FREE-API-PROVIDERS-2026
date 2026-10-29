@@ -5,8 +5,10 @@
   const providers = window.PROVIDERS || [];
   const PROVIDER_FALLBACK = 'assets/gorouterlogo.png';
 
-  const isNew = p => p.status === 'live' && !!p.addedAt &&
-    (Date.now() - new Date(`${p.addedAt}T00:00:00`).getTime()) / 864e5 <= 7;
+  const isNew = p => {
+    const age = (Date.now() - new Date(`${p.addedAt}T00:00:00`).getTime()) / 864e5;
+    return p.status === 'live' && !!p.addedAt && age >= 0 && age <= 7;
+  };
   const isOff = p => p.status === 'off';
   const isRestricted = p => p.status === 'restricted';
   const isAuth = p => p.status === 'auth';
@@ -78,7 +80,46 @@
   /* grid order = ALL providers: live newest first, offline last */
   const featured = [...liveSorted, ...sections[3].items];
 
+  // Optional category/authType/docsUrl fields support new provider types without
+  // guessing their capabilities. The incumbent directory contains AI providers.
+  const categories = p => Array.isArray(p.category) ? p.category : [p.category || 'AI'];
+  const authTypes = p => {
+    if (p.authType) return Array.isArray(p.authType) ? p.authType : [p.authType];
+    return /\b(?:api key|key|token)\b/i.test(p.blurb || '') && /\b(?:copy|your|one|register|get)\b/i.test(p.blurb || '')
+      ? ['api-key'] : ['unknown'];
+  };
+  const authLabel = key => ({ 'api-key': 'API Key', oauth: 'OAuth', none: 'No Auth', unknown: 'Not documented' }[key] || key);
+  const docsUrl = p => p.docsUrl || p.guide || 'setup.html';
+  // Optional measured/published metrics. Missing values stay unknown; no simulated telemetry.
+  const metricNumber = (value, max = Infinity) => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= max ? value : null;
+  const metrics = p => [
+    { key: 'requestsPerMinute', label: 'Req/Min', value: metricNumber(p.metrics?.requestsPerMinute), unit: '' },
+    { key: 'latencyMs', label: 'Latency', value: metricNumber(p.metrics?.latencyMs), unit: ' ms' },
+    { key: 'uptimePercent', label: 'Uptime %', value: metricNumber(p.metrics?.uptimePercent, 100), unit: '%' }
+  ].map(m => ({ ...m, display: m.value === null ? 'Not listed' : m.value.toLocaleString('en-US', { maximumFractionDigits: 2 }) + m.unit }));
+  const features = p => [
+    ['Authentication', authTypes(p).map(authLabel).join(', ')],
+    ['Data format', p.dataFormat || 'Not documented'],
+    ['Rate limit', p.rateLimit || (metrics(p)[0].value === null ? 'Not documented' : metrics(p)[0].display + ' requests/min')],
+    ['Client routes', (p.protocol || []).map(key => key === 'anthropic' ? 'Anthropic' : key === 'openai' ? 'OpenAI' : key).join(' + ') || 'Not documented']
+  ];
+  const filters = [
+    { key: 'category', title: 'API Category', options: [...new Set(providers.flatMap(categories))].sort().map(value => ({ value, label: value === 'AI' ? 'Artificial intelligence' : value })) },
+    { key: 'auth', title: 'Auth Type', options: ['api-key', 'oauth', 'none', 'unknown'].map(value => ({ value, label: authLabel(value) })) },
+    { key: 'status', title: 'Status', options: [{ value: 'live', label: 'Live' }, { value: 'off', label: 'Offline' }, ...(restricted ? [{ value: 'restricted', label: 'Restricted' }] : []), ...(auth ? [{ value: 'auth', label: 'Login issue' }] : [])] },
+    { key: 'protocol', title: 'Client compatibility', options: [{ value: 'anthropic', label: 'Claude Code' }, { value: 'openai', label: 'Codex / OpenAI' }] }
+  ];
+  const filterValues = (p, key) => key === 'category' ? categories(p) : key === 'auth' ? authTypes(p) : key === 'status' ? [p.status] : p.protocol || [];
+  const collections = [
+    { key: 'all', title: 'All providers', items: [...sections.flatMap(s => s.items), ...providers.filter(p => !sections.some(s => s.items.includes(p)))] },
+    { key: 'picks', title: 'Top picks', items: pick(PINNED) },
+    { key: 'newapi', title: 'New API', items: providers.filter(p => isLive(p) && hasFlag(p, 'newapi')) },
+    { key: 'recommended', title: 'Recommended', items: pick(RECOMMENDED) },
+    { key: 'offline', title: 'Disabled', items: providers.filter(p => !isLive(p)) }
+  ];
+
   window.Adapters = {
+    categories, authTypes, authLabel, docsUrl, metrics, features, filters, filterValues, collections,
     providers, isNew, isOff, isRestricted, isAuth, isLive, isCaveat, statusLabel,
     hasProto, hasFlag, kindLabel, stats, featured, sections, searchable,
     modelStats: { providers: searchable.filter(s => (s.provider.models || []).length).length, ids: modelIds.size },

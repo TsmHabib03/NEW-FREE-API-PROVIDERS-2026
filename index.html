@@ -3,113 +3,84 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Free AI API providers for Claude Code &amp; Codex | API Hub 2026</title>
-  <meta name="description" content="A directory of 42 free and free-credit AI API providers for Claude Code and Codex CLI — documented models, client routes and setup guides, one tap away.">
-  <meta property="og:title" content="Free AI API providers for Claude Code &amp; Codex">
-  <meta property="og:description" content="56 providers in one place: 42 live and 14 offline. Tap any card for its models, client route and free-credit note.">
+  <title>Free API providers | API Hub</title>
+  <meta name="description" content="Discover free and free-credit AI API providers. Filter by category, authentication and availability, explore documented models, and find your next API.">
+  <meta property="og:title" content="Find your next API | API Hub">
+  <meta property="og:description" content="Free API providers, documented models, honest availability and direct sign-up links in one place.">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#eef1f7">
+  <meta name="theme-color" content="#a49aeb">
   <link rel="icon" type="image/png" href="assets/gorouterlogo.png">
-  <script>
-    /* default to light; apply a saved dark preference before first paint (no FOUC) */
-    try { document.documentElement.dataset.theme = localStorage.getItem('aip2026.theme') === 'dark' ? 'dark' : 'light'; } catch {}
-  </script>
+  <script>try { document.documentElement.dataset.theme = localStorage.getItem('aip2026.theme') === 'dark' ? 'dark' : 'light'; } catch {}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/tailwind.css">
-  <link rel="stylesheet" href="css/theme.css">
-  <link rel="stylesheet" href="css/shell.css">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/directory.css">
 </head>
 <body class="page-list">
-  <header class="topbar">
-    <div class="topbar-inner">
-      <a class="brand" href="./" aria-label="API Hub home">
-        <span class="brand-mark"><img src="assets/gorouterlogo.png" alt=""></span>
-        API Hub
-      </a>
-      <nav class="topnav" aria-label="Sections">
-        <a data-nav="providers" href="#providers" aria-current="page">Providers</a>
-        <a href="setup.html">Setup guides</a>
-      </nav>
-      <button type="button" class="topbar-cta" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode" title="Dark mode (T)">
-        <i data-lucide="moon"></i><span data-theme-label>Dark mode</span>
-      </button>
-    </div>
-  </header>
-
-  <main class="hub-main" id="main-content">
-    <section class="view" data-view="providers" id="view-providers">
-      <div class="hero">
-        <div class="hero-copy">
-          <p class="hero-tag">— Free gateways</p>
-          <h1 class="view-title">Free API providers<span class="view-title-alt">Build without limits.</span></h1>
-          <p class="view-lede">Tap any card for its models, client route, and free-credit note — or hit <strong>Get API</strong> to jump straight to the provider's sign-up page.</p>
-          <ul class="stat-line" data-stat-chips></ul>
-        </div>
-        <div class="hero-stack" data-hero-stack aria-hidden="true"></div>
+  <a href="#main-content" class="skip-link">Skip to providers</a>
+  <div class="directory-shell" data-directory-shell>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="API Hub home"><span class="brand-mark"><img src="assets/gorouterlogo.png" alt="" width="34" height="34"></span><span>API Hub<span class="brand-caption">A little discovery. A lot of possibility.</span></span></a>
+      <div class="prov-search" role="search">
+        <i data-lucide="search"></i>
+        <input type="search" data-search-input placeholder="Search providers or models…" aria-label="Search providers or models" autocomplete="off" spellcheck="false">
+        <kbd class="search-shortcut">Ctrl K</kbd>
+        <button type="button" class="prov-search-clear icon-button" data-search-clear aria-label="Clear search" hidden><i data-lucide="x"></i></button>
       </div>
-
-      <div class="prov-tools" role="search">
-        <div class="prov-search">
-          <i data-lucide="search" aria-hidden="true"></i>
-          <input type="search" data-search-input placeholder="Search a model or provider"
-            aria-label="Search live providers by model ID or name" autocomplete="off" spellcheck="false">
-          <button type="button" class="prov-search-clear" data-search-clear aria-label="Clear search" hidden>
-            <i data-lucide="x" aria-hidden="true"></i>
-          </button>
-        </div>
-        <p class="prov-search-meta" data-search-meta role="status" aria-live="polite"></p>
-      </div>
-
-      <div class="prov-sections" data-provider-grid></div>
-
-      <div class="prov-empty" data-search-empty hidden>
-        <p><strong>No live provider lists that model.</strong></p>
-        <p>Only published model IDs are searchable — try the provider name instead.</p>
-        <button type="button" class="prov-empty-clear" data-search-clear>Clear search</button>
-      </div>
-
-      <p class="list-note">Provider pricing, credits, models, endpoints and availability change — verify current details in the provider's dashboard before configuring a client. Inside a card's details, <em>models unknown</em> means the provider does not publish its model IDs; that is not a guess.</p>
-
-      <footer class="footer">
-        <div><strong>API Hub</strong><span>Practical notes for compatible coding-agent setups.</span></div>
-        <div><span>Provider data verified 2026-10-23</span><a href="setup.html">Setup guides <i data-lucide="arrow-right"></i></a></div>
-      </footer>
+      <nav class="topnav" aria-label="Primary navigation"><a href="#main-content" aria-current="page">Discover</a><a href="setup.html">Setup guides <i data-lucide="arrow-up-right"></i></a></nav>
+      <button type="button" class="theme-toggle icon-button" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode"><i data-lucide="moon"></i></button>
+    </header>
+    <section class="directory-intro" aria-labelledby="directory-title">
+      <div><h1 id="directory-title">Find your next <span>API.</span></h1><p>Good ideas deserve great tools. Explore free APIs and start building.</p></div>
+      <div class="directory-health"><span class="status-dot"></span><span><strong data-live-count></strong> providers live<span class="health-caption">Ready for your next project</span></span></div>
     </section>
-  </main>
-
-  <div class="prov-veil" data-prov-modal hidden role="dialog" aria-modal="true" aria-labelledby="prov-name">
+    <div class="directory-layout">
+      <aside class="filter-sidebar" aria-label="Provider filters">
+        <div class="filter-heading"><h2>Filters</h2><button type="button" class="text-button" data-filters-reset>Reset</button><button type="button" class="icon-button mobile-filter-close" data-filters-close aria-label="Close filters"><i data-lucide="x"></i></button></div>
+        <div data-filter-groups></div>
+        <p class="filter-note">Choose a few. Find your fit.<br>Filters work together.</p>
+        <a class="sidebar-guide" href="setup.html"><i data-lucide="code"></i><strong>Your first API call?</strong><span>From API key to working request.</span><span class="sidebar-guide-link">Explore setup guides <i data-lucide="arrow-right"></i></span></a>
+        <button type="button" class="mobile-filter-done button-primary" data-filters-close>Show providers</button>
+      </aside>
+      <main id="main-content" class="directory-main" tabindex="-1">
+        <div class="collection-toolbar"><nav class="collection-tabs" data-collection-tabs aria-label="Provider collections"></nav><label class="sort-control"><span>Sort by</span><select data-sort-select aria-label="Sort providers"><option value="curated">Curated</option><option value="newest">Newest first</option><option value="name">Name A–Z</option></select><i data-lucide="chevron-down"></i></label></div>
+        <div class="results-toolbar"><div class="results-title"><h2 data-results-heading>All providers</h2><span class="result-count" data-results-count></span></div><p data-search-meta role="status" aria-live="polite"></p><button class="mobile-filter-toggle button-secondary" type="button" data-filters-toggle aria-expanded="false"><i data-lucide="sliders-horizontal"></i>Filters<span data-filter-count hidden></span></button></div>
+        <div class="active-filters" data-active-filters hidden></div>
+        <div data-provider-grid></div>
+        <div class="prov-empty" data-search-empty hidden><span class="empty-icon"><i data-lucide="search"></i></span><h3>No APIs found this time.</h3><p>Try another provider or model, or clear a filter to explore more.</p><button type="button" class="button-primary" data-reset-all>Clear search &amp; filters</button></div>
+        <noscript><p>Enable JavaScript to browse the provider directory. <a href="setup.html">Read the setup guides</a>.</p></noscript>
+        <p class="list-note">Offers and availability can change. Check the provider’s dashboard for current terms. “Not documented” means the provider hasn’t published that detail.</p>
+      </main>
+    </div>
+    <footer class="footer"><span><strong>API Hub</strong> Made for what you’ll build next.</span><a href="setup.html">A good API is just the beginning. <span>Get set up <i data-lucide="arrow-right"></i></span></a></footer>
+  </div>
+  <div class="filter-backdrop" data-filter-backdrop hidden></div>
+  <div class="prov-veil" data-prov-modal hidden role="dialog" aria-modal="true" aria-labelledby="prov-name" aria-describedby="prov-description">
     <div class="prov-card" data-prov-card>
-      <button type="button" class="prov-close" data-prov-close aria-label="Close details"><i data-lucide="x"></i></button>
-      <div class="prov-hero">
-        <span class="prov-hero-logo"><img src="" data-prov-modal-logo alt=""></span>
-      </div>
+      <button type="button" class="prov-close icon-button" data-prov-close aria-label="Close details"><i data-lucide="x"></i></button>
+      <div class="prov-hero"><span class="prov-hero-logo"><img src="assets/gorouterlogo.png" data-prov-modal-logo alt="" width="76" height="76"></span></div>
       <div class="prov-body">
         <h2 id="prov-name" data-prov-modal-name></h2>
-        <p class="prov-blurb" data-prov-modal-blurb></p>
         <p class="prov-kind" data-prov-modal-kind></p>
-        <p class="prov-notice" data-prov-modal-notice hidden></p>
+        <p class="prov-blurb" id="prov-description" data-prov-modal-blurb></p>
         <p class="prov-credit" data-prov-modal-credit hidden></p>
-        <div class="prov-block">
-          <h3 class="prov-block-title">Models you can reach</h3>
-          <div class="prov-models"></div>
-        </div>
-        <dl class="prov-facts"></dl>
-        <div class="prov-guide" data-prov-guide hidden>
-          <button type="button" class="prov-guide-btn" data-guide-open>
-            <i data-lucide="list-checks"></i><span>Open the 7-step claim guide</span>
-          </button>
-        </div>
+        <p class="prov-route" data-prov-modal-route></p>
+        <p class="prov-notice" data-prov-modal-notice hidden></p>
         <div class="prov-act"></div>
+        <p class="prov-route prov-docs-note" data-prov-docs-note hidden></p>
+        <details class="prov-technical">
+          <summary>Models, metrics &amp; connection details <i data-lucide="chevron-down"></i></summary>
+          <div class="prov-block"><h3>Documented models</h3><div class="prov-models"></div></div>
+          <div data-prov-modal-metrics></div>
+          <dl class="prov-facts"></dl>
+        </details>
+        <div class="prov-guide" data-prov-guide hidden><button type="button" class="prov-guide-btn" data-guide-open><i data-lucide="list-checks"></i>Open the 7-step claim guide <i data-lucide="arrow-right"></i></button></div>
       </div>
     </div>
   </div>
-
   <div class="prov-veil guide-veil" data-guide-modal hidden role="dialog" aria-modal="true" aria-labelledby="guide-title">
     <div class="prov-card guide-card" data-guide-card>
-      <button type="button" class="prov-close" data-guide-close aria-label="Close the claim guide"><i data-lucide="x"></i></button>
+      <button type="button" class="prov-close icon-button" data-guide-close aria-label="Close the claim guide"><i data-lucide="x"></i></button>
       <div class="prov-hero">
         <span class="prov-hero-logo"><img src="assets/museai-logo.png" alt=""></span>
       </div>
@@ -137,11 +108,7 @@
     </div>
   </div>
 
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="js/providers.js"></script>
-  <script src="js/adapters.js"></script>
-  <script src="js/views.js"></script>
-  <script src="js/router.js"></script>
-  <script src="js/theme.js"></script>
+
+  <script src="js/icons.js"></script><script src="js/providers.js"></script><script src="js/adapters.js"></script><script src="js/views.js"></script><script src="js/theme.js"></script>
 </body>
 </html>

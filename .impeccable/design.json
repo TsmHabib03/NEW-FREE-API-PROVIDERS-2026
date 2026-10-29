@@ -1,0 +1,521 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-29T05:53:27.682Z",
+  "title": "Design System: API Hub directory",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Directory Blue",
+        "canonical": "#4469dc",
+        "tonalRamp": [
+          "oklch(15% 0.18071 266.94)",
+          "oklch(26% 0.18071 266.94)",
+          "oklch(38% 0.18071 266.94)",
+          "oklch(49% 0.18071 266.94)",
+          "oklch(61% 0.18071 266.94)",
+          "oklch(72% 0.18071 266.94)",
+          "oklch(84% 0.18071 266.94)",
+          "oklch(95% 0.18071 266.94)"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Lavender Canvas",
+        "canonical": "#a49aeb",
+        "tonalRamp": [
+          "oklch(15% 0.11627 288.82)",
+          "oklch(26% 0.11627 288.82)",
+          "oklch(38% 0.11627 288.82)",
+          "oklch(49% 0.11627 288.82)",
+          "oklch(61% 0.11627 288.82)",
+          "oklch(72% 0.11627 288.82)",
+          "oklch(84% 0.11627 288.82)",
+          "oklch(95% 0.11627 288.82)"
+        ]
+      },
+      "modal-action": {
+        "role": "primary",
+        "displayName": "Violet Launch",
+        "canonical": "#8350e3",
+        "tonalRamp": [
+          "oklch(15% 0.2116 294.65)",
+          "oklch(26% 0.2116 294.65)",
+          "oklch(38% 0.2116 294.65)",
+          "oklch(49% 0.2116 294.65)",
+          "oklch(61% 0.2116 294.65)",
+          "oklch(72% 0.2116 294.65)",
+          "oklch(84% 0.2116 294.65)",
+          "oklch(95% 0.2116 294.65)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(26% 0 0)",
+          "oklch(38% 0 0)",
+          "oklch(49% 0 0)",
+          "oklch(61% 0 0)",
+          "oklch(72% 0 0)",
+          "oklch(84% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "surface-soft": {
+        "role": "neutral",
+        "displayName": "Surface Soft",
+        "canonical": "#f8f9fc",
+        "tonalRamp": [
+          "oklch(15% 0.00412 271.37)",
+          "oklch(26% 0.00412 271.37)",
+          "oklch(38% 0.00412 271.37)",
+          "oklch(49% 0.00412 271.37)",
+          "oklch(61% 0.00412 271.37)",
+          "oklch(72% 0.00412 271.37)",
+          "oklch(84% 0.00412 271.37)",
+          "oklch(95% 0.00412 271.37)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#222331",
+        "tonalRamp": [
+          "oklch(15% 0.0262 281.24)",
+          "oklch(26% 0.0262 281.24)",
+          "oklch(38% 0.0262 281.24)",
+          "oklch(49% 0.0262 281.24)",
+          "oklch(61% 0.0262 281.24)",
+          "oklch(72% 0.0262 281.24)",
+          "oklch(84% 0.0262 281.24)",
+          "oklch(95% 0.0262 281.24)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "canonical": "#626274",
+        "tonalRamp": [
+          "oklch(15% 0.0284 285.33)",
+          "oklch(26% 0.0284 285.33)",
+          "oklch(38% 0.0284 285.33)",
+          "oklch(49% 0.0284 285.33)",
+          "oklch(61% 0.0284 285.33)",
+          "oklch(72% 0.0284 285.33)",
+          "oklch(84% 0.0284 285.33)",
+          "oklch(95% 0.0284 285.33)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "canonical": "#eeeef4",
+        "tonalRamp": [
+          "oklch(15% 0.008 286.25)",
+          "oklch(26% 0.008 286.25)",
+          "oklch(38% 0.008 286.25)",
+          "oklch(49% 0.008 286.25)",
+          "oklch(61% 0.008 286.25)",
+          "oklch(72% 0.008 286.25)",
+          "oklch(84% 0.008 286.25)",
+          "oklch(95% 0.008 286.25)"
+        ]
+      },
+      "primary-hover": {
+        "role": "primary",
+        "displayName": "Primary Hover",
+        "canonical": "#3154c4",
+        "tonalRamp": [
+          "oklch(15% 0.17961 266.46)",
+          "oklch(26% 0.17961 266.46)",
+          "oklch(38% 0.17961 266.46)",
+          "oklch(49% 0.17961 266.46)",
+          "oklch(61% 0.17961 266.46)",
+          "oklch(72% 0.17961 266.46)",
+          "oklch(84% 0.17961 266.46)",
+          "oklch(95% 0.17961 266.46)"
+        ]
+      },
+      "violet": {
+        "role": "secondary",
+        "displayName": "Violet",
+        "canonical": "#7950dc",
+        "tonalRamp": [
+          "oklch(15% 0.20295 291.86)",
+          "oklch(26% 0.20295 291.86)",
+          "oklch(38% 0.20295 291.86)",
+          "oklch(49% 0.20295 291.86)",
+          "oklch(61% 0.20295 291.86)",
+          "oklch(72% 0.20295 291.86)",
+          "oklch(84% 0.20295 291.86)",
+          "oklch(95% 0.20295 291.86)"
+        ]
+      },
+      "violet-soft": {
+        "role": "secondary",
+        "displayName": "Violet Soft",
+        "canonical": "#f0eafb",
+        "tonalRamp": [
+          "oklch(15% 0.02352 301.95)",
+          "oklch(26% 0.02352 301.95)",
+          "oklch(38% 0.02352 301.95)",
+          "oklch(49% 0.02352 301.95)",
+          "oklch(61% 0.02352 301.95)",
+          "oklch(72% 0.02352 301.95)",
+          "oklch(84% 0.02352 301.95)",
+          "oklch(95% 0.02352 301.95)"
+        ]
+      },
+      "violet-ink": {
+        "role": "secondary",
+        "displayName": "Violet Ink",
+        "canonical": "#7352a6",
+        "tonalRamp": [
+          "oklch(15% 0.13144 299.92)",
+          "oklch(26% 0.13144 299.92)",
+          "oklch(38% 0.13144 299.92)",
+          "oklch(49% 0.13144 299.92)",
+          "oklch(61% 0.13144 299.92)",
+          "oklch(72% 0.13144 299.92)",
+          "oklch(84% 0.13144 299.92)",
+          "oklch(95% 0.13144 299.92)"
+        ]
+      },
+      "mint-soft": {
+        "role": "tertiary",
+        "displayName": "Mint Soft",
+        "canonical": "#e6f5ee",
+        "tonalRamp": [
+          "oklch(15% 0.01833 166.38)",
+          "oklch(26% 0.01833 166.38)",
+          "oklch(38% 0.01833 166.38)",
+          "oklch(49% 0.01833 166.38)",
+          "oklch(61% 0.01833 166.38)",
+          "oklch(72% 0.01833 166.38)",
+          "oklch(84% 0.01833 166.38)",
+          "oklch(95% 0.01833 166.38)"
+        ]
+      },
+      "mint-ink": {
+        "role": "tertiary",
+        "displayName": "Mint Ink",
+        "canonical": "#307255",
+        "tonalRamp": [
+          "oklch(15% 0.08255 162.22)",
+          "oklch(26% 0.08255 162.22)",
+          "oklch(38% 0.08255 162.22)",
+          "oklch(49% 0.08255 162.22)",
+          "oklch(61% 0.08255 162.22)",
+          "oklch(72% 0.08255 162.22)",
+          "oklch(84% 0.08255 162.22)",
+          "oklch(95% 0.08255 162.22)"
+        ]
+      },
+      "blue-soft": {
+        "role": "tertiary",
+        "displayName": "Blue Soft",
+        "canonical": "#eaf1fd",
+        "tonalRamp": [
+          "oklch(15% 0.01779 261.34)",
+          "oklch(26% 0.01779 261.34)",
+          "oklch(38% 0.01779 261.34)",
+          "oklch(49% 0.01779 261.34)",
+          "oklch(61% 0.01779 261.34)",
+          "oklch(72% 0.01779 261.34)",
+          "oklch(84% 0.01779 261.34)",
+          "oklch(95% 0.01779 261.34)"
+        ]
+      },
+      "blue-ink": {
+        "role": "tertiary",
+        "displayName": "Blue Ink",
+        "canonical": "#3e6a9f",
+        "tonalRamp": [
+          "oklch(15% 0.0977 254.06)",
+          "oklch(26% 0.0977 254.06)",
+          "oklch(38% 0.0977 254.06)",
+          "oklch(49% 0.0977 254.06)",
+          "oklch(61% 0.0977 254.06)",
+          "oklch(72% 0.0977 254.06)",
+          "oklch(84% 0.0977 254.06)",
+          "oklch(95% 0.0977 254.06)"
+        ]
+      },
+      "red-soft": {
+        "role": "tertiary",
+        "displayName": "Red Soft",
+        "canonical": "#fff0ee",
+        "tonalRamp": [
+          "oklch(15% 0.0165 26.65)",
+          "oklch(26% 0.0165 26.65)",
+          "oklch(38% 0.0165 26.65)",
+          "oklch(49% 0.0165 26.65)",
+          "oklch(61% 0.0165 26.65)",
+          "oklch(72% 0.0165 26.65)",
+          "oklch(84% 0.0165 26.65)",
+          "oklch(95% 0.0165 26.65)"
+        ]
+      },
+      "red-ink": {
+        "role": "tertiary",
+        "displayName": "Red Ink",
+        "canonical": "#b3443e",
+        "tonalRamp": [
+          "oklch(15% 0.14593 26.26)",
+          "oklch(26% 0.14593 26.26)",
+          "oklch(38% 0.14593 26.26)",
+          "oklch(49% 0.14593 26.26)",
+          "oklch(61% 0.14593 26.26)",
+          "oklch(72% 0.14593 26.26)",
+          "oklch(84% 0.14593 26.26)",
+          "oklch(95% 0.14593 26.26)"
+        ]
+      },
+      "dark-canvas": {
+        "role": "neutral",
+        "displayName": "Dark Canvas",
+        "canonical": "#302951",
+        "tonalRamp": [
+          "oklch(15% 0.07027 289.69)",
+          "oklch(26% 0.07027 289.69)",
+          "oklch(38% 0.07027 289.69)",
+          "oklch(49% 0.07027 289.69)",
+          "oklch(61% 0.07027 289.69)",
+          "oklch(72% 0.07027 289.69)",
+          "oklch(84% 0.07027 289.69)",
+          "oklch(95% 0.07027 289.69)"
+        ]
+      },
+      "dark-surface": {
+        "role": "neutral",
+        "displayName": "Dark Surface",
+        "canonical": "#191923",
+        "tonalRamp": [
+          "oklch(15% 0.01949 284.67)",
+          "oklch(26% 0.01949 284.67)",
+          "oklch(38% 0.01949 284.67)",
+          "oklch(49% 0.01949 284.67)",
+          "oklch(61% 0.01949 284.67)",
+          "oklch(72% 0.01949 284.67)",
+          "oklch(84% 0.01949 284.67)",
+          "oklch(95% 0.01949 284.67)"
+        ]
+      },
+      "dark-ink": {
+        "role": "neutral",
+        "displayName": "Dark Ink",
+        "canonical": "#f0eff7",
+        "tonalRamp": [
+          "oklch(15% 0.0107 291.95)",
+          "oklch(26% 0.0107 291.95)",
+          "oklch(38% 0.0107 291.95)",
+          "oklch(49% 0.0107 291.95)",
+          "oklch(61% 0.0107 291.95)",
+          "oklch(72% 0.0107 291.95)",
+          "oklch(84% 0.0107 291.95)",
+          "oklch(95% 0.0107 291.95)"
+        ]
+      },
+      "dark-muted": {
+        "role": "neutral",
+        "displayName": "Dark Muted",
+        "canonical": "#b0adbf",
+        "tonalRamp": [
+          "oklch(15% 0.02569 293.43)",
+          "oklch(26% 0.02569 293.43)",
+          "oklch(38% 0.02569 293.43)",
+          "oklch(49% 0.02569 293.43)",
+          "oklch(61% 0.02569 293.43)",
+          "oklch(72% 0.02569 293.43)",
+          "oklch(84% 0.02569 293.43)",
+          "oklch(95% 0.02569 293.43)"
+        ]
+      },
+      "dark-primary": {
+        "role": "primary",
+        "displayName": "Dark Primary",
+        "canonical": "#8ba4ff",
+        "tonalRamp": [
+          "oklch(15% 0.135 271.13)",
+          "oklch(26% 0.135 271.13)",
+          "oklch(38% 0.135 271.13)",
+          "oklch(49% 0.135 271.13)",
+          "oklch(61% 0.135 271.13)",
+          "oklch(72% 0.135 271.13)",
+          "oklch(84% 0.135 271.13)",
+          "oklch(95% 0.135 271.13)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Directory heading",
+        "purpose": "Page discovery title"
+      },
+      "code": {
+        "displayName": "Literal code",
+        "purpose": "Model IDs and invitation codes"
+      }
+    },
+    "shadows": [
+      {
+        "name": "card",
+        "value": "0 5px 20px rgba(46,43,82,.085)",
+        "purpose": "Provider card elevation"
+      },
+      {
+        "name": "card-focus",
+        "value": "0 12px 32px rgba(46,43,82,.13)",
+        "purpose": "Active card depth"
+      },
+      {
+        "name": "shell",
+        "value": "0 20px 70px rgba(67,53,133,.13)",
+        "purpose": "Application frame"
+      },
+      {
+        "name": "modal",
+        "value": "0 24px 90px rgba(27,15,56,.25)",
+        "purpose": "Provider details"
+      }
+    ],
+    "motion": [
+      {
+        "name": "modal-arrive",
+        "value": "280ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "Focused details entrance"
+      },
+      {
+        "name": "warm-focus",
+        "value": "300ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "Card radial glow"
+      },
+      {
+        "name": "filter-drawer",
+        "value": "220ms cubic-bezier(.16,1,.3,1)",
+        "purpose": "Mobile filter transition"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "two-columns",
+        "value": "1190px"
+      },
+      {
+        "name": "compact-toolbar",
+        "value": "990px"
+      },
+      {
+        "name": "filter-drawer",
+        "value": "730px"
+      },
+      {
+        "name": "one-column",
+        "value": "490px"
+      },
+      {
+        "name": "small-phone",
+        "value": "360px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Directory Details action.",
+      "html": "<button class=\"ds-primary\">Details</button>",
+      "css": ".ds-primary{background:var(--accent,#4469dc);color:#fff;padding:8px 11px;min-height:44px;border:0;border-radius:8px;font:500 12px \"DM Sans\",sans-serif}.ds-primary:hover{background:var(--accent-hover,#3154c4)}.ds-primary:focus-visible{outline:3px solid var(--accent,#4469dc);outline-offset:4px}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Documentation action.",
+      "html": "<button class=\"ds-secondary\">Docs</button>",
+      "css": ".ds-secondary{background:transparent;color:var(--ink,#222331);padding:8px 11px;min-height:44px;border:1px solid #c4c5d0;border-radius:8px;font:500 12px \"DM Sans\",sans-serif}.ds-secondary:hover{background:var(--surface,#fff);border-color:var(--accent,#4469dc)}.ds-secondary:focus-visible{outline:3px solid var(--accent,#4469dc);outline-offset:4px}"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "search",
+      "description": "Global provider/model search.",
+      "html": "<label class=\"ds-search\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\"><circle cx=\"10.8\" cy=\"10.8\" r=\"7.2\"/><path d=\"m16 16 4.5 4.5\"/></svg><input aria-label=\"Search providers or models\" placeholder=\"Search providers or models…\"></label>",
+      "css": ".ds-search{display:flex;align-items:center;gap:11px;min-height:46px;background:var(--surface-soft,#f8f9fc);border-radius:10px;padding:0 15px;color:var(--muted,#626274)}.ds-search svg{width:19px;height:19px}.ds-search input{width:100%;min-width:0;border:0;background:transparent;color:var(--ink,#222331);font:12px \"DM Sans\",sans-serif;height:46px;outline:0}.ds-search:focus-within{outline:2px solid var(--accent,#4469dc);outline-offset:2px}"
+    },
+    {
+      "name": "Collection Navigation",
+      "kind": "nav",
+      "description": "Filter collections above the directory.",
+      "html": "<nav class=\"ds-nav\"><button aria-current=\"true\">All providers</button><button>Top picks</button><button>Recommended</button></nav>",
+      "css": ".ds-nav{display:flex;gap:18px;border-bottom:1px solid var(--line,#eeeef4);overflow:auto}.ds-nav button{flex-shrink:0;border:0;background:transparent;min-height:49px;padding:0;font:500 11px \"DM Sans\",sans-serif;color:var(--muted,#626274)}.ds-nav button[aria-current=true]{color:var(--accent,#4469dc);border-bottom:2px solid var(--accent,#4469dc)}.ds-nav button:hover{color:var(--accent,#4469dc)}.ds-nav button:focus-visible{outline:3px solid var(--accent,#4469dc);outline-offset:-3px}"
+    },
+    {
+      "name": "Metadata Tag",
+      "kind": "chip",
+      "description": "Documented authentication or offer.",
+      "html": "<span class=\"ds-tag\">API Key</span>",
+      "css": ".ds-tag{display:inline-flex;background:var(--mint-soft,#e6f5ee);color:var(--mint-ink,#307255);padding:2px 6px;border-radius:5px;font:500 11px/1.5 \"DM Sans\",sans-serif}"
+    },
+    {
+      "name": "Provider Card",
+      "kind": "card",
+      "refersTo": "provider-card",
+      "description": "Shared white provider container with warm hover/focus.",
+      "html": "<article class=\"ds-card\"><h3>Provider name</h3><p>Provider details come from the directory record.</p><ul><li>Authentication: Not documented</li><li>Data format: Not documented</li></ul><button>Details</button></article>",
+      "css": ".ds-card{position:relative;isolation:isolate;overflow:hidden;background:var(--surface,#fff);color:var(--ink,#222331);border-radius:16px;padding:24px 22px 20px;box-shadow:0 5px 20px rgba(46,43,82,.085);font:13px/1.7 \"DM Sans\",sans-serif}.ds-card::before{content:\"\";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 100% 53%,rgba(255,173,38,.44),rgba(255,215,132,.24) 32%,transparent 70%);opacity:0;transition:opacity .3s cubic-bezier(.16,1,.3,1)}.ds-card:hover::before,.ds-card:focus-within::before{opacity:1}.ds-card:hover,.ds-card:focus-within{box-shadow:0 12px 32px rgba(46,43,82,.13)}.ds-card h3{font-size:18px;line-height:1.35;margin:0}.ds-card p{color:var(--muted,#626274)}.ds-card button{background:var(--accent,#4469dc);color:white;border:0;border-radius:8px;min-height:44px;padding:8px 11px}.ds-card button:focus-visible{outline:3px solid var(--accent,#4469dc);outline-offset:4px}"
+    },
+    {
+      "name": "Modal Launch Button",
+      "kind": "button",
+      "refersTo": "modal-action",
+      "description": "Provider signup pill and circular arrow.",
+      "html": "<button class=\"ds-launch\">Get API<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\"><path d=\"M4 12h16m-6-6 6 6-6 6\"/></svg></button>",
+      "css": ".ds-launch{position:relative;width:100%;min-height:54px;padding:13px 54px 13px 24px;background:#8350e3;color:white;border:0;border-radius:30px;font:600 14px \"DM Sans\",sans-serif}.ds-launch svg{position:absolute;right:8px;top:8px;width:38px;height:38px;box-sizing:border-box;padding:9px;background:white;color:#8350e3;border-radius:50%}.ds-launch:hover{background:#7140cf}.ds-launch:focus-visible{outline:3px solid var(--accent,#4469dc);outline-offset:4px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Useful discovery, warm focus.",
+    "overview": "The directory is a quiet white workspace held by a lavender canvas. Provider content owns the hierarchy. Warm radial light marks the card a visitor is exploring; a violet fade and floating logo give the selected provider a focused details view.\n\nThis documents the implemented directory in index.html. The existing setup documentation has its own styling. Values are derived from code; browser rendering and reference fidelity remain unverified because the browser access host is unavailable.",
+    "keyCharacteristics": [
+      "Lavender framing with white content surfaces.",
+      "Compact metadata and readable provider descriptions.",
+      "Warm card hover and focus with a violet details modal.",
+      "Honest unknown, offline and missing-link states."
+    ],
+    "rules": [
+      {
+        "name": "The Truth Rule",
+        "body": "Color may distinguish a recorded state; it must not imply measured reliability or an undocumented capability.",
+        "section": "colors"
+      },
+      {
+        "name": "The Code Rule",
+        "body": "Monospace identifies literal model IDs or copyable codes.",
+        "section": "typography"
+      },
+      {
+        "name": "The Unknown Rule",
+        "body": "Unpublished metrics render \"Not listed\"; other missing technical details render \"Not documented\". Offline providers stay visible and cannot launch sign-up.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do preserve exact provider endpoints and referral parameters.",
+      "Do pair color with explicit availability text.",
+      "Do keep full provider descriptions available in the modal.",
+      "Do preserve keyboard focus, mobile announcements and reduced motion.",
+      "Do use the same white card structure for featured and ordinary providers."
+    ],
+    "donts": [
+      "Don't invent request rates, latency, uptime, models or auth methods.",
+      "Don't replace provider-specific links with placeholder endpoints.",
+      "Don't hide offline records or remove their stored URLs.",
+      "Don't treat old screenshots or code tests as current rendered verification."
+    ]
+  }
+}

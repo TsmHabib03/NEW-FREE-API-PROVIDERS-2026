@@ -1,186 +1,96 @@
-/* views — renders the provider card grid, the hero stats and the provider
-   details modal. Rendering is delegated; data comes from window.Adapters. */
+/* Provider discovery state and shared modal. Provider records remain the source of truth. */
 (() => {
   const A = window.Adapters;
   const esc = A.esc;
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-
-  const refreshIcons = () => {
-    if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
-  };
-
-  const protoLabel = key => (key === 'anthropic' ? 'Anthropic' : key === 'openai' ? 'OpenAI' : key);
-  const FREE_SHAPE = { 'signup-credit': 'signup credit', 'invite-bonus': 'invite bonus', 'free-tier': 'free tier' };
-  const PALETTE = ['v--blue', 'v--teal', 'v--violet', 'v--amber', 'v--rose', 'v--green'];
-const MODEL_PREVIEW = 4;
-/* model chips wrap to one per row once the ids are long, so the visible count
-   has to shrink with the viewport or the details sheet stops fitting a phone */
-const modalModelCap = () => {
-  const w = window.innerWidth, h = window.innerHeight;
-  if (w <= 380 || h <= 620) return 4;
-  if (w <= 900 || h <= 760) return 6;
-  return 12;
-};
-  /* stride the palette so no two neighbours ever share a tone */
-  const toneFor = index => PALETTE[(index * 2 + Math.floor(index / 3)) % PALETTE.length];
-
-  /* ---------------- hero glass band ----------------
-     Decorative, staggered columns of frosted tiles carrying the providers'
-     own bundled logos (the shared brand mark is never repeated here).
-     'blank' leaves a tile empty so the composition stays airy, and --dy
-     staggers each column vertically. The band is masked in CSS so it fades
-     into the page instead of ending on a hard edge. */
-  const HERO_COLUMNS = [
-    { dy: 46, tiles: ['logo', 'blank', 'logo'] },
-    { dy: 0, tiles: ['logo', 'logo', 'logo'] },
-    { dy: 60, tiles: ['blank', 'logo', 'blank'] },
-    { dy: 18, tiles: ['logo', 'logo'] },
-    { dy: 70, tiles: ['logo', 'blank', 'logo'] },
-    { dy: 28, tiles: ['blank', 'logo'] },
-    { dy: 52, tiles: ['logo', 'logo'] },
-    { dy: 10, tiles: ['logo', 'blank', 'logo'] },
-    { dy: 64, tiles: ['logo', 'logo'] },
-    { dy: 34, tiles: ['blank', 'logo', 'logo'] }
-  ];
-
-  function heroLogos() {
-    const seen = new Set();
-    const out = [];
-    A.providers.forEach(p => {
-      const src = A.logo(p);
-      if (src.includes('gorouterlogo') || seen.has(src)) return;
-      seen.add(src);
-      out.push(src);
-    });
-    return out;
-  }
-
-  function renderHero() {
-    const stack = $('[data-hero-stack]');
-    if (!stack) return;
-    const logos = heroLogos();
-    let next = 0;
-    stack.innerHTML = HERO_COLUMNS.map(col => `
-      <div class="hero-col" style="--dy:${col.dy}px">${
-        col.tiles.map(kind => {
-          const src = kind === 'logo' ? logos[next++] : '';
-          return src
-            ? `<span class="hero-tile"><img src="${esc(src)}" alt="" loading="lazy" decoding="async"></span>`
-            : '<span class="hero-tile is-blank"></span>';
-        }).join('')
-      }</div>`).join('');
-  }
-
-  /* ---------------- provider details modal ---------------- */
+  const refreshIcons = () => window.lucide?.createIcons();
+  const protoLabel = key => key === 'anthropic' ? 'Anthropic' : key === 'openai' ? 'OpenAI' : key;
+  const FREE_SHAPE = { 'signup-credit': 'Free credit', 'invite-bonus': 'Invite bonus', 'free-tier': 'Free tier' };
+  const shell = $('[data-directory-shell]');
+  const sidebar = $('.filter-sidebar');
+  const searchInput = $('[data-search-input]');
+  const state = { query: '', collection: 'all', sort: 'curated', filters: Object.fromEntries(A.filters.map(g => [g.key, new Set()])) };
   const modal = {
-    veil: $('[data-prov-modal]'),
-    card: $('[data-prov-card]'),
-    logo: $('[data-prov-modal-logo]'),
-    name: $('[data-prov-modal-name]'),
-    kind: $('[data-prov-modal-kind]'),
-    blurb: $('[data-prov-modal-blurb]'),
-    credit: $('[data-prov-modal-credit]'),
-    notice: $('[data-prov-modal-notice]'),
+    veil: $('[data-prov-modal]'), card: $('[data-prov-card]'), logo: $('[data-prov-modal-logo]'),
+    name: $('[data-prov-modal-name]'), kind: $('[data-prov-modal-kind]'), blurb: $('[data-prov-modal-blurb]'),
+    credit: $('[data-prov-modal-credit]'), notice: $('[data-prov-modal-notice]'),
     models: () => $('.prov-models', $('[data-prov-modal]')),
-    facts: () => $('.prov-facts', $('[data-prov-modal]')),
-    act: () => $('.prov-act', $('[data-prov-modal]'))
+    facts: () => $('.prov-facts', $('[data-prov-modal]')), act: () => $('.prov-act', $('[data-prov-modal]'))
   };
-  let lastFocus = null;
-  let currentId = null;
-
-  /* the modal shows the provider's own bundled logo; missing files fall back
-     to the shared brand mark (guarded so it can never loop) */
-  if (modal.logo) modal.logo.addEventListener('error', () => {
-    if (!String(modal.logo.src).includes('gorouterlogo.png')) modal.logo.src = 'assets/gorouterlogo.png';
-  });
-
-  /* the free-credit line is DERIVED from documented fields only (never invented) */
-  function creditNote(p) {
-    const offer = (p.offer || '').trim();
-    if (p.freeShape === 'signup-credit' || p.signupCredit) return offer || 'Sign in to claim the free starting credits.';
-    if (p.freeShape === 'invite-bonus') return offer || 'Bonus credits are granted on an invite.';
-    if (p.freeShape === 'free-tier') return offer || 'A free tier is available once you sign in.';
-    return '';
-  }
-
+  let lastFocus = null, currentId = null, filterFocus = null;
+  const safeUrl = value => {
+    if (!value) return null;
+    try { return /^https?:$/.test(new URL(value, location.href).protocol) ? value : value === 'setup.html' ? value : null; } catch { return null; }
+  };
+  const docsLink = p => safeUrl(A.docsUrl(p)) || 'setup.html';
+  const metricsMarkup = p => '<dl class="api-metrics" aria-label="Published API metrics">' + A.metrics(p).map(m =>
+    '<div><dt>' + esc(m.label) + '</dt><dd class="' + (m.value === null ? 'is-unknown' : '') + '">' + esc(m.display) + '</dd></div>').join('') + '</dl>';
+  const external = url => url === 'setup.html' ? '' : ' target="_blank" rel="noopener noreferrer"';
+  const dateLabel = p => {
+    const value = p.updatedAt || p.addedAt;
+    if (!value) return 'Date unknown';
+    const date = new Date(value + 'T12:00:00');
+    return isNaN(date.getTime()) ? 'Date unknown' : date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
   function fillProvider(p) {
     currentId = p.id;
-    modal.logo.src = A.logo(p);
-    modal.logo.alt = '';
+    modal.logo.src = A.logo(p); modal.logo.alt = p.name + ' logo';
+    modal.name.textContent = p.name;
     modal.card.classList.toggle('is-off', A.isOff(p));
     modal.card.classList.toggle('is-flagged', A.isCaveat(p));
-    modal.name.textContent = p.name;
-
-    const protos = (p.protocol || []).map(protoLabel).join(' · ');
-    const kind = A.kindLabel(p);
-    const bits = [A.isOff(p) ? 'offline' : A.isCaveat(p) ? A.statusLabel(p).toLowerCase() : 'live now'];
-    if (kind) bits.push(kind);
-    if (protos) bits.push(`${protos} route${(p.protocol || []).length > 1 ? 's' : ''}`);
-    if (FREE_SHAPE[p.freeShape]) bits.push(FREE_SHAPE[p.freeShape]);
-    modal.kind.textContent = bits.join('  ·  ');
+    modal.kind.textContent = [A.statusLabel(p), A.kindLabel(p)].filter(Boolean).join(' · ');
     modal.kind.classList.toggle('is-off', A.isOff(p));
     modal.kind.classList.toggle('is-flagged', A.isCaveat(p));
-
-    modal.blurb.textContent = p.blurb || '';
-
-    const caveat = A.isCaveat(p) ? (p.statusNote || '') : '';
-    modal.notice.textContent = caveat;
-    modal.notice.hidden = !caveat;
-
-    const note = creditNote(p);
-    modal.credit.textContent = note;
-    modal.credit.hidden = !note;
-
-    const list = p.models || [];
-    const shown = list.slice(0, modalModelCap());
-    modal.models().innerHTML = shown.length
-      ? shown.map(m => `<code>${esc(m)}</code>`).join('') +
-        (list.length > shown.length ? `<code class="more">+${list.length - shown.length} more</code>` : '')
-      : (p.modelsNote ? `<code class="more">${esc(p.modelsNote)}</code>`
-        : '<code class="more">models unknown — the provider does not publish its model IDs</code>');
-
-    const rows = [
-      ['Client route', protos ? esc(protos) : 'not documented', !!(kind || protos)],
-      ['Kind', kind ? esc(kind) : 'unknown', !!(kind || protos)],
-      ['Card', p.noCard === true ? 'no card needed' : 'check the provider\u2019s own wording', false],
-      ['Pricing', p.offer ? esc(p.offer) : 'see the provider\u2019s sign-up page', false],
-      ['Setup guide', p.guide ? `<a href="${esc(p.guide)}" target="_blank" rel="noopener noreferrer">open provider guide</a>` : 'none', false],
-      ['Added', esc(p.addedAt || 'unknown'), false]
+    modal.blurb.textContent = p.blurb || 'Provider details have not been published.';
+    modal.credit.textContent = p.offer || '';
+    modal.credit.hidden = !p.offer;
+    const routes = (p.protocol || []).map(protoLabel).join(' + ');
+    const models = p.models || [];
+    const modelSummary = models.length ? models.slice(0, 3).join(', ') + (models.length > 3 ? ' and ' + (models.length - 3) + ' more' : '') : p.modelsNote || 'Models not documented';
+    $('[data-prov-modal-route]').textContent = modelSummary + ' · ' +
+      (routes ? routes + ' client route' + ((p.protocol || []).length > 1 ? 's' : '') : 'Client route not documented');
+    modal.notice.textContent = !A.isLive(p) ? p.statusNote || A.statusLabel(p) : '';
+    modal.notice.hidden = A.isLive(p);
+    modal.models().innerHTML = models.length ? models.map(m => '<code>' + esc(m) + '</code>').join('') :
+      '<code class="more">' + esc(p.modelsNote || 'Models unknown — the provider does not publish its model IDs.') + '</code>';
+    const facts = [
+      ['Client route', routes || 'Not documented'], ['API Category', A.categories(p).join(', ')],
+      ['Authentication', A.authTypes(p).map(A.authLabel).join(', ')], ['Card required', p.noCard ? 'No card needed' : 'Not documented'],
+      ['Added', p.addedAt || 'Not documented'], ...A.features(p).filter(([key]) => key === 'Data format' || key === 'Rate limit')
     ];
-    modal.facts().innerHTML = rows.map(([k, v, redundant]) =>
-      `<div${redundant ? ' class="is-redundant"' : ''}><dt>${k}</dt><dd>${v}</dd></div>`).join('');
-
-    modal.act().innerHTML = A.isOff(p)
-      ? '<span class="prov-offline" aria-disabled="true"><i data-lucide="circle-off"></i>Unavailable — this provider is offline</span>'
-      : `<a class="prov-signin" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">Get API <i data-lucide="arrow-up-right"></i></a>`;
-
-    const guideBox = $('[data-prov-guide]');
-    if (guideBox) guideBox.hidden = !p.onboarding;
+    modal.facts().innerHTML = facts.map(([key, value]) => '<div><dt>' + esc(key) + '</dt><dd>' + esc(value) + '</dd></div>').join('');
+    $('[data-prov-modal-metrics]').innerHTML = metricsMarkup(p);
+    const docs = docsLink(p), signup = safeUrl(p.url);
+    const docsNote = $('[data-prov-docs-note]');
+    docsNote.hidden = docs !== 'setup.html';
+    docsNote.textContent = docs === 'setup.html' ? 'Provider documentation is not listed. View our client setup guides instead.' : '';
+    modal.act().innerHTML = '<a class="prov-docs" href="' + esc(docs) + '"' + external(docs) + '><i data-lucide="book-open"></i>View Documentation</a>' +
+      (A.isOff(p) || !signup ? '<span class="prov-offline" aria-disabled="true"><i data-lucide="circle-off"></i>' +
+      (A.isOff(p) ? 'Unavailable — provider offline' : 'Sign-up link not available') + '</span>' :
+      '<a class="prov-signin" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer">Get API<i data-lucide="arrow-right"></i></a>');
+    $('.prov-technical', modal.card).open = false;
+    $('[data-prov-guide]').hidden = !p.onboarding;
+    modal.card.scrollTop = 0;
     refreshIcons();
   }
-
   function openProvider(id) {
     const p = A.providers.find(x => x.id === id);
-    if (!p || !modal.veil) return;
+    if (!p) return;
+    closeFilters();
     fillProvider(p);
-    lastFocus = document.activeElement;
-    modal.veil.hidden = false;
+    if (modal.veil.hidden) lastFocus = document.activeElement;
+    modal.veil.hidden = false; shell.inert = true;
     document.body.classList.add('modal-open');
-    $('[data-prov-close]', modal.veil)?.focus();
+    $('[data-prov-close]').focus();
   }
-
   function closeModal() {
-    if (guide.veil && !guide.veil.hidden) closeGuide();
-    if (!modal.veil || modal.veil.hidden) return;
-    modal.veil.hidden = true;
+    if (!guide.veil.hidden) closeGuide();
+    if (modal.veil.hidden) return;
+    modal.veil.hidden = true; shell.inert = false;
     document.body.classList.remove('modal-open');
-    if (lastFocus instanceof HTMLElement) { lastFocus.focus(); lastFocus = null; }
+    lastFocus?.focus(); lastFocus = null;
   }
-
-  /* ---------------- provider onboarding guide ----------------
-     A second dialog stacked over the details modal. Its content comes from
-     p.onboarding in providers.js, so no step or link is duplicated in HTML. */
   const guide = {
     veil: $('[data-guide-modal]'),
     title: $('[data-guide-title]'),
@@ -217,6 +127,7 @@ const modalModelCap = () => {
     fillGuide(p);
     guideFocus = document.activeElement;
     guide.veil.hidden = false;
+    modal.card.inert = true;
     refreshIcons();
     $('[data-guide-close]', guide.veil)?.focus();
   }
@@ -224,6 +135,7 @@ const modalModelCap = () => {
   function closeGuide() {
     if (!guide.veil || guide.veil.hidden) return;
     guide.veil.hidden = true;
+    modal.card.inert = false;
     if (guideFocus instanceof HTMLElement && guideFocus.offsetParent !== null) guideFocus.focus();
     guideFocus = null;
   }
@@ -262,7 +174,7 @@ const modalModelCap = () => {
     const veil = guide.veil && !guide.veil.hidden ? guide.veil
       : modal.veil && !modal.veil.hidden ? modal.veil : null;
     if (!veil) return;
-    const focusables = $$('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])', veil)
+    const focusables = $$('a[href],button:not([disabled]),summary,[tabindex]:not([tabindex="-1"])', veil)
       .filter(el => el.offsetParent !== null);
     if (!focusables.length) return;
     const first = focusables[0];
@@ -271,197 +183,137 @@ const modalModelCap = () => {
     else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
   }
 
-  /* ---------------- card grid ----------------
-     Each tile wears the provider's own bundled logo; providers without one
-     fall back to the shared brand mark (assets/gorouterlogo.png). */
-  const CARD_LOGO = 'assets/gorouterlogo.png';
 
-  /* the models a provider documents, listed under its name (never invented) */
-  function modelList(p) {
-    const list = p.models || [];
-    if (!list.length) return '<ul class="api-models"><li class="more">models unknown</li></ul>';
-    const shown = list.slice(0, MODEL_PREVIEW);
-    const rest = list.length - shown.length;
-    return `<ul class="api-models">${shown.map(m => `<li>${esc(m)}</li>`).join('')}${
-      rest ? `<li class="more">+${rest} more</li>` : ''}</ul>`;
+  function matches(p) {
+    return Object.entries(state.filters).every(([key, values]) => !values.size || A.filterValues(p, key).some(value => values.has(value))) &&
+      state.query.toLowerCase().trim().split(/\s+/).filter(Boolean).every(token =>
+        [p.name, p.id, p.blurb, p.offer, ...A.categories(p), ...(p.models || [])].join(' ').toLowerCase().includes(token));
   }
-
-  function cardMarkup(p, index) {
-    const off = A.isOff(p);
-    const caveat = A.isCaveat(p);
-    const meta = [
-      off ? 'offline' : caveat ? A.statusLabel(p).toLowerCase() : 'live',
-      A.kindLabel(p),
-      (p.protocol || []).map(protoLabel).join(' · '),
-      FREE_SHAPE[p.freeShape]
-    ].filter(Boolean).join('  ·  ');
-    const action = off
-      ? '<span class="api-btn" aria-disabled="true"><i data-lucide="circle-off"></i>Unavailable</span>'
-      : `<a class="api-btn" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">Get API <i data-lucide="arrow-up-right"></i></a>`;
-    /* a flagged row leads with its status instead of the New chip */
-    const chip = caveat ? `<span class="api-chip is-warn">${esc(A.statusLabel(p))}</span>`
-      : (!off && A.isNew(p)) ? '<span class="api-chip">New</span>' : '';
-    const note = caveat && p.statusNote ? `<span class="api-note">${esc(p.statusNote)}</span>` : '';
-    return `<li class="api-card ${toneFor(index)}${off ? ' is-off' : ''}${caveat ? ' is-flagged' : ''}">
-      <button type="button" class="api-card-btn" data-prov-open="${esc(p.id)}"
-        aria-label="${off ? 'Unavailable — details for' : 'Open details for'} ${esc(p.name)}">
-        <span class="api-logo"><img src="${esc(A.logo(p))}" alt="" loading="lazy"></span>
-        <span class="api-title">${esc(p.name)}${chip}</span>
-        ${modelList(p)}
-        <span class="api-desc">${esc(p.blurb || '')}</span>
-        ${note}
-        ${meta ? `<span class="api-meta">${esc(meta)}</span>` : ''}
-      </button>
-      <div class="api-actions">${action}</div>
-    </li>`;
+  function renderFilters() {
+    $('[data-filter-groups]').innerHTML = A.filters.map(group =>
+      '<fieldset class="filter-group"><legend>' + esc(group.title) + '</legend>' + group.options.map(option => {
+        const count = A.providers.filter(p => A.filterValues(p, group.key).includes(option.value)).length;
+        return '<label class="filter-option"><input type="checkbox" data-filter-group="' + group.key + '" value="' + esc(option.value) + '"' +
+          (state.filters[group.key].has(option.value) ? ' checked' : '') + (!count ? ' disabled' : '') + '><span>' + esc(option.label) +
+          '</span><span class="filter-option-count">' + count + '</span></label>';
+      }).join('') + '</fieldset>').join('');
   }
-
+  function cardMarkup(p, featured = false) {
+    const off = A.isOff(p), docs = docsLink(p);
+    const signup = safeUrl(p.url);
+    const tags = [
+      FREE_SHAPE[p.freeShape] ? '<span class="api-tag">' + FREE_SHAPE[p.freeShape] + '</span>' : '',
+      ...A.authTypes(p).filter(type => type !== 'unknown').map(type => '<span class="api-tag auth">' + esc(A.authLabel(type)) + '</span>'),
+      ...(p.protocol || []).map(proto => '<span class="api-tag route">' + esc(protoLabel(proto)) + '</span>'),
+      A.isNew(p) ? '<span class="api-tag new">New</span>' : '',
+      !A.isLive(p) ? '<span class="api-tag status">' + A.statusLabel(p) + '</span>' : ''
+    ].filter(Boolean).slice(0, 4).join('') || '<span class="api-tag route">' + esc(A.categories(p).join(' · ')) + '</span>';
+    return '<li class="api-card' + (off ? ' is-off' : A.isCaveat(p) ? ' is-flagged' : '') + (featured ? ' api-featured' : '') + '" data-provider-id="' + esc(p.id) + '">' +
+      '<div class="api-card-top"><span class="api-logo"><img src="' + esc(A.logo(p)) + '" alt="" loading="lazy" width="40" height="40"></span>' +
+      '<div class="api-card-stamp">' + (featured ? '<span class="api-tag featured-label">Featured</span>' : '') +
+      '<time class="api-date"' + (p.updatedAt || p.addedAt ? ' datetime="' + esc(p.updatedAt || p.addedAt) + '"' : '') + ' title="' + (p.updatedAt ? 'Updated' : 'Added') + ' ' + esc(p.updatedAt || p.addedAt || '') + '">' + esc(dateLabel(p)) + '</time></div></div>' +
+      '<h3 class="api-title"><button type="button" data-prov-open="' + esc(p.id) + '" aria-label="Open details for ' + esc(p.name) + '">' + esc(p.name) + '</button></h3>' +
+      '<p class="api-desc">' + esc(p.blurb || 'Provider details are not documented yet.') + '</p><div class="api-tags">' + tags + '</div>' +
+      '<ul class="api-features">' + A.features(p).map(([key,value]) => '<li><span>' + esc(key) + '</span><strong>' + esc(value) + '</strong></li>').join('') + '</ul>' +
+      (!A.isLive(p) && p.statusNote ? '<p class="api-note">' + esc(p.statusNote) + '</p>' : '') +
+      '<div class="api-card-meta"><span class="status-dot"></span>' + esc(A.statusLabel(p)) + '<span>·</span>' +
+      ((p.models || []).length ? p.models.length + ' documented models' : 'Models not documented') + '</div>' + metricsMarkup(p) +
+      '<div class="api-actions"><button type="button" class="button-primary" data-prov-open="' + esc(p.id) + '" aria-label="Details for ' + esc(p.name) + '">Details</button>' +
+      '<a class="button-secondary" href="' + esc(docs) + '"' + external(docs) + ' aria-label="Documentation for ' + esc(p.name) + '">Docs<i data-lucide="arrow-up-right"></i></a>' +
+      (off || !signup ? '<span class="api-signup is-disabled" aria-disabled="true">' + (off ? 'Offline' : 'No link') + '</span>' :
+      '<a class="api-signup" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer" aria-label="Get API from ' + esc(p.name) + '">Get API<i data-lucide="arrow-up-right"></i></a>') + '</div></li>';
+  }
   function renderGrid() {
-    const grid = $('[data-provider-grid]');
-    if (!grid) return;
-    let index = 0;
-    grid.innerHTML = A.sections.filter(section => section.items.length).map(section => {
-      const start = index;
-      index += section.items.length;
-      return `<section class="prov-section" data-section="${esc(section.key)}">
-        <div class="prov-section-head">
-          <h2 class="prov-section-title">${esc(section.title)}</h2>
-          <span class="prov-section-count">${section.items.length}</span>
-        </div>
-        <ol class="api-grid">${section.items.map((p, i) => cardMarkup(p, start + i)).join('')}</ol>
-      </section>`;
-    }).join('');
+    const collection = A.collections.find(c => c.key === state.collection);
+    let items = collection.items.filter(matches);
+    if (state.sort === 'newest') items = [...items].sort((a,b) => String(b.updatedAt || b.addedAt || '').localeCompare(String(a.updatedAt || a.addedAt || '')) || a.name.localeCompare(b.name));
+    if (state.sort === 'name') items = [...items].sort((a,b) => a.name.localeCompare(b.name));
+    const featured = state.collection === 'all' && state.sort === 'curated' && !state.query && !Object.values(state.filters).some(s => s.size)
+      ? items.find(p => p.id === 'agentrouter' && A.isLive(p) && safeUrl(p.url)) : null;
+    if (featured) { items = items.filter(p => p !== featured); items.splice(Math.min(2, items.length),0,featured); }
+    $('[data-provider-grid]').innerHTML = items.length ? '<ol class="api-grid">' + items.map(p => cardMarkup(p, p === featured)).join('') + '</ol>' : '';
+    $('[data-search-empty]').hidden = !!items.length;
+    $('[data-results-heading]').textContent = state.query ? 'Search results' : collection.title;
+    $('[data-results-count]').textContent = items.length;
+    $('[data-search-meta]').textContent = items.length + ' provider' + (items.length === 1 ? '' : 's') + (state.query ? ' matching “' + state.query + '”' : ' in this view');
+    $('[data-search-clear]').hidden = !state.query;
+    $$('[data-collection]').forEach(button => button.setAttribute('aria-current',String(button.dataset.collection === state.collection)));
+    const active = A.filters.flatMap(g => g.options.filter(o => state.filters[g.key].has(o.value)).map(o => ({...o, group:g.key})));
+    $('[data-active-filters]').hidden = !active.length;
+    $('[data-active-filters]').innerHTML = active.map(o => '<button type="button" class="active-filter" data-remove-filter="' + o.group + '" data-filter-value="' + esc(o.value) + '" aria-label="Remove ' + esc(o.label) + ' filter">' + esc(o.label) + '<i data-lucide="x"></i></button>').join('');
+    $('[data-filter-count]').hidden = !active.length; $('[data-filter-count]').textContent = active.length;
+    $('[data-live-count]').textContent = A.stats.live;
     refreshIcons();
-    setSearchMeta();
   }
-
-  /* ---------------- model search ----------------
-     Filters the cards by live provider name, id or a documented model ID.
-     Offline rows are never returned, so every result is clickable. */
-  const searchInput = $('[data-search-input]');
-  const emptyState = $('[data-search-empty]');
-  let searchTimer = 0;
-
-  const isTyping = target => !!target && (
-    /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable);
-
-  function setSearchMeta(count, query) {
-    const meta = $('[data-search-meta]');
-    if (!meta) return;
-    const m = A.modelStats;
-    meta.textContent = query
-      ? `${count} live provider${count === 1 ? '' : 's'} match "${query}".`
-      : `Search ${m.ids} model IDs from ${m.providers} live providers.`;
+  function resetFilters() { Object.values(state.filters).forEach(set => set.clear()); renderFilters(); renderGrid(); }
+  function closeFilters() {
+    if (!document.body.classList.contains('filters-open')) return;
+    document.body.classList.remove('filters-open');
+    $('[data-filter-backdrop]').hidden = true;
+    $('[data-filters-toggle]').setAttribute('aria-expanded','false');
+    $$('.topbar,.directory-intro,.directory-main,.footer').forEach(el => el.inert = false);
+    sidebar.removeAttribute('role'); sidebar.removeAttribute('aria-modal');
+    filterFocus?.focus(); filterFocus = null;
   }
-
-  function applySearch(value) {
-    const grid = $('[data-provider-grid]');
-    if (!grid) return;
-    const query = String(value || '').trim();
-    const tokens = query.toLowerCase().split(/\s+/).filter(Boolean);
-    const clear = $('[data-search-clear]');
-    if (clear) clear.hidden = !query;
-    if (!tokens.length) {
-      if (emptyState) emptyState.hidden = true;
-      renderGrid();
-      return;
+  function openFilters() {
+    filterFocus = document.activeElement;
+    document.body.classList.add('filters-open');
+    $('[data-filter-backdrop]').hidden = false;
+    $('[data-filters-toggle]').setAttribute('aria-expanded','true');
+    $$('.topbar,.directory-intro,.directory-main,.footer').forEach(el => el.inert = true);
+    sidebar.setAttribute('role','dialog'); sidebar.setAttribute('aria-modal','true');
+    $('[data-filters-close]').focus();
+  }
+  $('[data-collection-tabs]').innerHTML = A.collections.map(c => '<button class="collection-tab" type="button" data-collection="' + c.key + '" aria-current="' + (c.key === state.collection) + '">' + c.title + '</button>').join('');
+  document.addEventListener('change',event => {
+    if (event.target.matches('[data-filter-group]')) {
+      const input = event.target, set = state.filters[input.dataset.filterGroup];
+      input.checked ? set.add(input.value) : set.delete(input.value); renderGrid();
     }
-    const matches = A.searchable
-      .filter(entry => tokens.every(token => entry.haystack.includes(token)))
-      .map(entry => entry.provider);
-    grid.innerHTML = matches.length
-      ? `<section class="prov-section" data-section="results">
-          <div class="prov-section-head">
-            <h2 class="prov-section-title">Results</h2>
-            <span class="prov-section-count">${matches.length}</span>
-          </div>
-          <ol class="api-grid">${matches.map((p, i) => cardMarkup(p, i)).join('')}</ol>
-        </section>`
-      : '';
-    if (emptyState) emptyState.hidden = matches.length > 0;
-    setSearchMeta(matches.length, query);
-    refreshIcons();
-  }
-
-  function wireSearch() {
-    if (!searchInput) return;
-    searchInput.addEventListener('input', () => {
-      window.clearTimeout(searchTimer);
-      searchTimer = window.setTimeout(() => applySearch(searchInput.value), 100);
-    });
-    searchInput.addEventListener('keydown', event => {
-      if (event.key !== 'Escape') return;
-      event.stopPropagation();
-      searchInput.value = '';
-      applySearch('');
-    });
-    $$('[data-search-clear]').forEach(button => button.addEventListener('click', () => {
-      searchInput.value = '';
-      applySearch('');
-      searchInput.focus();
-    }));
-    document.addEventListener('keydown', event => {
-      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
-      if (isTyping(event.target)) return;
-      if ((modal.veil && !modal.veil.hidden) || (guide.veil && !guide.veil.hidden)) return;
-      event.preventDefault();
-      searchInput.focus();
-    });
-  }
-
-  /* ---------------- hero stats ---------------- */
-  function renderStats() {
-    const s = A.stats;
-    const setText = (sel, value) => { const el = $(sel); if (el) el.textContent = value; };
-    setText('[data-live-count]', s.live);
-    setText('[data-off-count]', s.off);
-    setText('[data-guide-count]', s.guides);
-    /* a divided stat line, not badges: the number carries the tone, the
-       words stay quiet, and the row wraps cleanly on narrow screens */
-    const line = $('[data-stat-chips]');
-    if (line) line.innerHTML = s.chips
-      .map(c => {
-        const parts = String(c.label).match(/^(\S+)\s+(.*)$/);
-        const value = parts ? parts[1] : c.label;
-        const text = parts ? parts[2] : '';
-        return `<li class="${c.tone}"><b>${esc(value)}</b>${text ? `<span>${esc(text)}</span>` : ''}</li>`;
-      }).join('');
-  }
-
-  /* ---------------- global click delegation ---------------- */
-  function wireClicks() {
-    document.addEventListener('click', event => {
-      const nav = event.target.closest('[data-nav]');
-      if (nav && window.AipRouter) { window.AipRouter.show(nav.dataset.nav); return; }
-
-      const opener = event.target.closest('[data-prov-open]');
-      if (opener) { event.preventDefault(); openProvider(opener.dataset.provOpen); return; }
-
-      if (event.target.closest('[data-guide-open]')) { openGuide(); return; }
-      if (event.target.closest('[data-guide-close]')) { closeGuide(); return; }
-      const copyBtn = event.target.closest('[data-copy-code]');
-      if (copyBtn) { copyGuideCode(copyBtn); return; }
-      if (event.target === guide.veil) { closeGuide(); return; }
-
-      if (event.target.closest('[data-prov-close]')) { closeModal(); return; }
-      if (event.target === modal.veil) { closeModal(); return; }
-    });
-  }
-
-  document.addEventListener('keydown', event => {
+    if (event.target.matches('[data-sort-select]')) { state.sort = event.target.value; renderGrid(); }
+  });
+  searchInput.addEventListener('input',() => {state.query = searchInput.value.trim(); renderGrid();});
+  document.addEventListener('click',event => {
+    const target = event.target;
+    const opener = target.closest('[data-prov-open]');
+    if (opener) { event.preventDefault(); openProvider(opener.dataset.provOpen); return; }
+    if (target.closest('[data-prov-close]') || target === modal.veil) {closeModal();return;}
+    if (target.closest('[data-guide-open]')) {openGuide();return;}
+    if (target.closest('[data-guide-close]') || target === guide.veil) {closeGuide();return;}
+    const copy = target.closest('[data-copy-code]'); if (copy) {copyGuideCode(copy);return;}
+    const tab = target.closest('[data-collection]'); if (tab) {state.collection=tab.dataset.collection;renderGrid();return;}
+    if (target.closest('[data-search-clear]')) {searchInput.value='';state.query='';renderGrid();searchInput.focus();return;}
+    if (target.closest('[data-filters-reset]')) {resetFilters();return;}
+    if (target.closest('[data-reset-all]')) {state.collection='all';state.query='';searchInput.value='';resetFilters();return;}
+    const remove = target.closest('[data-remove-filter]');
+    if (remove) {state.filters[remove.dataset.removeFilter].delete(remove.dataset.filterValue);renderFilters();renderGrid();return;}
+    if (target.closest('[data-filters-toggle]')) {openFilters();return;}
+    if (target.closest('[data-filters-close]') || target === $('[data-filter-backdrop]')) {closeFilters();return;}
+    const card = target.closest('[data-provider-id]');
+    if (card && !target.closest('a,button,input')) openProvider(card.dataset.providerId);
+  });
+  document.addEventListener('keydown',event => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k' && modal.veil.hidden && guide.veil.hidden && !document.body.classList.contains('filters-open')) {event.preventDefault();searchInput.focus();return;}
     if (event.key === 'Escape') {
-      if (guide.veil && !guide.veil.hidden) { closeGuide(); return; }
-      if (modal.veil && !modal.veil.hidden) { closeModal(); return; }
+      if (!guide.veil.hidden) {closeGuide();return;}
+      if (!modal.veil.hidden) {closeModal();return;}
+      if (document.body.classList.contains('filters-open')) {closeFilters();return;}
+      if (event.target === searchInput) {searchInput.value='';state.query='';renderGrid();}
+    }
+    if (document.body.classList.contains('filters-open') && event.key === 'Tab') {
+      const controls=$$('button,input:not([disabled]),a[href]',sidebar).filter(el=>el.offsetParent!==null);
+      const first=controls[0],last=controls[controls.length-1];
+      if(event.shiftKey && document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey && document.activeElement===last){event.preventDefault();first.focus();}
+      return;
     }
     trapFocus(event);
   });
-
-  window.Views = { openProvider, closeModal };
-
-  renderGrid();
-  renderStats();
-  renderHero();
-  wireClicks();
-  wireSearch();
-  refreshIcons();
+  document.addEventListener('error',event => {
+    const img=event.target;
+    if(img instanceof HTMLImageElement && !img.src.includes('gorouterlogo.png')) img.src='assets/gorouterlogo.png';
+  },true);
+  window.addEventListener('resize',() => {if(window.innerWidth>730) closeFilters();});
+  window.Views={openProvider,closeModal};
+  renderFilters();renderGrid();refreshIcons();
 })();
