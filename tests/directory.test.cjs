@@ -94,7 +94,7 @@ test('all source providers appear once, with feature lists and three honest metr
   assert.equal((markup.match(/class="api-features"/g) || []).length, records.length);
   assert.equal((markup.match(/class="api-metrics"/g) || []).length, records.length);
   assert.equal((markup.match(/Not listed/g) || []).length, records.length * 3);
-  assert.equal(h.context.window.Adapters.stats.off, 14);
+  assert.equal(h.context.window.Adapters.stats.off, 15);
 });
 
 test('every card and modal preserve exact provider endpoints and disable only offline/missing URLs', () => {

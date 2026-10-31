@@ -43,6 +43,7 @@
      guide         the provider's own setup guide URL, or null.
 
    Verified 2026-10-31. Round 17 added KVOTUM, Moyuu and FREE-PI at the owner's request.
+   Three Router is currently disabled by the maintainer; its URL is retained for possible reactivation.
    Round 16 replaced MegaNova AI and Plugsky with three owner-requested referral links.
    Round 14 added HyxAPI, xKiro and Three Router (owner-requested referral links).
    Round 13 added PixRouter (owner-requested invite link). Round 12 turns
@@ -520,7 +521,8 @@ window.PROVIDERS = [
     blurb: "Referral sign-up for an AI API gateway. Register, then check the dashboard for the current endpoint, key and model details.",
     offer: "Referral sign-up - check the dashboard for current terms", guide: null },
   { id: "threerouter", name: "Three Router", url: "https://www.threerouter.com/register?aff=DB35EA93EF6G", logo: "assets/three-router-logo.webp",
-    status: "live", flags: [], addedAt: "2026-10-26", rank: null,
+    status: "off", flags: [], addedAt: "2026-10-26", rank: null,
+    statusNote: "Disabled by the maintainer - sign-up link is off until the provider is rechecked.",
     kind: "gateway", protocol: [], freeShape: "unknown",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,
