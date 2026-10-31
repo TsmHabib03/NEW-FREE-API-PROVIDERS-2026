@@ -86,7 +86,7 @@ function harness(fixtures) {
 
 test('all source providers appear once, with feature lists and three honest metrics', () => {
   const h = harness(), records = h.context.window.PROVIDERS;
-  assert.equal(records.length, 63);
+  assert.equal(records.length, 66);
   assert.equal(h.ids().length, records.length);
   assert.equal(new Set(h.ids()).size, records.length);
   assert.deepEqual(new Set(h.ids()), new Set(records.map(p => p.id)));

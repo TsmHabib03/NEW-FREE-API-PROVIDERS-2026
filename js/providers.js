@@ -42,7 +42,8 @@
      blurb/offer   verbatim provider-facing copy, shown on row expand, not in the row.
      guide         the provider's own setup guide URL, or null.
 
-   Verified 2026-10-29. Round 16 replaced MegaNova AI and Plugsky with three owner-requested referral links.
+   Verified 2026-10-31. Round 17 added KVOTUM, Moyuu and FREE-PI at the owner's request.
+   Round 16 replaced MegaNova AI and Plugsky with three owner-requested referral links.
    Round 14 added HyxAPI, xKiro and Three Router (owner-requested referral links).
    Round 13 added PixRouter (owner-requested invite link). Round 12 turns
    off Geaix (provider down). Round 11 turned off five rows
@@ -459,6 +460,28 @@ window.PROVIDERS = [
     models: [], modelsNote: null,
     blurb: "AI API routing platform for developers - one place to explore and integrate AI capabilities into your projects. Register through the invite link, then take the base URL, key and model from the dashboard.",
     offer: "Invite sign-up - check the dashboard for current terms", guide: null },
+  /* Round 17 — owner-requested referral links added 2026-10-31. */
+  { id: "kvotum", name: "KVOTUM", url: "https://myapi.buzz/?ref=41a98df6", logo: "assets/kvotum-logo.png",
+    status: "live", flags: [], addedAt: "2026-10-31", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "API gateway sign-up through KVOTUM. Register through the referral link, then check the dashboard for the current endpoint, key and model details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
+  { id: "moyuu", name: "Moyuu", url: "https://moyuu.cc/sign-up?aff=mqIv", logo: "assets/moyuu-logo.png",
+    status: "live", flags: [], addedAt: "2026-10-31", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "API gateway sign-up through Moyuu. Register through the referral link, then check the dashboard for the current endpoint, key and model details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
+  { id: "freepi", name: "FREE-PI", url: "https://freepi.ai/?ref=8y868hkq", logo: "assets/freepi-logo.png",
+    status: "live", flags: [], addedAt: "2026-10-31", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "AI API gateway sign-up through FREE-PI. Register through the referral link, then check the dashboard for the current endpoint, key and model details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
   /* Round 16 — owner-requested referral links added 2026-10-29. */
   { id: "floodgate", name: "FloodGate", url: "https://floodgate.dev/sign-up?aff=nSWi", logo: "assets/floodgate-logo.png",
     status: "live", flags: [], addedAt: "2026-10-29", rank: null,
