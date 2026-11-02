@@ -35,6 +35,7 @@
   };
   function fillProvider(p) {
     currentId = p.id;
+    modal.card.dataset.providerId = p.id;
     modal.logo.src = A.logo(p); modal.logo.alt = p.name + ' logo';
     modal.name.textContent = p.name;
     modal.card.classList.toggle('is-off', A.isOff(p));
