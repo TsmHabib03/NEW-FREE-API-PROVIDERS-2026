@@ -46,6 +46,11 @@
     modal.blurb.textContent = p.blurb || 'Provider details have not been published.';
     modal.credit.textContent = p.offer || '';
     modal.credit.hidden = !p.offer;
+    const event = $('[data-prov-event]');
+    event.hidden = !p.event;
+    event.innerHTML = p.event ? '<p class="prov-event-kicker"><i data-lucide="zap"></i>' + esc(p.event.label) + '</p>' +
+      '<p class="prov-event-duration">' + esc(p.event.duration) + '</p><ul>' +
+      p.event.rewards.map(reward => '<li>' + esc(reward) + '</li>').join('') + '</ul>' : '';
     const routes = (p.protocol || []).map(protoLabel).join(' + ');
     const models = p.models || [];
     const modelSummary = models.length ? models.slice(0, 3).join(', ') + (models.length > 3 ? ' and ' + (models.length - 3) + ' more' : '') : p.modelsNote || 'Models not documented';
@@ -58,7 +63,9 @@
     const facts = [
       ['Client route', routes || 'Not documented'], ['API Category', A.categories(p).join(', ')],
       ['Authentication', A.authTypes(p).map(A.authLabel).join(', ')], ['Card required', p.noCard ? 'No card needed' : 'Not documented'],
-      ['Added', p.addedAt || 'Not documented'], ...A.features(p).filter(([key]) => key === 'Data format' || key === 'Rate limit')
+      ['Added', p.addedAt || 'Not documented'],
+      ...(p.gatewayFeatures || []).map((feature, index) => ['Gateway feature ' + (index + 1), feature]),
+      ...A.features(p).filter(([key]) => key === 'Data format' || key === 'Rate limit')
     ];
     modal.facts().innerHTML = facts.map(([key, value]) => '<div><dt>' + esc(key) + '</dt><dd>' + esc(value) + '</dd></div>').join('');
     $('[data-prov-modal-metrics]').innerHTML = metricsMarkup(p);
@@ -212,6 +219,7 @@
     return '<li class="api-card' + (off ? ' is-off' : A.isCaveat(p) ? ' is-flagged' : '') + (featured ? ' api-featured' : '') + '" data-provider-id="' + esc(p.id) + '">' +
       '<div class="api-card-top"><span class="api-logo"><img src="' + esc(A.logo(p)) + '" alt="" loading="lazy" width="40" height="40"></span>' +
       '<div class="api-card-stamp">' + (featured ? '<span class="api-tag featured-label">Featured</span>' : '') +
+      (p.event ? '<span class="api-tag event-label"><i data-lucide="zap"></i>' + esc(p.event.label) + '</span>' : '') +
       '<time class="api-date"' + (p.updatedAt || p.addedAt ? ' datetime="' + esc(p.updatedAt || p.addedAt) + '"' : '') + ' title="' + (p.updatedAt ? 'Updated' : 'Added') + ' ' + esc(p.updatedAt || p.addedAt || '') + '">' + esc(dateLabel(p)) + '</time></div></div>' +
       '<h3 class="api-title"><button type="button" data-prov-open="' + esc(p.id) + '" aria-label="Open details for ' + esc(p.name) + '">' + esc(p.name) + '</button></h3>' +
       '<p class="api-desc">' + esc(p.blurb || 'Provider details are not documented yet.') + '</p><div class="api-tags">' + tags + '</div>' +
