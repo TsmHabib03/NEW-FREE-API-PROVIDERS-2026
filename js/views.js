@@ -69,11 +69,12 @@
     ];
     modal.facts().innerHTML = facts.map(([key, value]) => '<div><dt>' + esc(key) + '</dt><dd>' + esc(value) + '</dd></div>').join('');
     $('[data-prov-modal-metrics]').innerHTML = metricsMarkup(p);
-    const docs = docsLink(p), signup = safeUrl(p.url);
+    const docs = docsLink(p), signup = safeUrl(p.url), official = safeUrl(p.officialUrl);
     const docsNote = $('[data-prov-docs-note]');
     docsNote.hidden = docs !== 'setup.html';
     docsNote.textContent = docs === 'setup.html' ? 'Provider documentation is not listed. View our client setup guides instead.' : '';
-    modal.act().innerHTML = '<a class="prov-docs" href="' + esc(docs) + '"' + external(docs) + '><i data-lucide="book-open"></i>View Documentation</a>' +
+    modal.act().innerHTML = (official ? '<a class="prov-docs" href="' + esc(official) + '" target="_blank" rel="noopener noreferrer"><i data-lucide="globe"></i>Use its official website</a>' : '') +
+      '<a class="prov-docs" href="' + esc(docs) + '"' + external(docs) + '><i data-lucide="book-open"></i>View Documentation</a>' +
       (A.isOff(p) || !signup ? '<span class="prov-offline" aria-disabled="true"><i data-lucide="circle-off"></i>' +
       (A.isOff(p) ? 'Unavailable — provider offline' : 'Sign-up link not available') + '</span>' :
       '<a class="prov-signin" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer">Get API<i data-lucide="arrow-right"></i></a>');
@@ -219,6 +220,7 @@
     return '<li class="api-card' + (off ? ' is-off' : A.isCaveat(p) ? ' is-flagged' : '') + (featured ? ' api-featured' : '') + '" data-provider-id="' + esc(p.id) + '">' +
       '<div class="api-card-top"><span class="api-logo"><img src="' + esc(A.logo(p)) + '" alt="" loading="lazy" width="40" height="40"></span>' +
       '<div class="api-card-stamp">' + (featured ? '<span class="api-tag featured-label">Featured</span>' : '') +
+      (p.recommended ? '<span class="api-tag featured-label">Recommended</span>' : '') +
       (p.event ? '<span class="api-tag event-label"><i data-lucide="zap"></i>' + esc(p.event.label) + '</span>' : '') +
       '<time class="api-date"' + (p.updatedAt || p.addedAt ? ' datetime="' + esc(p.updatedAt || p.addedAt) + '"' : '') + ' title="' + (p.updatedAt ? 'Updated' : 'Added') + ' ' + esc(p.updatedAt || p.addedAt || '') + '">' + esc(dateLabel(p)) + '</time></div></div>' +
       '<h3 class="api-title"><button type="button" data-prov-open="' + esc(p.id) + '" aria-label="Open details for ' + esc(p.name) + '">' + esc(p.name) + '</button></h3>' +

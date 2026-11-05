@@ -126,6 +126,21 @@ test('every card and modal preserve exact provider endpoints and disable only of
   }
 });
 
+test('recommended UTIM keeps its API signup and adds a separate official website action', () => {
+  const h = harness(), A = h.context.window.Adapters;
+  const utim = A.providers.find(p => p.id === 'utim');
+  const pixrouter = A.providers.find(p => p.id === 'pixrouter');
+  assert.equal(utim.recommended, true);
+  assert.equal(pixrouter.recommended, true);
+  assert.ok(A.collections.find(c => c.key === 'picks').items.some(p => p.id === 'utim'));
+  h.emit('click', h.target('[data-prov-open]', { provOpen: 'utim' }));
+  const actions = h.get('.prov-act').innerHTML;
+  assert.ok(actions.includes('href="https://utim.dev/"'));
+  assert.ok(actions.includes('Use its official website'));
+  assert.ok(actions.includes('href="https://utim.dev/auth?mode=signup&amp;ref=278c8461"'));
+  assert.ok(actions.includes('Get API'));
+});
+
 test('checkboxes use OR within groups and AND across groups; search includes offline models', () => {
   const h = harness(), A = h.context.window.Adapters;
   h.change('status', 'off');
