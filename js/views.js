@@ -19,6 +19,76 @@
     facts: () => $('.prov-facts', $('[data-prov-modal]')), act: () => $('.prov-act', $('[data-prov-modal]'))
   };
   let lastFocus = null, currentId = null, filterFocus = null;
+  const community = {
+    veil: $('[data-community-modal]'), panel: $('[data-community-panel]'),
+    title: $('[data-community-title]'), reading: $('[data-community-reading]'),
+    opener: $('[data-community-open]')
+  };
+  const NOTICE_KEY = 'aip2026.community-notice';
+  const NOTICE_VERSION = '2026-11-v1';
+  let noticeMemory = null, noticeFocus = null;
+  const noticeIsOpen = () => !!community.veil && !community.veil.hidden;
+
+  function validNotice(raw) {
+    try {
+      const record = JSON.parse(raw);
+      return record?.version === NOTICE_VERSION && ['acknowledged', 'dismissed'].includes(record.disposition) ? record : null;
+    } catch { return null; }
+  }
+  function readNotice() {
+    let record = noticeMemory;
+    for (const name of ['localStorage', 'sessionStorage']) {
+      try {
+        const saved = validNotice(window[name].getItem(NOTICE_KEY));
+        if (saved && (!record || saved.disposition === 'acknowledged')) record = saved;
+      } catch { /* Storage access itself may throw; session or memory still works. */ }
+    }
+    noticeMemory = record;
+    return record;
+  }
+  function saveNotice(disposition) {
+    const previous = readNotice();
+    noticeMemory = { version: NOTICE_VERSION, disposition: previous?.disposition === 'acknowledged' ? 'acknowledged' : disposition };
+    const raw = JSON.stringify(noticeMemory);
+    for (const name of ['localStorage', 'sessionStorage']) {
+      try { window[name].setItem(NOTICE_KEY, raw); } catch { /* Page-memory suppression remains available. */ }
+    }
+  }
+  function syncDialogBackground() {
+    const open = noticeIsOpen() || !modal.veil.hidden || !guide.veil.hidden;
+    shell.inert = open;
+    const skip = $('.skip-link');
+    if (skip) skip.inert = open || document.body.classList.contains('filters-open');
+    document.body.classList.toggle('modal-open', open);
+  }
+  function restoreFocus(element) {
+    const target = element instanceof HTMLElement && element.isConnected !== false && element.offsetParent !== null && !element.inert
+      ? element : $('#main-content');
+    target?.focus({ preventScroll: true });
+  }
+  function openNotice(automatic = false) {
+    if (!community.veil || !community.panel || !community.title || !community.reading || noticeIsOpen()) return;
+    if (automatic && (readNotice() || !modal.veil.hidden || !guide.veil.hidden || document.body.classList.contains('filters-open'))) return;
+    const returnTarget = automatic ? $('#main-content') : document.activeElement;
+    // The notice is a top-level dialog. Only provider details can nest a guide.
+    closeModal(); closeFilters();
+    noticeFocus = returnTarget;
+    community.panel.scrollTop = 0;
+    community.reading.scrollTop = 0;
+    community.veil.hidden = false;
+    syncDialogBackground();
+    community.title.focus({ preventScroll: true });
+  }
+  function closeNotice(disposition = 'dismissed', browse = false) {
+    if (!noticeIsOpen()) return;
+    saveNotice(disposition);
+    community.veil.hidden = true;
+    syncDialogBackground();
+    const returnTarget = browse ? $('#main-content') : noticeFocus;
+    noticeFocus = null;
+    restoreFocus(returnTarget);
+    if (browse) $('#main-content')?.scrollIntoView({ behavior: 'instant', block: 'start' });
+  }
   const safeUrl = value => {
     if (!value) return null;
     try { return /^https?:$/.test(new URL(value, location.href).protocol) ? value : value === 'setup.html' ? value : null; } catch { return null; }
@@ -86,19 +156,20 @@
   function openProvider(id) {
     const p = A.providers.find(x => x.id === id);
     if (!p) return;
+    closeNotice();
     closeFilters();
     fillProvider(p);
     if (modal.veil.hidden) lastFocus = document.activeElement;
-    modal.veil.hidden = false; shell.inert = true;
-    document.body.classList.add('modal-open');
+    modal.veil.hidden = false;
+    syncDialogBackground();
     $('[data-prov-close]').focus();
   }
   function closeModal() {
     if (!guide.veil.hidden) closeGuide();
     if (modal.veil.hidden) return;
-    modal.veil.hidden = true; shell.inert = false;
-    document.body.classList.remove('modal-open');
-    lastFocus?.focus(); lastFocus = null;
+    modal.veil.hidden = true;
+    syncDialogBackground();
+    restoreFocus(lastFocus); lastFocus = null;
   }
   const guide = {
     veil: $('[data-guide-modal]'),
@@ -180,7 +251,7 @@
 
   function trapFocus(event) {
     if (event.key !== 'Tab') return;
-    const veil = guide.veil && !guide.veil.hidden ? guide.veil
+    const veil = noticeIsOpen() ? community.veil : guide.veil && !guide.veil.hidden ? guide.veil
       : modal.veil && !modal.veil.hidden ? modal.veil : null;
     if (!veil) return;
     const focusables = $$('a[href],button:not([disabled]),summary,[tabindex]:not([tabindex="-1"])', veil)
@@ -188,8 +259,9 @@
     if (!focusables.length) return;
     const first = focusables[0];
     const last = focusables[focusables.length - 1];
-    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    const outsideTabOrder = !focusables.includes(document.activeElement);
+    if (event.shiftKey && (document.activeElement === first || outsideTabOrder)) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && (document.activeElement === last || outsideTabOrder)) { event.preventDefault(); first.focus(); }
   }
 
 
@@ -264,15 +336,18 @@
     $('[data-filters-toggle]').setAttribute('aria-expanded','false');
     $$('.topbar,.directory-intro,.directory-main,.footer').forEach(el => el.inert = false);
     sidebar.removeAttribute('role'); sidebar.removeAttribute('aria-modal');
-    filterFocus?.focus(); filterFocus = null;
+    syncDialogBackground();
+    restoreFocus(filterFocus); filterFocus = null;
   }
   function openFilters() {
+    closeNotice(); closeModal();
     filterFocus = document.activeElement;
     document.body.classList.add('filters-open');
     $('[data-filter-backdrop]').hidden = false;
     $('[data-filters-toggle]').setAttribute('aria-expanded','true');
     $$('.topbar,.directory-intro,.directory-main,.footer').forEach(el => el.inert = true);
     sidebar.setAttribute('role','dialog'); sidebar.setAttribute('aria-modal','true');
+    syncDialogBackground();
     $('[data-filters-close]').focus();
   }
   $('[data-collection-tabs]').innerHTML = A.collections.map(c => '<button class="collection-tab" type="button" data-collection="' + c.key + '" aria-current="' + (c.key === state.collection) + '">' + c.title + '</button>').join('');
@@ -286,6 +361,13 @@
   searchInput.addEventListener('input',() => {state.query = searchInput.value.trim(); renderGrid();});
   document.addEventListener('click',event => {
     const target = event.target;
+    if (target.closest('[data-community-open]')) {openNotice();return;}
+    if (noticeIsOpen()) {
+      if (target.closest('[data-community-acknowledge]')) closeNotice('acknowledged');
+      else if (target.closest('[data-community-browse]')) closeNotice('dismissed', true);
+      else if (target.closest('[data-community-close]') || target === community.veil) closeNotice();
+      return;
+    }
     const opener = target.closest('[data-prov-open]');
     if (opener) { event.preventDefault(); openProvider(opener.dataset.provOpen); return; }
     if (target.closest('[data-prov-close]') || target === modal.veil) {closeModal();return;}
@@ -304,8 +386,13 @@
     if (card && !target.closest('a,button,input')) openProvider(card.dataset.providerId);
   });
   document.addEventListener('keydown',event => {
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k' && modal.veil.hidden && guide.veil.hidden && !document.body.classList.contains('filters-open')) {event.preventDefault();searchInput.focus();return;}
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      if (!noticeIsOpen() && modal.veil.hidden && guide.veil.hidden && !document.body.classList.contains('filters-open')) searchInput.focus();
+      return;
+    }
     if (event.key === 'Escape') {
+      if (noticeIsOpen()) {event.preventDefault();closeNotice();return;}
       if (!guide.veil.hidden) {closeGuide();return;}
       if (!modal.veil.hidden) {closeModal();return;}
       if (document.body.classList.contains('filters-open')) {closeFilters();return;}
@@ -320,11 +407,22 @@
     }
     trapFocus(event);
   });
+  document.addEventListener('focusin', () => {
+    if (noticeIsOpen() && !community.veil.contains(document.activeElement)) community.title.focus({ preventScroll: true });
+  });
   document.addEventListener('error',event => {
     const img=event.target;
     if(img instanceof HTMLImageElement && !img.src.includes('gorouterlogo.png')) img.src='assets/gorouterlogo.png';
   },true);
   window.addEventListener('resize',() => {if(window.innerWidth>730) closeFilters();});
-  window.Views={openProvider,closeModal};
+  window.Views={openProvider,closeModal,openNotice};
   renderFilters();renderGrid();refreshIcons();
+  // Keep the hidden markup fail-open: a notice error cannot lock the directory.
+  try {
+    if (community.opener) community.opener.hidden = false;
+    openNotice(true);
+  } catch {
+    if (community.veil) community.veil.hidden = true;
+    syncDialogBackground();
+  }
 })();

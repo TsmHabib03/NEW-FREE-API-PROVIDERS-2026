@@ -31,7 +31,7 @@
       <button type="button" class="theme-toggle icon-button" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode"><i data-lucide="moon"></i></button>
     </header>
     <section class="directory-intro" aria-labelledby="directory-title">
-      <div><h1 id="directory-title">Find your next <span>API.</span></h1><p>Good ideas deserve great tools. Explore free APIs and start building.</p></div>
+      <div><h1 id="directory-title">Find your next <span>API.</span></h1><p>Good ideas deserve great tools. Explore free APIs and start building.</p><button type="button" class="community-reopen" data-community-open aria-haspopup="dialog" aria-controls="community-notice" hidden>Community notice <i data-lucide="arrow-up-right"></i></button></div>
       <div class="directory-health"><span class="status-dot"></span><span><strong data-live-count></strong> providers live<span class="health-caption">Ready for your next project</span></span></div>
     </section>
     <div class="directory-layout">
@@ -109,6 +109,46 @@
     </div>
   </div>
 
+
+  <div class="community-veil" id="community-notice" data-community-modal hidden role="dialog" aria-modal="true" aria-labelledby="community-title">
+    <section class="community-panel" data-community-panel>
+      <header class="community-header">
+        <div class="community-heading-row">
+          <h2 id="community-title" data-community-title tabindex="-1">Community Notice</h2>
+          <span class="community-tag">Notice</span>
+          <button type="button" class="community-close icon-button" data-community-close aria-label="Close community awareness notice"><i data-lucide="x"></i></button>
+        </div>
+        <div class="community-brand"><img class="community-mark" src="assets/community-mark.svg" alt="" width="40" height="40"><div><strong>Community Awareness</strong><span>Platform Update</span></div></div>
+      </header>
+      <div class="community-reading" data-community-reading>
+        <div class="community-cards" role="group" aria-label="Our community commitments">
+          <article class="community-card community-card-yellow" tabindex="0" aria-label="A collective effort to enhance platform safety efficiently.">
+            <p>A collective effort to enhance platform safety efficiently.</p>
+            <span class="community-signature"><img src="assets/community-mark.svg" alt="" width="26" height="26"><span>API favicon</span></span>
+          </article>
+          <article class="community-card community-card-blue" tabindex="0" aria-label="Iterative community updates based on continuous feedback.">
+            <p>Iterative community updates based on continuous feedback.</p>
+            <span class="community-signature"><img src="assets/community-mark.svg" alt="" width="26" height="26"><span>API favicon</span></span>
+          </article>
+          <article class="community-card community-card-red" tabindex="0" aria-label="Ensuring seamless navigation and open communication across all devices.">
+            <p>Ensuring seamless navigation and open communication across all devices.</p>
+            <span class="community-signature"><img src="assets/community-mark.svg" alt="" width="26" height="26"><span>API favicon</span></span>
+          </article>
+        </div>
+        <div class="community-copy">
+          <p>We are aware of recent allegations circulating within the developer community regarding several AI API providers listed on this website.</p>
+          <p>We respect honest feedback and legitimate warnings. However, claims of scams or fake models should be supported by verifiable technical evidence, not assumptions or personal experiences alone.</p>
+          <p>FREE-API-PROVIDERS is an independent directory for discovering free and free-tier AI APIs. We do not own, operate, or guarantee the services listed.</p>
+          <p>We also encourage visitors to evaluate promotional recommendations and referral links independently.</p>
+          <p>Our commitment remains transparency, reliable information, and helping developers discover useful AI resources.</p>
+        </div>
+      </div>
+      <footer class="community-actions">
+        <button type="button" class="community-primary" data-community-acknowledge>Acknowledge &amp; Continue <i data-lucide="arrow-right"></i></button>
+        <button type="button" class="community-secondary" data-community-browse>Browse Directory</button>
+      </footer>
+    </section>
+  </div>
 
   <script src="js/icons.js"></script><script src="js/providers.js"></script><script src="js/adapters.js"></script><script src="js/views.js"></script><script src="js/theme.js"></script>
 </body>

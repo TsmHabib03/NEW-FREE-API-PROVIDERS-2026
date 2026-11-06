@@ -8,7 +8,9 @@ const source = file => fs.readFileSync(path.join(root, file), 'utf8');
 
 // A DOM double exercises the real event handlers and generated markup. It does
 // not claim to verify browser rendering, accessibility trees or native focus.
-function harness(fixtures) {
+const NOTICE_KEY = 'aip2026.community-notice';
+const noticeRecord = disposition => JSON.stringify({ version: '2026-11-v1', disposition });
+function harness(fixtures, options = {}) {
   const nodes = new Map(), events = {}, windowEvents = {};
   let document;
   class Element {
@@ -17,6 +19,7 @@ function harness(fixtures) {
       this.hidden = /modal|backdrop/.test(selector); this.inert = false;
       this.innerHTML = ''; this.textContent = ''; this.value = '';
       this.offsetParent = {}; this.style = {}; this.listeners = {};
+      this.isConnected = true; this.scrollTop = 0;
       this.classes = new Set();
       this.classList = {
         add: name => this.classes.add(name), remove: name => this.classes.delete(name),
@@ -29,22 +32,31 @@ function harness(fixtures) {
     setAttribute(name, value) { this.attributes[name] = String(value); }
     removeAttribute(name) { delete this.attributes[name]; }
     focus() { document.activeElement = this; }
+    contains(element) { return element === this || element.scope === this.selector; }
+    scrollIntoView(options) { this.scrolled = options; }
     addEventListener(type, callback) { this.listeners[type] = callback; }
     querySelector(selector) { return get(selector); }
-    querySelectorAll(selector) { return queryAll(selector); }
+    querySelectorAll(selector) { return queryAll(selector, this); }
   }
   const get = selector => {
     if (!nodes.has(selector)) nodes.set(selector, new Element(selector));
     return nodes.get(selector);
   };
-  const queryAll = selector => {
+  const queryAll = (selector, scope) => {
     if (selector === '[data-collection]') return collections;
     if (selector === '[data-theme-toggle]') return [get(selector)];
     if (selector === 'meta[name="theme-color"]') return [get(selector)];
     if (selector === '.topbar,.directory-intro,.directory-main,.footer')
       return selector.split(',').map(get);
-    if (selector.includes('a[href]') || selector.includes('button,input'))
-      return [get('[data-prov-close]'), get('[data-guide-open]')];
+    if (selector.includes('a[href]') || selector.includes('button,input')) {
+      const controls = scope?.selector === '[data-community-modal]'
+        ? ['[data-community-close]', 'card-yellow', 'card-blue', 'card-red', '[data-community-acknowledge]', '[data-community-browse]']
+        : scope?.selector === '[data-guide-modal]'
+          ? ['[data-guide-close]', '[data-copy-code]', '[data-guide-link]']
+          : scope?.selector === '.filter-sidebar'
+            ? ['[data-filters-close]', 'filter-input'] : ['[data-prov-close]', '[data-guide-open]'];
+      return controls.map(selector => { const el = get(selector); el.scope = scope?.selector; return el; });
+    }
     return [];
   };
   document = {
@@ -56,12 +68,25 @@ function harness(fixtures) {
   const collections = ['all', 'picks', 'newapi', 'recommended', 'offline'].map(key => {
     const el = new Element('[data-collection]'); el.dataset.collection = key; return el;
   });
-  const storage = new Map();
+  const storage = options.storage || new Map(options.fresh ? [] : [[NOTICE_KEY, noticeRecord('dismissed')]]);
+  const session = options.session || new Map();
+  const makeStorage = (map, name) => ({
+    getItem(key) { if (options[name + 'ReadFails']) throw Error('Storage blocked'); return map.get(key) ?? null; },
+    setItem(key, value) { if (options[name + 'WriteFails']) throw Error('Storage full'); map.set(key, value); }
+  });
+  const localApi = makeStorage(storage, 'local'), sessionApi = makeStorage(session, 'session');
+  const window = { innerWidth: 1440, addEventListener: (type, cb) => windowEvents[type] = cb };
+  Object.defineProperties(window, {
+    localStorage: { get() { if (options.localGetterFails) throw Error('Storage blocked'); return localApi; } },
+    sessionStorage: { get() { if (options.sessionGetterFails) throw Error('Storage blocked'); return sessionApi; } }
+  });
+  for (const selector of ['[data-community-title]', '[data-community-panel]', '[data-community-reading]', '[data-community-close]', '[data-community-acknowledge]', '[data-community-browse]', 'card-yellow', 'card-blue', 'card-red']) get(selector).scope = '[data-community-modal]';
+  if (options.missingReading) nodes.set('[data-community-reading]', null);
   const context = vm.createContext({
-    document, window: { innerWidth: 1440, addEventListener: (type, cb) => windowEvents[type] = cb },
-    location: { href: 'http://localhost:8080/index.html' }, URL, HTMLElement: Element,
+    document, window,
+    location: { href: 'http://localhost:8080/index.html#main-content', hash: '#main-content' }, URL, HTMLElement: Element,
     HTMLImageElement: Element, navigator: {}, console, setTimeout, clearTimeout,
-    localStorage: { getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value) }
+    localStorage: localApi
   });
   vm.runInContext(source('js/providers.js'), context);
   if (fixtures) context.window.PROVIDERS = fixtures;
@@ -81,7 +106,7 @@ function harness(fixtures) {
     get('[data-search-input]').listeners.input();
   };
   const ids = () => [...get('[data-provider-grid]').innerHTML.matchAll(/data-provider-id="([^"]+)"/g)].map(m => m[1]);
-  return { context, get, emit, target, change, search, ids, document, windowEvents };
+  return { context, get, emit, target, change, search, ids, document, windowEvents, storage, session };
 }
 
 test('all source providers appear once, with feature lists and three honest metrics', () => {
@@ -235,4 +260,168 @@ test('HTML contains every static view hook; CSS parses; theme toggle exposes dar
   h.get('[data-theme-toggle]').listeners.click({ preventDefault() {} });
   assert.equal(h.document.documentElement.dataset.theme, 'dark');
   assert.equal(h.get('[data-theme-toggle]').attributes['aria-pressed'], 'true');
+});
+
+test('fresh visit opens notice after rendering directory and locks background including skip link', () => {
+  const h = harness(null, { fresh: true });
+  assert.equal(h.get('[data-community-modal]').hidden, false);
+  assert.equal(h.get('[data-community-open]').hidden, false);
+  assert.equal(h.document.activeElement, h.get('[data-community-title]'));
+  assert.equal(h.get('[data-directory-shell]').inert, true);
+  assert.equal(h.get('.skip-link').inert, true);
+  assert.equal(h.document.body.classList.contains('modal-open'), true);
+  assert.equal(h.ids().length, 66);
+  assert.equal(h.storage.has(NOTICE_KEY), false);
+  h.emit('click', h.target('[data-prov-open]', { provOpen: 'museai' }));
+  assert.equal(h.get('[data-prov-modal]').hidden, true);
+  h.emit('click', h.get('[data-community-panel]'));
+  assert.equal(h.get('[data-community-modal]').hidden, false);
+});
+
+test('each intentional exit persists its own disposition and suppresses reload popup', () => {
+  for (const [selector, disposition, key] of [
+    ['[data-community-acknowledge]', 'acknowledged'],
+    ['[data-community-browse]', 'dismissed'],
+    ['[data-community-close]', 'dismissed'],
+    ['[data-community-modal]', 'dismissed'],
+    ['[data-community-title]', 'dismissed', 'Escape']
+  ]) {
+    const h = harness(null, { fresh: true });
+    h.emit(key ? 'keydown' : 'click', h.get(selector), key ? { key } : {});
+    assert.equal(h.storage.get(NOTICE_KEY), noticeRecord(disposition), selector);
+    assert.equal(h.get('[data-community-modal]').hidden, true);
+    assert.equal(h.document.activeElement, h.get('#main-content'));
+    assert.equal(h.get('[data-directory-shell]').inert, false);
+    assert.equal(h.get('.skip-link').inert, false);
+    assert.equal(h.document.body.classList.contains('modal-open'), false);
+    const reloaded = harness(null, { storage: h.storage, session: h.session });
+    assert.equal(reloaded.get('[data-community-modal]').hidden, true, selector);
+  }
+});
+
+test('current preferences suppress auto-open; older, malformed or unknown records recover', () => {
+  for (const raw of [noticeRecord('acknowledged'), noticeRecord('dismissed')]) {
+    assert.equal(harness(null, { storage: new Map([[NOTICE_KEY, raw]]) }).get('[data-community-modal]').hidden, true);
+  }
+  for (const raw of ['broken-json', 'null', '{}', JSON.stringify({ version: 'old', disposition: 'acknowledged' }),
+    JSON.stringify({ version: '2026-11-v1', disposition: 'unexpected' })]) {
+    const h = harness(null, { storage: new Map([[NOTICE_KEY, raw]]) });
+    assert.equal(h.get('[data-community-modal]').hidden, false, raw);
+    h.emit('click', h.get('[data-community-close]'));
+    assert.equal(h.storage.get(NOTICE_KEY), noticeRecord('dismissed'));
+  }
+});
+
+test('manual reopen restores trigger focus, resets reading position and preserves acknowledgment', () => {
+  const h = harness(null, { storage: new Map([[NOTICE_KEY, noticeRecord('acknowledged')]]) });
+  const opener = h.get('[data-community-open]');
+  opener.focus();
+  h.get('[data-community-reading]').scrollTop = 250;
+  h.emit('click', opener);
+  assert.equal(h.get('[data-community-reading]').scrollTop, 0);
+  assert.equal(h.document.activeElement, h.get('[data-community-title]'));
+  h.emit('click', h.get('[data-community-close]'));
+  assert.equal(h.document.activeElement, opener);
+  assert.equal(h.storage.get(NOTICE_KEY), noticeRecord('acknowledged'));
+  opener.focus(); h.emit('click', opener); opener.isConnected = false;
+  h.emit('keydown', h.get('[data-community-title]'), { key: 'Escape' });
+  assert.equal(h.document.activeElement, h.get('#main-content'));
+});
+
+test('storage getter/read/write failures fall back to session and page memory without blocking exit', () => {
+  for (const failure of ['localGetterFails', 'localReadFails', 'localWriteFails']) {
+    const h = harness(null, { fresh: true, [failure]: true });
+    h.emit('click', h.get('[data-community-acknowledge]'));
+    assert.equal(h.session.get(NOTICE_KEY), noticeRecord('acknowledged'));
+    const reload = harness(null, { fresh: true, session: h.session, [failure]: true });
+    assert.equal(reload.get('[data-community-modal]').hidden, true, failure);
+  }
+  for (const options of [
+    { localGetterFails: true, sessionGetterFails: true },
+    { localReadFails: true, sessionReadFails: true, localWriteFails: true, sessionWriteFails: true }
+  ]) {
+    const h = harness(null, { fresh: true, ...options });
+    h.emit('click', h.get('[data-community-acknowledge]'));
+    assert.equal(h.get('[data-community-modal]').hidden, true);
+    h.context.window.Views.openNotice(true);
+    assert.equal(h.get('[data-community-modal]').hidden, true, 'memory suppresses a second automatic attempt');
+    const opener = h.get('[data-community-open]'); opener.focus(); h.emit('click', opener);
+    assert.equal(h.get('[data-community-modal]').hidden, false, 'manual reopening bypasses memory');
+    h.emit('click', h.get('[data-community-browse]'));
+    assert.equal(h.document.activeElement, h.get('#main-content'));
+  }
+});
+
+test('notice traps title/edge focus, permits card traversal and guards search shortcuts/outside focus', () => {
+  const h = harness(null, { fresh: true }), title = h.get('[data-community-title]');
+  const close = h.get('[data-community-close]'), browse = h.get('[data-community-browse]');
+  assert.equal(h.emit('keydown', title, { key: 'Tab' }).prevented, true);
+  assert.equal(h.document.activeElement, close);
+  h.emit('keydown', close, { key: 'Tab', shiftKey: true });
+  assert.equal(h.document.activeElement, browse);
+  h.emit('keydown', browse, { key: 'Tab' });
+  assert.equal(h.document.activeElement, close);
+  title.focus(); h.emit('keydown', title, { key: 'Tab', shiftKey: true });
+  assert.equal(h.document.activeElement, browse);
+  h.get('card-blue').focus();
+  assert.equal(h.emit('keydown', h.get('card-blue'), { key: 'Tab' }).prevented, undefined);
+  assert.equal(h.document.activeElement, h.get('card-blue'));
+  for (const modifier of ['ctrlKey', 'metaKey']) {
+    assert.equal(h.emit('keydown', title, { key: 'k', [modifier]: true }).prevented, true);
+    assert.equal(h.document.activeElement, h.get('card-blue'));
+  }
+  h.get('.skip-link').focus(); h.emit('focusin', h.get('.skip-link'));
+  assert.equal(h.document.activeElement, title);
+  h.emit('click', close);
+  h.emit('keydown', h.get('#main-content'), { key: 'k', ctrlKey: true });
+  assert.equal(h.document.activeElement, h.get('[data-search-input]'));
+});
+
+test('Browse Directory preserves filters, search, sorting, collection and URL', () => {
+  const h = harness();
+  h.change('status', 'live'); h.search('api');
+  h.emit('click', h.target('[data-collection]', { collection: 'recommended' }));
+  const sort = h.target('[data-sort-select]'); sort.value = 'name'; h.emit('change', sort);
+  const ids = h.ids(), href = h.context.location.href;
+  h.context.window.Views.openNotice(); h.emit('click', h.get('[data-community-browse]'));
+  assert.deepEqual(h.ids(), ids);
+  assert.equal(h.get('[data-search-input]').value, 'api');
+  assert.equal(h.context.location.href, href);
+  assert.equal(h.document.activeElement, h.get('#main-content'));
+  assert.equal(h.get('#main-content').scrolled.behavior, 'instant');
+  assert.equal(h.get('[data-community-reading]').scrollTop, 0);
+});
+
+test('notice/provider/guide/drawer transitions keep one top-level overlay and release locks', () => {
+  const h = harness();
+  h.context.window.Views.openProvider('museai');
+  h.emit('click', h.get('[data-guide-open]'));
+  h.context.window.Views.openNotice(true);
+  assert.equal(h.get('[data-community-modal]').hidden, true);
+  h.context.window.Views.openNotice();
+  assert.equal(h.get('[data-prov-modal]').hidden, true);
+  assert.equal(h.get('[data-guide-modal]').hidden, true);
+  assert.equal(h.get('[data-prov-card]').inert, false);
+  assert.equal(h.get('[data-directory-shell]').inert, true);
+  h.context.window.Views.openProvider('museai');
+  assert.equal(h.get('[data-community-modal]').hidden, true);
+  assert.equal(h.get('[data-prov-modal]').hidden, false);
+  assert.equal(h.get('[data-directory-shell]').inert, true);
+  h.context.window.Views.closeModal();
+  h.emit('click', h.get('[data-filters-toggle]'));
+  h.context.window.Views.openNotice();
+  assert.equal(h.document.body.classList.contains('filters-open'), false);
+  assert.equal(h.get('.directory-main').inert, false);
+  assert.equal(h.get('[data-directory-shell]').inert, true);
+  h.emit('click', h.get('[data-community-close]'));
+  assert.equal(h.get('[data-directory-shell]').inert, false);
+  assert.equal(h.document.body.classList.contains('modal-open'), false);
+});
+
+test('notice initialization error leaves directory interactive', () => {
+  const h = harness(null, { fresh: true, missingReading: true });
+  assert.equal(h.get('[data-community-modal]').hidden, true);
+  assert.equal(h.get('[data-directory-shell]').inert, false);
+  assert.equal(h.document.body.classList.contains('modal-open'), false);
+  assert.equal(h.ids().length, 66);
 });
