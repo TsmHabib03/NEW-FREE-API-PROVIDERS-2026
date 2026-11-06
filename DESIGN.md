@@ -183,3 +183,13 @@ Motion is bounded: a 280ms modal arrival, 300ms warm overlay fade, and 220ms fil
 - Don't replace provider-specific links with placeholder endpoints.
 - Don't hide offline records or remove their stored URLs.
 - Don't treat old screenshots or code tests as current rendered verification.
+
+## Community notice
+
+The latest approved notice reference uses its own scoped card geometry while the directory and provider dialogs keep their existing styles. The card is at most 410px wide with 16px corners, 26px body insets and an off-white #f7f7f5 reading surface. Primary copy uses #191a19 at 23px/1.18, weight 600; secondary copy uses #62645f at 19px/1.25; tertiary copy uses 13px/1.4. This deliberately dense hierarchy follows the supplied vertical reference. At narrow widths the type scales to 22px and 18px, body insets become 22px, and safe-area padding surrounds the viewport-bounded scrolling card.
+
+The 230px header is a rectangular orange/coral, lavender and beige mosaic, made from 24 overlapping translucent blocks over #ff7753, #d9cdb4, #bda6ec and #d7b9cb. A second palette crossfades through opacity over 14 seconds in each direction. Pixel boundaries remain still and sharp. The inset translucent title bar holds a 38px circular container for the existing site favicon and a 44px close control. Short viewports reduce the header to 170px or 130px. Reduced motion stops the fade, and forced colors replace the decorative mosaic with the system canvas.
+
+One 48px acknowledgment button uses #20221f with light text and 9px corners. In dark theme the reading surface becomes #24242a, primary text #f5f4f0, secondary text #bbbcb7, and the button #eeeae1 with dark text. The 45% black backdrop and neutral 0 24px 80px shadow focus the notice. Existing focus, inertness, persistence, dismissal and reopening behavior remains part of the component contract.
+
+This rebuild passed the DOM-double regression tests and CSS parsing. Impeccable's detector flagged the intentional reference-driven tight leading and new scoped palette/type values, alongside incumbent directory findings. Native rendering, screen-reader behavior and visual fidelity could not be reviewed because browser access was unavailable; these remain explicit verification limits.

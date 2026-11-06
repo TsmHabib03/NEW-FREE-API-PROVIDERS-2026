@@ -21,7 +21,7 @@ Visit http://localhost:8080. No backend or API key is required to browse. The si
 - js/views.js: search/filter state, cards, dynamic modal, endpoint actions, focus management, and guide copying.
 - js/icons.js: bundled SVG icon set.
 - js/theme.js: persisted directory theme.
-- assets/community-mark.svg: local multicolor bracket mark for the community notice.
+- assets/gorouterlogo.png: existing site favicon and brand mark, reused by the community notice.
 - setup.html and its existing CSS/scripts: client setup documentation.
 
 ## Provider metadata
@@ -51,13 +51,13 @@ Provider Docs use docsUrl, then guide. When neither is supplied, the link opens 
 
 ## Community awareness notice
 
-The homepage displays the current notice once when no matching preference exists. The persistent **Community notice** button near the directory introduction reopens it. The square outer panel uses DM Sans, three responsive gradient cards, a local bracket mark, stacked actions, and theme-aware contrast. Hover and keyboard focus gently deepen the card color pools; reduced motion disables these transitions.
+The homepage displays the current notice once when no matching preference exists. The persistent **Community notice** button near the directory introduction reopens it. The latest approved reference replaces the three-card design with a rounded, 410px vertical card: an orange/coral, lavender and beige rectangular mosaic header, the existing circular site favicon, a solid reading surface with three levels of DM Sans typography, and one full-width **Acknowledge & Continue** button. A slow, continuous opacity crossfade changes the header palette without moving the pixel edges. Reduced motion disables it; light/dark and forced-color styles remain scoped to the notice. The whole card scrolls on small or short viewports, with safe-area padding.
 
-The `aip2026.community-notice` storage record is `{ "version": "2026-11-v1", "disposition": "acknowledged" }` or `"dismissed"`. **Acknowledge & Continue** records acknowledgment. **Browse Directory**, X, Escape, and a backdrop click record dismissal. Both suppress automatic reopening for this version; manually reopening and closing never downgrades acknowledgment. Bump the version only for a material notice update.
+The `aip2026.community-notice` storage record is `{ "version": "2026-11-v1", "disposition": "acknowledged" }` or `"dismissed"`. **Acknowledge & Continue** records acknowledgment. X, Escape, and a backdrop click record dismissal. Both suppress automatic reopening for this version; manually reopening and closing never downgrades acknowledgment. The version stays unchanged for this redesign so previously acknowledged visitors are not interrupted again; they can use the reopen button to read the revised notice. Bump it for a future material notice requiring a new first-visit announcement.
 
 Storage access and parsing are guarded. Local storage provides persistence, session storage provides a fallback, and page memory still suppresses repeated automatic attempts when both are blocked. If all storage is blocked, suppression cannot survive reloads. Storage is separate for each origin, browser profile, and device. The record contains no identity, API key, timestamp, or analytics data.
 
-The notice focuses its heading, traps Tab/Shift+Tab within its controls and cards, makes the directory and skip link inert, and restores focus on exit. Browse Directory focuses and immediately scrolls to existing main content without changing the URL or clearing directory state. The notice, provider details, and filter drawer are mutually exclusive; the existing MuseAI guide still nests within provider details. Static markup remains hidden without JavaScript. The five paragraphs distinguish allegations from verified findings and retain the directory's independent-service disclaimer; provider/referral records are unchanged.
+The notice focuses its heading, traps Tab/Shift+Tab within its close and acknowledgment buttons, makes the directory and skip link inert, and restores focus on exit. Dismissal preserves the directory filters, search, sorting, collection and URL. The notice, provider details, and filter drawer are mutually exclusive; the existing MuseAI guide still nests within provider details. Static markup remains hidden without JavaScript. The exact three approved paragraphs retain the directory's independent-service disclaimer, referral-evaluation advice and transparency commitment; provider/referral records are unchanged.
 
 ## Checks
 
@@ -66,8 +66,8 @@ npm install
 npm test
 ```
 
-Tests execute the real provider, adapter, and view scripts against a small DOM double. They cover record coverage, exact card/modal links, filters/search, collections/sorts, modal state, nested guide, optional metadata, unsafe URL rejection, and theme state. Notice coverage adds fresh display, persisted reloads, invalid/versioned records, storage exceptions, focus restoration/trapping, manual reopening, shortcut guards, state-preserving browsing, overlay exclusivity, and missing-markup recovery. CSS parsing uses the existing PostCSS dependency.
+Tests execute the real provider, adapter, and view scripts against a small DOM double. They cover record coverage, exact card/modal links, filters/search, collections/sorts, modal state, nested guide, optional metadata, unsafe URL rejection, and theme state. Notice coverage adds fresh display, persisted reloads, invalid/versioned records, storage exceptions, focus restoration/trapping, manual reopening, shortcut guards, state-preserving exits, overlay exclusivity, and missing-markup recovery. CSS parsing uses the existing PostCSS dependency.
 
-These tests do not validate browser layout, native focus behavior, accessibility trees, or screenshot fidelity. Desktop/mobile visual review remains necessary when browser access is available. Directory CSS is hand-authored and requires no build; the existing build:css command remains for the legacy Tailwind stylesheet.
+These tests do not validate browser layout, native focus behavior, accessibility trees, or screenshot fidelity. Desktop/mobile visual review remains necessary when browser access is available. The browser access host was unavailable and native Chrome access was rejected during this rebuild. Directory CSS is hand-authored and requires no build; the existing build:css command remains for the legacy Tailwind stylesheet.
 
-Manual notice checks: desktop three-column and mobile stacked cards at 730px, 540px, 375px and 320px; short landscape screens and 200%/400% zoom; both themes; reduced motion and forced colors; heading announcement and paragraph reading; visible keyboard focus and scroll reachability; every dismissal and returning-visitor reload; provider/guide/filter behavior after dismissal. Browser review was unavailable during implementation, so these remain release verification limits.
+Manual notice checks: vertical card and scrolling at 730px, 540px, 375px and 320px; short landscape screens and 200%/400% zoom; both themes; reduced motion and forced colors; heading announcement and paragraph reading; visible keyboard focus and scroll reachability; every dismissal and returning-visitor reload; provider/guide/filter behavior after dismissal. Browser review was unavailable during implementation, so these remain release verification limits.

@@ -50,7 +50,7 @@ function harness(fixtures, options = {}) {
       return selector.split(',').map(get);
     if (selector.includes('a[href]') || selector.includes('button,input')) {
       const controls = scope?.selector === '[data-community-modal]'
-        ? ['[data-community-close]', 'card-yellow', 'card-blue', 'card-red', '[data-community-acknowledge]', '[data-community-browse]']
+        ? ['[data-community-close]', '[data-community-acknowledge]']
         : scope?.selector === '[data-guide-modal]'
           ? ['[data-guide-close]', '[data-copy-code]', '[data-guide-link]']
           : scope?.selector === '.filter-sidebar'
@@ -80,7 +80,7 @@ function harness(fixtures, options = {}) {
     localStorage: { get() { if (options.localGetterFails) throw Error('Storage blocked'); return localApi; } },
     sessionStorage: { get() { if (options.sessionGetterFails) throw Error('Storage blocked'); return sessionApi; } }
   });
-  for (const selector of ['[data-community-title]', '[data-community-panel]', '[data-community-reading]', '[data-community-close]', '[data-community-acknowledge]', '[data-community-browse]', 'card-yellow', 'card-blue', 'card-red']) get(selector).scope = '[data-community-modal]';
+  for (const selector of ['[data-community-title]', '[data-community-panel]', '[data-community-reading]', '[data-community-close]', '[data-community-acknowledge]']) get(selector).scope = '[data-community-modal]';
   if (options.missingReading) nodes.set('[data-community-reading]', null);
   const context = vm.createContext({
     document, window,
@@ -281,7 +281,6 @@ test('fresh visit opens notice after rendering directory and locks background in
 test('each intentional exit persists its own disposition and suppresses reload popup', () => {
   for (const [selector, disposition, key] of [
     ['[data-community-acknowledge]', 'acknowledged'],
-    ['[data-community-browse]', 'dismissed'],
     ['[data-community-close]', 'dismissed'],
     ['[data-community-modal]', 'dismissed'],
     ['[data-community-title]', 'dismissed', 'Escape']
@@ -317,8 +316,10 @@ test('manual reopen restores trigger focus, resets reading position and preserve
   const opener = h.get('[data-community-open]');
   opener.focus();
   h.get('[data-community-reading]').scrollTop = 250;
+  h.get('[data-community-panel]').scrollTop = 350;
   h.emit('click', opener);
   assert.equal(h.get('[data-community-reading]').scrollTop, 0);
+  assert.equal(h.get('[data-community-panel]').scrollTop, 0);
   assert.equal(h.document.activeElement, h.get('[data-community-title]'));
   h.emit('click', h.get('[data-community-close]'));
   assert.equal(h.document.activeElement, opener);
@@ -347,28 +348,26 @@ test('storage getter/read/write failures fall back to session and page memory wi
     assert.equal(h.get('[data-community-modal]').hidden, true, 'memory suppresses a second automatic attempt');
     const opener = h.get('[data-community-open]'); opener.focus(); h.emit('click', opener);
     assert.equal(h.get('[data-community-modal]').hidden, false, 'manual reopening bypasses memory');
-    h.emit('click', h.get('[data-community-browse]'));
-    assert.equal(h.document.activeElement, h.get('#main-content'));
+    h.emit('click', h.get('[data-community-close]'));
+    assert.equal(h.document.activeElement, opener);
   }
 });
 
-test('notice traps title/edge focus, permits card traversal and guards search shortcuts/outside focus', () => {
+test('notice traps title/edge focus and guards search shortcuts/outside focus', () => {
   const h = harness(null, { fresh: true }), title = h.get('[data-community-title]');
-  const close = h.get('[data-community-close]'), browse = h.get('[data-community-browse]');
+  const close = h.get('[data-community-close]'), acknowledge = h.get('[data-community-acknowledge]');
   assert.equal(h.emit('keydown', title, { key: 'Tab' }).prevented, true);
   assert.equal(h.document.activeElement, close);
+  assert.equal(h.emit('keydown', close, { key: 'Tab' }).prevented, undefined, 'native Tab can reach acknowledgment');
   h.emit('keydown', close, { key: 'Tab', shiftKey: true });
-  assert.equal(h.document.activeElement, browse);
-  h.emit('keydown', browse, { key: 'Tab' });
+  assert.equal(h.document.activeElement, acknowledge);
+  h.emit('keydown', acknowledge, { key: 'Tab' });
   assert.equal(h.document.activeElement, close);
   title.focus(); h.emit('keydown', title, { key: 'Tab', shiftKey: true });
-  assert.equal(h.document.activeElement, browse);
-  h.get('card-blue').focus();
-  assert.equal(h.emit('keydown', h.get('card-blue'), { key: 'Tab' }).prevented, undefined);
-  assert.equal(h.document.activeElement, h.get('card-blue'));
+  assert.equal(h.document.activeElement, acknowledge);
   for (const modifier of ['ctrlKey', 'metaKey']) {
-    assert.equal(h.emit('keydown', title, { key: 'k', [modifier]: true }).prevented, true);
-    assert.equal(h.document.activeElement, h.get('card-blue'));
+    assert.equal(h.emit('keydown', acknowledge, { key: 'k', [modifier]: true }).prevented, true);
+    assert.equal(h.document.activeElement, acknowledge);
   }
   h.get('.skip-link').focus(); h.emit('focusin', h.get('.skip-link'));
   assert.equal(h.document.activeElement, title);
@@ -377,19 +376,20 @@ test('notice traps title/edge focus, permits card traversal and guards search sh
   assert.equal(h.document.activeElement, h.get('[data-search-input]'));
 });
 
-test('Browse Directory preserves filters, search, sorting, collection and URL', () => {
-  const h = harness();
-  h.change('status', 'live'); h.search('api');
-  h.emit('click', h.target('[data-collection]', { collection: 'recommended' }));
-  const sort = h.target('[data-sort-select]'); sort.value = 'name'; h.emit('change', sort);
-  const ids = h.ids(), href = h.context.location.href;
-  h.context.window.Views.openNotice(); h.emit('click', h.get('[data-community-browse]'));
-  assert.deepEqual(h.ids(), ids);
-  assert.equal(h.get('[data-search-input]').value, 'api');
-  assert.equal(h.context.location.href, href);
-  assert.equal(h.document.activeElement, h.get('#main-content'));
-  assert.equal(h.get('#main-content').scrolled.behavior, 'instant');
-  assert.equal(h.get('[data-community-reading]').scrollTop, 0);
+test('notice exits preserve filters, search, sorting, collection and URL', () => {
+  for (const selector of ['[data-community-acknowledge]', '[data-community-close]']) {
+    const h = harness();
+    h.change('status', 'live'); h.search('api');
+    h.emit('click', h.target('[data-collection]', { collection: 'recommended' }));
+    const sort = h.target('[data-sort-select]'); sort.value = 'name'; h.emit('change', sort);
+    const ids = h.ids(), href = h.context.location.href, opener = h.get('[data-community-open]');
+    opener.focus(); h.emit('click', opener); h.emit('click', h.get(selector));
+    assert.deepEqual(h.ids(), ids);
+    assert.equal(h.get('[data-search-input]').value, 'api');
+    assert.equal(h.context.location.href, href);
+    assert.equal(h.document.activeElement, opener);
+    assert.equal(h.get('[data-community-reading]').scrollTop, 0);
+  }
 });
 
 test('notice/provider/guide/drawer transitions keep one top-level overlay and release locks', () => {
@@ -424,4 +424,23 @@ test('notice initialization error leaves directory interactive', () => {
   assert.equal(h.get('[data-directory-shell]').inert, false);
   assert.equal(h.document.body.classList.contains('modal-open'), false);
   assert.equal(h.ids().length, 66);
+});
+
+test('notice markup has exact approved copy, existing favicon, decorative mosaic and one CTA', () => {
+  const html = source('index.html');
+  const notice = html.slice(html.indexOf('<div class="community-veil"'), html.indexOf('<script', html.indexOf('<div class="community-veil"')));
+  const paragraphs = [...notice.matchAll(/<p class="community-[^"]+">([^<]+)<\/p>/g)].map(match => match[1]);
+  assert.deepEqual(paragraphs, [
+    'FREE-API-PROVIDERS is an independent directory for discovering free and free-tier AI APIs. We do not own, operate, or guarantee the services listed.',
+    'We also encourage visitors to evaluate promotional recommendations and referral links independently.',
+    'Our commitment remains transparency, reliable information, and helping developers discover useful AI resources.'
+  ]);
+  assert.ok(notice.includes('role="dialog" aria-modal="true" aria-labelledby="community-title"'));
+  assert.ok(notice.includes('class="community-mosaic" aria-hidden="true"'));
+  assert.equal((notice.match(/<span><\/span>/g) || []).length, 24);
+  assert.ok(notice.includes('src="assets/gorouterlogo.png" alt=""'));
+  assert.equal((notice.match(/<button/g) || []).length, 2, 'X and a single acknowledgment CTA');
+  assert.ok(notice.includes('Acknowledge &amp; Continue'));
+  assert.ok(!notice.includes('data-community-browse'));
+  assert.ok(!notice.includes('community-cards'));
 });

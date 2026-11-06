@@ -79,15 +79,14 @@
     syncDialogBackground();
     community.title.focus({ preventScroll: true });
   }
-  function closeNotice(disposition = 'dismissed', browse = false) {
+  function closeNotice(disposition = 'dismissed') {
     if (!noticeIsOpen()) return;
     saveNotice(disposition);
     community.veil.hidden = true;
     syncDialogBackground();
-    const returnTarget = browse ? $('#main-content') : noticeFocus;
+    const returnTarget = noticeFocus;
     noticeFocus = null;
     restoreFocus(returnTarget);
-    if (browse) $('#main-content')?.scrollIntoView({ behavior: 'instant', block: 'start' });
   }
   const safeUrl = value => {
     if (!value) return null;
@@ -364,7 +363,6 @@
     if (target.closest('[data-community-open]')) {openNotice();return;}
     if (noticeIsOpen()) {
       if (target.closest('[data-community-acknowledge]')) closeNotice('acknowledged');
-      else if (target.closest('[data-community-browse]')) closeNotice('dismissed', true);
       else if (target.closest('[data-community-close]') || target === community.veil) closeNotice();
       return;
     }
