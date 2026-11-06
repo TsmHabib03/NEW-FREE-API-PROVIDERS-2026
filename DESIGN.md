@@ -141,7 +141,7 @@ The application shell is at most 1320px wide. Desktop body padding is 48px 36px.
 
 At 1190px and below the grid becomes two columns and the sidebar narrows to 165px. At 730px the sidebar becomes a fixed filter drawer, search moves below navigation, and result announcements remain visually hidden but accessible. At 490px the grid becomes one column. At 360px shell padding contracts further.
 
-The modal is at most 600px wide, with a viewport-bounded scroll container. Its 170px hero ends behind an 88px logo that overlaps by 44px. Content starts with 68px top padding. Small and short viewports reduce hero/logo dimensions while preserving scroll access.
+The provider modal is at most 600px wide, with a viewport-bounded scroll container and a hidden scrollbar. Wheel, touch and keyboard scrolling remain available. Its 170px hero ends behind an 88px logo that overlaps by 44px. Content starts with 68px top padding. Small and short viewports reduce hero/logo dimensions while preserving scroll access.
 
 ## Elevation & Depth
 

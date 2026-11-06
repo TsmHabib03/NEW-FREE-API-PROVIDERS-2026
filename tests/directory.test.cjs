@@ -190,9 +190,13 @@ test('checkboxes use OR within groups and AND across groups; search includes off
 
 test('collections and sort controls update generated cards', () => {
   const h = harness(), A = h.context.window.Adapters;
+  assert.equal(h.ids()[h.ids().indexOf('qronos') + 1], 'tokenforge');
   for (const collection of A.collections) {
     h.emit('click', h.target('[data-collection]', { collection: collection.key }));
     assert.deepEqual(new Set(h.ids()), new Set(collection.items.map(p => p.id)));
+    if (['all', 'picks'].includes(collection.key)) {
+      assert.equal(h.ids()[h.ids().indexOf('qronos') + 1], 'tokenforge');
+    }
   }
   h.emit('click', h.target('[data-collection]', { collection: 'all' }));
   const select = h.target('[data-sort-select]'); select.value = 'name'; h.emit('change', select);
