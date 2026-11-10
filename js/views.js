@@ -93,7 +93,10 @@
     try { return /^https?:$/.test(new URL(value, location.href).protocol) ? value : value === 'setup.html' ? value : null; } catch { return null; }
   };
   const docsLink = p => safeUrl(A.docsUrl(p)) || 'setup.html';
-  const metricsMarkup = p => '<dl class="api-metrics" aria-label="Published API metrics">' + A.metrics(p).map(m =>
+  const metricsMarkup = p => p.rewards ? '<dl class="api-metrics" aria-label="Current reward rules">' + [
+    ['Min. withdrawal', p.rewards.minimumWithdrawal], ['Withdrawal fee', p.rewards.withdrawalFee], ['Payout asset', p.rewards.payoutAsset]
+  ].map(([key, value]) => '<div><dt>' + esc(key) + '</dt><dd>' + esc(value) + '</dd></div>').join('') + '</dl>' :
+    '<dl class="api-metrics" aria-label="Published API metrics">' + A.metrics(p).map(m =>
     '<div><dt>' + esc(m.label) + '</dt><dd class="' + (m.value === null ? 'is-unknown' : '') + '">' + esc(m.display) + '</dd></div>').join('') + '</dl>';
   const external = url => url === 'setup.html' ? '' : ' target="_blank" rel="noopener noreferrer"';
   const dateLabel = p => {
@@ -125,8 +128,14 @@
     const routes = (p.protocol || []).map(protoLabel).join(' + ');
     const models = p.models || [];
     const modelSummary = models.length ? models.slice(0, 3).join(', ') + (models.length > 3 ? ' and ' + (models.length - 3) + ' more' : '') : p.modelsNote || 'Models not documented';
+    $('[data-prov-modal-route]').hidden = !!p.rewards;
     $('[data-prov-modal-route]').textContent = modelSummary + ' · ' +
       (routes ? routes + ' client route' + ((p.protocol || []).length > 1 ? 's' : '') : 'Client route not documented');
+    const rewards = $('[data-prov-rewards]');
+    rewards.hidden = !p.rewards;
+    rewards.innerHTML = p.rewards ? '<h3>How to earn with AdSelect</h3><ol>' +
+      p.rewards.steps.map(step => '<li>' + esc(step) + '</li>').join('') + '</ol>' +
+      metricsMarkup(p) + '<p>' + esc(p.rewards.terms) + '</p>' : '';
     modal.notice.textContent = !A.isLive(p) ? p.statusNote || A.statusLabel(p) : '';
     modal.notice.hidden = A.isLive(p);
     modal.models().innerHTML = models.length ? models.map(m => '<code>' + esc(m) + '</code>').join('') :
@@ -142,14 +151,15 @@
     $('[data-prov-modal-metrics]').innerHTML = metricsMarkup(p);
     const docs = docsLink(p), signup = safeUrl(p.url), official = safeUrl(p.officialUrl);
     const docsNote = $('[data-prov-docs-note]');
-    docsNote.hidden = docs !== 'setup.html';
-    docsNote.textContent = docs === 'setup.html' ? 'Provider documentation is not listed. View our client setup guides instead.' : '';
+    docsNote.hidden = !!p.rewards || docs !== 'setup.html';
+    docsNote.textContent = !p.rewards && docs === 'setup.html' ? 'Provider documentation is not listed. View our client setup guides instead.' : '';
     modal.act().innerHTML = (official ? '<a class="prov-docs" href="' + esc(official) + '" target="_blank" rel="noopener noreferrer"><i data-lucide="globe"></i>Use its official website</a>' : '') +
-      '<a class="prov-docs" href="' + esc(docs) + '"' + external(docs) + '><i data-lucide="book-open"></i>View Documentation</a>' +
+      (p.rewards ? '' : '<a class="prov-docs" href="' + esc(docs) + '"' + external(docs) + '><i data-lucide="book-open"></i>View Documentation</a>') +
       (A.isOff(p) || !signup ? '<span class="prov-offline" aria-disabled="true"><i data-lucide="circle-off"></i>' +
       (A.isOff(p) ? 'Unavailable — provider offline' : 'Sign-up link not available') + '</span>' :
-      '<a class="prov-signin" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer">Get API<i data-lucide="arrow-right"></i></a>');
+      '<a class="prov-signin" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer">' + (p.rewards ? 'Join AdSelect &amp; earn rewards' : 'Get API') + '<i data-lucide="arrow-right"></i></a>');
     $('.prov-technical', modal.card).open = false;
+    $('.prov-technical', modal.card).hidden = !!p.rewards;
     $('[data-prov-guide]').hidden = !p.onboarding;
     modal.card.scrollTop = 0;
     refreshIcons();
@@ -284,6 +294,7 @@
     const off = A.isOff(p), docs = docsLink(p);
     const signup = safeUrl(p.url);
     const tags = [
+      p.rewards ? '<span class="api-tag auth">Earn rewards</span>' : '',
       FREE_SHAPE[p.freeShape] ? '<span class="api-tag">' + FREE_SHAPE[p.freeShape] + '</span>' : '',
       ...A.authTypes(p).filter(type => type !== 'unknown').map(type => '<span class="api-tag auth">' + esc(A.authLabel(type)) + '</span>'),
       ...(p.protocol || []).map(proto => '<span class="api-tag route">' + esc(protoLabel(proto)) + '</span>'),
@@ -302,11 +313,12 @@
       '<ul class="api-features">' + A.features(p).map(([key,value]) => '<li><span>' + esc(key) + '</span><strong>' + esc(value) + '</strong></li>').join('') + '</ul>' +
       (!A.isLive(p) && p.statusNote ? '<p class="api-note">' + esc(p.statusNote) + '</p>' : '') +
       '<div class="api-card-meta"><span class="status-dot"></span>' + esc(A.statusLabel(p)) + '<span>·</span>' +
-      ((p.models || []).length ? p.models.length + ' documented models' : 'Models not documented') + '</div>' + metricsMarkup(p) +
+      (p.rewards ? 'Advertising rewards' : (p.models || []).length ? p.models.length + ' documented models' : 'Models not documented') + '</div>' + metricsMarkup(p) +
       '<div class="api-actions"><button type="button" class="button-primary" data-prov-open="' + esc(p.id) + '" aria-label="Details for ' + esc(p.name) + '">Details</button>' +
-      '<a class="button-secondary" href="' + esc(docs) + '"' + external(docs) + ' aria-label="Documentation for ' + esc(p.name) + '">Docs<i data-lucide="arrow-up-right"></i></a>' +
+      (p.rewards ? '' : '<a class="button-secondary" href="' + esc(docs) + '"' + external(docs) + ' aria-label="Documentation for ' + esc(p.name) + '">Docs<i data-lucide="arrow-up-right"></i></a>') +
       (off || !signup ? '<span class="api-signup is-disabled" aria-disabled="true">' + (off ? 'Offline' : 'No link') + '</span>' :
-      '<a class="api-signup" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer" aria-label="Get API from ' + esc(p.name) + '">Get API<i data-lucide="arrow-up-right"></i></a>') + '</div></li>';
+      '<a class="api-signup" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer" aria-label="' +
+      (p.rewards ? 'Join ' : 'Get API from ') + esc(p.name) + '">' + (p.rewards ? 'Join &amp; earn rewards' : 'Get API') + '<i data-lucide="arrow-up-right"></i></a>') + '</div></li>';
   }
   function renderGrid() {
     const collection = A.collections.find(c => c.key === state.collection);

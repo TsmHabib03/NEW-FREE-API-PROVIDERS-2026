@@ -28,6 +28,8 @@ Visit http://localhost:8080. No backend or API key is required to browse. The si
 
 Existing provider records remain the source of truth. Optional fields can add new categories, documented auth methods, feature data, and published metrics:
 
+AdSelect appears directly after PixRouter; UTIM appears directly after TokenForge in the default order and Top picks. AdSelect uses the supplied logo and exact referral URL. Its `rewards` metadata gives the card and details earning activities, payout rules and onboarding steps, with a rewards signup action and no API setup links. Reward amounts are variable; current terms belong to the member dashboard.
+
 ```js
 {
   category: ['Weather', 'Finance'],
