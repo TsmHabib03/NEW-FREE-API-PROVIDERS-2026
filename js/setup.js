@@ -5,6 +5,16 @@
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const providers = window.PROVIDERS || [];
 
+  // Keep the restored provider's guide and signup actions on the shared record.
+  const artbloom = providers.find(p => p.id === 'artbloom');
+  for (const [selector, url] of [['[data-artbloom-signup]', artbloom?.url], ['[data-artbloom-guide]', artbloom?.guide]]) {
+    const link = $(selector);
+    if (link) {
+      link.hidden = !artbloom || artbloom.status === 'off' || !url;
+      if (!link.hidden) link.href = url;
+    }
+  }
+
   const refreshIcons = () => {
     if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
   };

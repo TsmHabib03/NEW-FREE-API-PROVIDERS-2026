@@ -14,7 +14,7 @@
   const modal = {
     veil: $('[data-prov-modal]'), card: $('[data-prov-card]'), logo: $('[data-prov-modal-logo]'),
     name: $('[data-prov-modal-name]'), kind: $('[data-prov-modal-kind]'), blurb: $('[data-prov-modal-blurb]'),
-    credit: $('[data-prov-modal-credit]'), notice: $('[data-prov-modal-notice]'),
+    credit: $('[data-prov-modal-credit]'), notice: $('[data-prov-modal-notice]'), returned: $('[data-prov-modal-return]'),
     models: () => $('.prov-models', $('[data-prov-modal]')),
     facts: () => $('.prov-facts', $('[data-prov-modal]')), act: () => $('.prov-act', $('[data-prov-modal]'))
   };
@@ -107,6 +107,8 @@
     modal.card.dataset.providerId = p.id;
     modal.logo.src = A.logo(p); modal.logo.alt = p.name + ' logo';
     modal.name.textContent = p.name;
+    modal.returned.textContent = A.isReturned(p) ? p.name + ' is back' : '';
+    modal.returned.hidden = !A.isReturned(p);
     modal.card.classList.toggle('is-off', A.isOff(p));
     modal.card.classList.toggle('is-flagged', A.isCaveat(p));
     modal.kind.textContent = [A.statusLabel(p), A.kindLabel(p)].filter(Boolean).join(' · ');
@@ -291,6 +293,7 @@
     return '<li class="api-card' + (off ? ' is-off' : A.isCaveat(p) ? ' is-flagged' : '') + (featured ? ' api-featured' : '') + '" data-provider-id="' + esc(p.id) + '">' +
       '<div class="api-card-top"><span class="api-logo"><img src="' + esc(A.logo(p)) + '" alt="" loading="lazy" width="40" height="40"></span>' +
       '<div class="api-card-stamp">' + (featured ? '<span class="api-tag featured-label">Featured</span>' : '') +
+      (A.isReturned(p) ? '<span class="api-tag return-label">' + esc(p.name) + ' is back</span>' : '') +
       (p.recommended ? '<span class="api-tag featured-label">Recommended</span>' : '') +
       (p.event ? '<span class="api-tag event-label"><i data-lucide="zap"></i>' + esc(p.event.label) + '</span>' : '') +
       '<time class="api-date"' + (p.updatedAt || p.addedAt ? ' datetime="' + esc(p.updatedAt || p.addedAt) + '"' : '') + ' title="' + (p.updatedAt ? 'Updated' : 'Added') + ' ' + esc(p.updatedAt || p.addedAt || '') + '">' + esc(dateLabel(p)) + '</time></div></div>' +

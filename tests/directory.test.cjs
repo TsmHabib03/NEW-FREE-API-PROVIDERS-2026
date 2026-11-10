@@ -119,7 +119,7 @@ test('all source providers appear once, with feature lists and three honest metr
   assert.equal((markup.match(/class="api-features"/g) || []).length, records.length);
   assert.equal((markup.match(/class="api-metrics"/g) || []).length, records.length);
   assert.equal((markup.match(/Not listed/g) || []).length, records.length * 3);
-  assert.equal(h.context.window.Adapters.stats.off, 15);
+  assert.equal(h.context.window.Adapters.stats.off, 14);
 });
 
 test('every card and modal preserve exact provider endpoints and disable only offline/missing URLs', () => {
@@ -149,6 +149,59 @@ test('every card and modal preserve exact provider endpoints and disable only of
     h.context.window.Views.closeModal();
     assert.equal(h.document.activeElement, opener);
   }
+});
+
+test('ArtBloom return enables the exact new signup link and resets its badge when switching providers', () => {
+  const h = harness(), A = h.context.window.Adapters;
+  const artbloom = A.providers.find(p => p.id === 'artbloom');
+  assert.equal(artbloom.status, 'live');
+  assert.equal(artbloom.url, 'https://api.artbloom.tech/signup?ref=EQJPJADV5U');
+  assert.equal(artbloom.addedAt, '2026-09-29');
+  assert.equal(A.isReturned(artbloom), true);
+  assert.equal(artbloom.statusNote, undefined);
+  const markup = h.get('[data-provider-grid]').innerHTML;
+  const card = markup.split('data-provider-id="artbloom"')[1].split('<li class="api-card')[0];
+  assert.ok(card.includes('ArtBloom is back'));
+  assert.ok(card.includes('href="' + artbloom.url + '"'));
+  assert.ok(!card.includes('api-signup is-disabled'));
+  h.context.window.Views.openProvider('artbloom');
+  assert.equal(h.get('[data-prov-modal-return]').hidden, false);
+  assert.equal(h.get('[data-prov-modal-return]').textContent, 'ArtBloom is back');
+  assert.ok(h.get('.prov-act').innerHTML.includes('href="' + artbloom.url + '"'));
+  assert.equal(h.get('[data-prov-modal-notice]').hidden, true);
+  h.context.window.Views.openProvider('qronos');
+  assert.equal(h.get('[data-prov-modal-return]').hidden, true);
+  assert.equal(h.get('[data-prov-modal-return]').textContent, '');
+
+  const fixtures = A.providers.map(p => p.id === 'artbloom' ? { ...p, status: 'off' } : p);
+  const offline = harness(fixtures);
+  assert.equal(offline.context.window.Adapters.isReturned(fixtures.find(p => p.id === 'artbloom')), false);
+  assert.ok(!offline.get('[data-provider-grid]').innerHTML.includes('ArtBloom is back'));
+  offline.context.window.Views.openProvider('artbloom');
+  assert.equal(offline.get('[data-prov-modal-return]').hidden, true);
+  assert.ok(!offline.get('.prov-act').innerHTML.includes('class="prov-signin"'));
+});
+
+test('ArtBloom setup tab is enabled, uses the shared signup/guide URLs, and is absent from the offline notice', () => {
+  const { JSDOM } = require('jsdom');
+  const dom = new JSDOM(source('setup.html'), { url: 'https://example.test/setup.html#artbloom', runScripts: 'outside-only' });
+  try {
+    const win = dom.window;
+    win.setTimeout = () => 0;
+    win.CSS = { escape: value => value };
+    win.eval(source('js/providers.js'));
+    win.eval(source('js/setup.js'));
+    const p = win.PROVIDERS.find(p => p.id === 'artbloom');
+    const tab = win.document.querySelector('[data-tab="artbloom"]');
+    assert.equal(tab.disabled, false);
+    assert.equal(tab.getAttribute('aria-selected'), 'true');
+    assert.equal(win.document.querySelector('[data-panel="artbloom"]').classList.contains('active'), true);
+    assert.equal(win.document.querySelector('[data-artbloom-signup]').href, p.url);
+    assert.equal(win.document.querySelector('[data-artbloom-guide]').href, p.guide);
+    assert.ok(win.document.querySelector('[data-panel="artbloom"]').textContent.includes('ArtBloom is back'));
+    assert.ok(!win.document.querySelector('[data-offline-text]').textContent.includes('ArtBloom'));
+    assert.ok(!source('setup.html').includes('ArtBloom is no longer accessible'));
+  } finally { dom.window.close(); }
 });
 
 test('recommended UTIM keeps its API signup and adds a separate official website action', () => {
@@ -190,11 +243,13 @@ test('checkboxes use OR within groups and AND across groups; search includes off
 
 test('collections and sort controls update generated cards', () => {
   const h = harness(), A = h.context.window.Adapters;
+  assert.equal(h.ids()[h.ids().indexOf('qronos') - 1], 'artbloom');
   assert.equal(h.ids()[h.ids().indexOf('qronos') + 1], 'tokenforge');
   for (const collection of A.collections) {
     h.emit('click', h.target('[data-collection]', { collection: collection.key }));
     assert.deepEqual(new Set(h.ids()), new Set(collection.items.map(p => p.id)));
     if (['all', 'picks'].includes(collection.key)) {
+      assert.equal(h.ids()[h.ids().indexOf('qronos') - 1], 'artbloom');
       assert.equal(h.ids()[h.ids().indexOf('qronos') + 1], 'tokenforge');
     }
   }

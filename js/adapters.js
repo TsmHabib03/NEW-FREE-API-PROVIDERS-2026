@@ -13,6 +13,7 @@
   const isRestricted = p => p.status === 'restricted';
   const isAuth = p => p.status === 'auth';
   const isLive = p => p.status === 'live';
+  const isReturned = p => isLive(p) && !!p.returnedAt;
   /* reachable, but flagged: the link still works, the provider needs a caveat */
   const isCaveat = p => isRestricted(p) || isAuth(p);
   const statusLabel = p => (isOff(p) ? 'Offline' : isRestricted(p) ? 'Restricted'
@@ -50,7 +51,7 @@
   /* curated rows: the top picks, then the recommended set (MIA Router sits
      next to AgentRouter). Ids stay here (not in providers.js) so ordering is a
      presentation concern and every row can still be turned off by flipping status alone. */
-  const PINNED = ['pixrouter', 'utim', 'qronos', 'tokenforge', 'kvotum', 'moyuu', 'freepi', 'floodgate', 'fxqidian', 'kiosapi', 'hyxapi', 'xkiro', 'threerouter', 'foundable', 'museai', 'zcode', 'hcnsec', 'freemodelin'];
+  const PINNED = ['pixrouter', 'utim', 'artbloom', 'qronos', 'tokenforge', 'kvotum', 'moyuu', 'freepi', 'floodgate', 'fxqidian', 'kiosapi', 'hyxapi', 'xkiro', 'threerouter', 'foundable', 'museai', 'zcode', 'hcnsec', 'freemodelin'];
   const RECOMMENDED = ['agentrouter', 'miarouter', 'emtf', 'kktoken', 'seekai', 'justdowork',
     'bluesminds', 'budsai', 'flushai', 'geminiapi'];
   const byId = new Map(providers.map(p => [p.id, p]));
@@ -120,7 +121,7 @@
 
   window.Adapters = {
     categories, authTypes, authLabel, docsUrl, metrics, features, filters, filterValues, collections,
-    providers, isNew, isOff, isRestricted, isAuth, isLive, isCaveat, statusLabel,
+    providers, isNew, isOff, isRestricted, isAuth, isLive, isReturned, isCaveat, statusLabel,
     hasProto, hasFlag, kindLabel, stats, featured, sections, searchable,
     modelStats: { providers: searchable.filter(s => (s.provider.models || []).length).length, ids: modelIds.size },
     esc: value => String(value == null ? '' : value)

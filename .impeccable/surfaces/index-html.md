@@ -44,6 +44,10 @@ The directory remains Operate; its first-visit notice is a Read surface. The lat
 
 Use only the latest user's exact three paragraphs: the independent-directory disclaimer, independent referral evaluation, and transparency commitment. Do not identify the Discord user, verify providers/accusations, or change provider/referral data. Keep the versioned `aip2026.community-notice` preference with guarded local/session storage and memory suppression; retain the existing version so the visual replacement does not reprompt returning visitors. The persistent introduction button reopens it. The notice owns focus and inertness while open, restores focus on dismissal and preserves the directory state and URL. X, backdrop and Escape dismiss; the single CTA acknowledges. Existing provider details, nested MuseAI guide and mobile drawer retain their behavior.
 
+## ArtBloom return (November 10, 2026)
+
+ArtBloom is live again and appears immediately before Qronos in curated All providers and Top picks. Its card and details dialog use the static mint label "ArtBloom is back", reusing the shared compact badge shape and light/dark mint tokens. The card's metadata can shrink and the return label can wrap. Return state is recorded separately from the original added date and disappears if the provider becomes offline. Both signup actions use https://api.artbloom.tech/signup?ref=EQJPJADV5U exactly. Its setup tab is enabled again and links to the shared signup and existing external setup guide. The generated offline notice no longer includes ArtBloom. Automated checks cover ordering, signup URLs, badge clearing, offline fallback, and the setup tab; browser visual review remains unavailable.
+
 ## Current verification limits
 
 Browser access host unavailable; no current screenshots exist. DOM-double tests verify data, generated markup, and event wiring, not CSS rendering, actual browser focus, overflow or visual fidelity. Do not use old .shots/mobile-plan captures as evidence of this redesign.
