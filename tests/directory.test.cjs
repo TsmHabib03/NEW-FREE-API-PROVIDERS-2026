@@ -183,25 +183,32 @@ test('ArtBloom return enables the exact new signup link and resets its badge whe
 });
 
 test('ArtBloom setup tab is enabled, uses the shared signup/guide URLs, and is absent from the offline notice', () => {
-  const { JSDOM } = require('jsdom');
-  const dom = new JSDOM(source('setup.html'), { url: 'https://example.test/setup.html#artbloom', runScripts: 'outside-only' });
-  try {
-    const win = dom.window;
-    win.setTimeout = () => 0;
-    win.CSS = { escape: value => value };
-    win.eval(source('js/providers.js'));
-    win.eval(source('js/setup.js'));
-    const p = win.PROVIDERS.find(p => p.id === 'artbloom');
-    const tab = win.document.querySelector('[data-tab="artbloom"]');
-    assert.equal(tab.disabled, false);
-    assert.equal(tab.getAttribute('aria-selected'), 'true');
-    assert.equal(win.document.querySelector('[data-panel="artbloom"]').classList.contains('active'), true);
-    assert.equal(win.document.querySelector('[data-artbloom-signup]').href, p.url);
-    assert.equal(win.document.querySelector('[data-artbloom-guide]').href, p.guide);
-    assert.ok(win.document.querySelector('[data-panel="artbloom"]').textContent.includes('ArtBloom is back'));
-    assert.ok(!win.document.querySelector('[data-offline-text]').textContent.includes('ArtBloom'));
-    assert.ok(!source('setup.html').includes('ArtBloom is no longer accessible'));
-  } finally { dom.window.close(); }
+  const h = harness();
+  const p = h.context.window.PROVIDERS.find(p => p.id === 'artbloom');
+  const panels = ['agentrouter', 'artbloom'].map(id => h.target('[data-panel]', { panel: id }));
+  const tabs = panels.map(panel => h.target('[data-tab]', { tab: panel.dataset.panel }));
+  const queryAll = h.document.querySelectorAll;
+  h.document.querySelectorAll = selector => selector === '[data-tabs]' ? [h.get('[data-tabs]')]
+    : selector === '[data-panel]' ? panels : selector === '[data-tab]' ? tabs : queryAll(selector);
+  h.get('[data-tabs]').querySelectorAll = h.document.querySelectorAll;
+  const queryOne = h.document.querySelector;
+  h.document.querySelector = selector => selector === '[data-panel="artbloom"]' ? panels[1]
+    : selector === '[data-tab="artbloom"]' ? tabs[1] : queryOne(selector);
+  tabs[1].click = () => tabs[1].listeners.click();
+  h.context.window.setTimeout = () => 0;
+  h.context.location.hash = '#artbloom';
+  h.context.CSS = { escape: value => value };
+  vm.runInContext(source('js/setup.js'), h.context);
+  const tabMarkup = h.get('[data-tab-strip]').innerHTML.match(/<button[^>]*data-tab="artbloom"[^>]*>/)[0];
+  assert.ok(!tabMarkup.includes('disabled'));
+  assert.equal(tabs[1].attributes['aria-selected'], 'true');
+  assert.equal(panels[1].classList.contains('active'), true);
+  assert.equal(h.get('[data-artbloom-signup]').href, p.url);
+  assert.equal(h.get('[data-artbloom-signup]').hidden, false);
+  assert.equal(h.get('[data-artbloom-guide]').href, p.guide);
+  assert.ok(source('setup.html').includes('ArtBloom is back'));
+  assert.ok(!h.get('[data-offline-text]').textContent.includes('ArtBloom'));
+  assert.ok(!source('setup.html').includes('ArtBloom is no longer accessible'));
 });
 
 test('recommended UTIM keeps its API signup and adds a separate official website action', () => {

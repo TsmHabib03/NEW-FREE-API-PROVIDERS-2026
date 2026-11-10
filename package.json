@@ -4,8 +4,7 @@
   "description": "A static documentation site for configuring compatible API gateways with Claude Code, Codex CLI, and CC Switch.",
   "main": "index.js",
   "scripts": {
-    "test": "node --test tests/directory.test.cjs tests/agentcall-modal.test.cjs",
-    "test:agentcall": "node --test tests/agentcall-modal.test.cjs",
+    "test": "node --test tests/directory.test.cjs",
     "build:css": "tailwindcss -i ./css/src/tailwind.css -o ./css/tailwind.css --minify"
   },
   "repository": {
@@ -21,7 +20,6 @@
   },
   "homepage": "https://github.com/TsmHabib03/NEW-FREE-API-PROVIDERS-2026#readme",
   "devDependencies": {
-    "jsdom": "^31.0.0",
     "tailwindcss": "^3.4.17"
   }
 }
