@@ -468,7 +468,7 @@ window.PROVIDERS = [
     offer: "Invite sign-up - check the dashboard for current terms", guide: null },
   /* AdSelect restored with the owner's updated referral URL on 2026-11-11. */
   { id: "adselect", name: "AdSelect", url: "https://adselect.biz/register?ref=tsmhabib03", logo: "assets/adselect-logo.png",
-    status: "live", flags: [], addedAt: "2026-11-10", updatedAt: "2026-11-11", rank: null,
+    status: "live", flags: [], addedAt: "2026-11-10", updatedAt: "2026-11-11", rank: null, featured: true,
     kind: "advertising-rewards", category: ["Advertising rewards"], protocol: [], freeShape: "unknown",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,
@@ -488,7 +488,7 @@ window.PROVIDERS = [
   /* Zurelay and Qoder — owner-requested links and logos added 2026-11-11.
      Product descriptions checked against their public sites; referral rewards are not assumed. */
   { id: "zurelay", name: "Zurelay", url: "https://zurelay.com/signup?ref=HABI6Z6Z", logo: "assets/zurelay-logo.svg",
-    status: "live", flags: [], addedAt: "2026-11-11", rank: null, featured: true,
+    status: "live", flags: [], addedAt: "2026-11-11", rank: null,
     kind: "gateway", protocol: ["anthropic", "openai"], authType: ["api-key"], freeShape: "unknown",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: ["claude-opus-5-5", "gpt-6-astra", "deepseek-v4-flash", "zurelay-auto"], modelsNote: "90 models advertised",
@@ -497,7 +497,7 @@ window.PROVIDERS = [
     gatewayFeatures: ["Automatic failover", "Spend caps per API key", "Text, image and video endpoints"],
     docsUrl: "https://zurelay.com/docs", guide: null },
   { id: "qoder", name: "Qoder", url: "https://qoder.com/activities?referral_code=J7alB0RB6kGqmZGIqbVuC0VWwVNVEpXy", logo: "assets/qoder-logo.png",
-    status: "live", flags: [], addedAt: "2026-11-11", rank: null, featured: true,
+    status: "live", flags: [], addedAt: "2026-11-11", rank: null,
     kind: "coding-platform", protocol: [], freeShape: "unknown",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,

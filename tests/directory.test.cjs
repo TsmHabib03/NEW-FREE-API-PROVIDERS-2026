@@ -239,9 +239,13 @@ test('recommended UTIM keeps its API signup and adds a separate official website
   assert.ok(actions.includes('Get API'));
 });
 
-test('featured providers keep accurate referral actions under search and offline states', () => {
+test('only AdSelect and AgentRouter have highlighted borders; new providers retain referral actions', () => {
   const h = harness(), A = h.context.window.Adapters;
   assert.equal(A.providers.find(p => p.id === 'adselect').url, 'https://adselect.biz/register?ref=tsmhabib03');
+  assert.deepEqual(Array.from(A.providers.filter(p => p.featured), p => p.id).sort(), ['adselect', 'agentrouter']);
+  const initialMarkup = h.get('[data-provider-grid]').innerHTML;
+  assert.deepEqual([...initialMarkup.matchAll(/class="api-card api-featured" data-provider-id="([^"]+)"/g)].map(m => m[1]), ['adselect', 'agentrouter']);
+  assert.ok(!initialMarkup.includes('>Featured</span>'));
   const expected = [
     ['zurelay', 'https://zurelay.com/signup?ref=HABI6Z6Z', 'assets/zurelay-logo.svg', 'Get API'],
     ['qoder', 'https://qoder.com/activities?referral_code=J7alB0RB6kGqmZGIqbVuC0VWwVNVEpXy', 'assets/qoder-logo.png', 'Open activities']
@@ -254,8 +258,9 @@ test('featured providers keep accurate referral actions under search and offline
     h.search(p.name);
     assert.deepEqual(h.ids(), [id]);
     const markup = h.get('[data-provider-grid]').innerHTML;
-    assert.ok(markup.includes('api-featured'));
-    assert.ok(markup.includes('>Featured</span>'));
+    assert.ok(!markup.includes('api-featured'));
+    assert.ok(!markup.includes('>Featured</span>'));
+    assert.ok(markup.includes('class="api-tag new">New</span>'));
     assert.ok(markup.includes('href="' + A.esc(url) + '"'));
     assert.ok(markup.includes('>' + action + '<i'));
     h.context.window.Views.openProvider(id);
@@ -274,7 +279,10 @@ test('featured providers keep accurate referral actions under search and offline
   for (const key of ['all', 'picks']) {
     const ids = offline.context.window.Adapters.collections.find(c => c.key === key).items.map(p => p.id);
     assert.equal(new Set(ids).size, ids.length);
-    if (key === 'picks') assert.ok(!ids.includes('zurelay') && !ids.includes('qoder') && !ids.includes('agentrouter'));
+    if (key === 'picks') {
+      assert.ok(!ids.includes('adselect') && !ids.includes('agentrouter'));
+      assert.ok(ids.includes('zurelay') && ids.includes('qoder'));
+    }
   }
 });
 
@@ -303,13 +311,13 @@ test('checkboxes use OR within groups and AND across groups; search includes off
 test('collections and sort controls update generated cards', () => {
   const h = harness(), A = h.context.window.Adapters;
   assert.equal(h.ids()[h.ids().indexOf('tokenforge') + 1], 'qronos');
-  assert.deepEqual(h.ids().slice(0, 6), ['pixrouter', 'adselect', 'zurelay', 'agentrouter', 'qoder', 'utim']);
+  assert.deepEqual(h.ids().slice(0, 9), ['pixrouter', 'adselect', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim']);
   for (const collection of A.collections) {
     h.emit('click', h.target('[data-collection]', { collection: collection.key }));
     assert.deepEqual(new Set(h.ids()), new Set(collection.items.map(p => p.id)));
     if (['all', 'picks'].includes(collection.key)) {
       assert.equal(h.ids()[h.ids().indexOf('tokenforge') + 1], 'qronos');
-      assert.deepEqual(h.ids().slice(0, 6), ['pixrouter', 'adselect', 'zurelay', 'agentrouter', 'qoder', 'utim']);
+      assert.deepEqual(h.ids().slice(0, 9), ['pixrouter', 'adselect', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim']);
     }
   }
   h.emit('click', h.target('[data-collection]', { collection: 'all' }));

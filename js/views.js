@@ -304,7 +304,7 @@
     ].filter(Boolean).slice(0, 4).join('') || '<span class="api-tag route">' + esc(A.categories(p).join(' · ')) + '</span>';
     return '<li class="api-card' + (off ? ' is-off' : A.isCaveat(p) ? ' is-flagged' : '') + (featured ? ' api-featured' : '') + '" data-provider-id="' + esc(p.id) + '">' +
       '<div class="api-card-top"><span class="api-logo"><img src="' + esc(A.logo(p)) + '" alt="" loading="lazy" width="40" height="40"></span>' +
-      '<div class="api-card-stamp">' + (featured ? '<span class="api-tag featured-label">Featured</span>' : '') +
+      '<div class="api-card-stamp">' +
       (A.isReturned(p) ? '<span class="api-tag return-label">' + esc(p.name) + ' is back</span>' : '') +
       (p.recommended ? '<span class="api-tag featured-label">Recommended</span>' : '') +
       (p.event ? '<span class="api-tag event-label"><i data-lucide="zap"></i>' + esc(p.event.label) + '</span>' : '') +
