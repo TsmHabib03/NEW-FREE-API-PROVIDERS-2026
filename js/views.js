@@ -133,7 +133,7 @@
       (routes ? routes + ' client route' + ((p.protocol || []).length > 1 ? 's' : '') : 'Client route not documented');
     const rewards = $('[data-prov-rewards]');
     rewards.hidden = !p.rewards;
-    rewards.innerHTML = p.rewards ? '<h3>How to earn with AdSelect</h3><ol>' +
+    rewards.innerHTML = p.rewards ? '<h3>How to earn with ' + esc(p.name) + '</h3><ol>' +
       p.rewards.steps.map(step => '<li>' + esc(step) + '</li>').join('') + '</ol>' +
       metricsMarkup(p) + '<p>' + esc(p.rewards.terms) + '</p>' : '';
     modal.notice.textContent = !A.isLive(p) ? p.statusNote || A.statusLabel(p) : '';
@@ -157,7 +157,7 @@
       (p.rewards ? '' : '<a class="prov-docs" href="' + esc(docs) + '"' + external(docs) + '><i data-lucide="book-open"></i>View Documentation</a>') +
       (A.isOff(p) || !signup ? '<span class="prov-offline" aria-disabled="true"><i data-lucide="circle-off"></i>' +
       (A.isOff(p) ? 'Unavailable — provider offline' : 'Sign-up link not available') + '</span>' :
-      '<a class="prov-signin" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer">' + (p.rewards ? 'Join AdSelect &amp; earn rewards' : 'Get API') + '<i data-lucide="arrow-right"></i></a>');
+      '<a class="prov-signin" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer">' + esc(p.actionLabel || (p.rewards ? 'Join ' + p.name + ' & earn rewards' : 'Get API')) + '<i data-lucide="arrow-right"></i></a>');
     $('.prov-technical', modal.card).open = false;
     $('.prov-technical', modal.card).hidden = !!p.rewards;
     $('[data-prov-guide]').hidden = !p.onboarding;
@@ -290,9 +290,10 @@
           '</span><span class="filter-option-count">' + count + '</span></label>';
       }).join('') + '</fieldset>').join('');
   }
-  function cardMarkup(p, featured = false) {
+  function cardMarkup(p) {
     const off = A.isOff(p), docs = docsLink(p);
     const signup = safeUrl(p.url);
+    const featured = p.featured && A.isLive(p) && !!signup;
     const tags = [
       p.rewards ? '<span class="api-tag auth">Earn rewards</span>' : '',
       FREE_SHAPE[p.freeShape] ? '<span class="api-tag">' + FREE_SHAPE[p.freeShape] + '</span>' : '',
@@ -318,17 +319,14 @@
       (p.rewards ? '' : '<a class="button-secondary" href="' + esc(docs) + '"' + external(docs) + ' aria-label="Documentation for ' + esc(p.name) + '">Docs<i data-lucide="arrow-up-right"></i></a>') +
       (off || !signup ? '<span class="api-signup is-disabled" aria-disabled="true">' + (off ? 'Offline' : 'No link') + '</span>' :
       '<a class="api-signup" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer" aria-label="' +
-      (p.rewards ? 'Join ' : 'Get API from ') + esc(p.name) + '">' + (p.rewards ? 'Join &amp; earn rewards' : 'Get API') + '<i data-lucide="arrow-up-right"></i></a>') + '</div></li>';
+      esc(p.actionLabel ? p.actionLabel + ' for ' : p.rewards ? 'Join ' : 'Get API from ') + esc(p.name) + '">' + esc(p.actionLabel || (p.rewards ? 'Join & earn rewards' : 'Get API')) + '<i data-lucide="arrow-up-right"></i></a>') + '</div></li>';
   }
   function renderGrid() {
     const collection = A.collections.find(c => c.key === state.collection);
     let items = collection.items.filter(matches);
     if (state.sort === 'newest') items = [...items].sort((a,b) => String(b.updatedAt || b.addedAt || '').localeCompare(String(a.updatedAt || a.addedAt || '')) || a.name.localeCompare(b.name));
     if (state.sort === 'name') items = [...items].sort((a,b) => a.name.localeCompare(b.name));
-    const featured = state.collection === 'all' && state.sort === 'curated' && !state.query && !Object.values(state.filters).some(s => s.size)
-      ? items.find(p => p.id === 'agentrouter' && A.isLive(p) && safeUrl(p.url)) : null;
-    if (featured) { items = items.filter(p => p !== featured); items.splice(Math.min(2, items.length),0,featured); }
-    $('[data-provider-grid]').innerHTML = items.length ? '<ol class="api-grid">' + items.map(p => cardMarkup(p, p === featured)).join('') + '</ol>' : '';
+    $('[data-provider-grid]').innerHTML = items.length ? '<ol class="api-grid">' + items.map(p => cardMarkup(p)).join('') + '</ol>' : '';
     $('[data-search-empty]').hidden = !!items.length;
     $('[data-results-heading]').textContent = state.query ? 'Search results' : collection.title;
     $('[data-results-count]').textContent = items.length;

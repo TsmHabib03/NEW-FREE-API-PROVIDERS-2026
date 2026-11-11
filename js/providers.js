@@ -114,7 +114,7 @@ window.PROVIDERS = [
       ]
     } },
   { id: "agentrouter", name: "AgentRouter", url: "https://agentrouter.org/register?aff=1TUW", logo: "assets/gorouterlogo.png",
-    status: "live", flags: ["newapi"], addedAt: "2026-09-11", rank: null,
+    status: "live", flags: ["newapi"], addedAt: "2026-09-11", rank: null, featured: true,
     kind: "newapi-gateway", protocol: ["anthropic", "openai"], freeShape: "free-tier",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: ["gpt-6-astra", "claude-opus-4-8", "claude-opus-5", "deepseek-v4-flash"], modelsNote: null,
@@ -466,25 +466,26 @@ window.PROVIDERS = [
     models: [], modelsNote: null,
     blurb: "AI API routing platform for developers - one place to explore and integrate AI capabilities into your projects. Register through the invite link, then take the base URL, key and model from the dashboard.",
     offer: "Invite sign-up - check the dashboard for current terms", guide: null },
-  /* AdSelect — owner-requested rewards platform added 2026-11-10. */
-  { id: "adselect", name: "AdSelect", url: "https://adselect.org/register?ref=tsmhabib03", logo: "assets/adselect-logo.png",
-    status: "live", flags: [], addedAt: "2026-11-10", rank: null,
-    kind: "advertising-rewards", category: ["Advertising rewards"], protocol: [], freeShape: "unknown",
+  /* Zurelay and Qoder — owner-requested links and logos added 2026-11-11.
+     Product descriptions checked against their public sites; referral rewards are not assumed. */
+  { id: "zurelay", name: "Zurelay", url: "https://zurelay.com/signup?ref=HABI6Z6Z", logo: "assets/zurelay-logo.svg",
+    status: "live", flags: [], addedAt: "2026-11-11", rank: null, featured: true,
+    kind: "gateway", protocol: ["anthropic", "openai"], authType: ["api-key"], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: ["claude-opus-5-5", "gpt-6-astra", "deepseek-v4-flash", "zurelay-auto"], modelsNote: "90 models advertised",
+    blurb: "One API key for Claude, GPT, Gemini, Grok and DeepSeek, with OpenAI- and Anthropic-compatible endpoints and automatic failover. Register through the referral link, then create your key in the dashboard.",
+    offer: "Pay as you go with prepaid credit - check current pricing and referral terms",
+    gatewayFeatures: ["Automatic failover", "Spend caps per API key", "Text, image and video endpoints"],
+    docsUrl: "https://zurelay.com/docs", guide: null },
+  { id: "qoder", name: "Qoder", url: "https://qoder.com/activities?referral_code=J7alB0RB6kGqmZGIqbVuC0VWwVNVEpXy", logo: "assets/qoder-logo.png",
+    status: "live", flags: [], addedAt: "2026-11-11", rank: null, featured: true,
+    kind: "coding-platform", protocol: [], freeShape: "unknown",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,
-    blurb: "Earn rewards by viewing partner ads, checking in daily, sharing stories and inviting friends. AdSelect is a community and advertising platform with small, variable rewards paid in USDT (BEP20). Joining is free.",
-    offer: "Free to join · USDT (BEP20) payouts · $100 minimum withdrawal", guide: null,
-    rewards: {
-      activities: ["Partner ad views", "Daily check-in", "Story sharing", "Referrals"],
-      minimumWithdrawal: "$100", withdrawalFee: "Currently 0%", payoutAsset: "USDT (BEP20)",
-      terms: "Reward amounts are shown in the member dashboard and can change with advertiser demand. Referrals are optional. Withdrawals follow the platform's payout schedule. AdSelect is not an investment platform and promises no fixed or guaranteed returns.",
-      steps: [
-        "Create your free account with your name, email and mobile number.",
-        "Complete partner ad tasks, daily check-ins and story shares in your dashboard.",
-        "Optionally invite friends with your referral link. Fake or duplicate accounts are not allowed.",
-        "Request a withdrawal to your own USDT (BEP20) wallet once your balance reaches $100."
-      ]
-    } },
+    blurb: "Agentic coding platform with an IDE, terminal CLI and JetBrains plugin. Use the referral activities page to explore current offers, then choose the coding tools that fit your workflow.",
+    offer: "Referral activities - check the page for current offers and eligibility",
+    actionLabel: "Open activities", docsUrl: "https://docs.qoder.com/", guide: null,
+    productFeatures: [["Tools", "IDE, CLI + JetBrains plugin"], ["Workflow", "Agentic coding"], ["Project context", "Codebase awareness"], ["Offers", "See referral activities"]] },
   /* Round 17 — owner-requested referral links added 2026-10-31. */
   { id: "kvotum", name: "KVOTUM", url: "https://myapi.buzz/?ref=41a98df6", logo: "assets/kvotum-logo.png",
     status: "live", flags: [], addedAt: "2026-10-31", rank: null,

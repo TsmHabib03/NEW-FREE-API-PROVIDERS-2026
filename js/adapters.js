@@ -48,10 +48,10 @@
     ]
   };
 
-  /* curated rows: the top picks, then the recommended set (MIA Router sits
-     next to AgentRouter). Ids stay here (not in providers.js) so ordering is a
+  /* curated rows: Zurelay sits between PixRouter and AgentRouter; Qoder sits
+     beside UTIM in the next row. Ids stay here (not in providers.js) so ordering is a
      presentation concern and every row can still be turned off by flipping status alone. */
-  const PINNED = ['pixrouter', 'adselect', 'artbloom', 'qronos', 'tokenforge', 'utim', 'kvotum', 'moyuu', 'freepi', 'floodgate', 'fxqidian', 'kiosapi', 'hyxapi', 'xkiro', 'threerouter', 'foundable', 'museai', 'zcode', 'hcnsec', 'freemodelin'];
+  const PINNED = ['pixrouter', 'zurelay', 'agentrouter', 'qoder', 'utim', 'artbloom', 'qronos', 'tokenforge', 'kvotum', 'moyuu', 'freepi', 'floodgate', 'fxqidian', 'kiosapi', 'hyxapi', 'xkiro', 'threerouter', 'foundable', 'museai', 'zcode', 'hcnsec', 'freemodelin'];
   const RECOMMENDED = ['agentrouter', 'miarouter', 'emtf', 'kktoken', 'seekai', 'justdowork',
     'bluesminds', 'budsai', 'flushai', 'geminiapi'];
   const byId = new Map(providers.map(p => [p.id, p]));
@@ -65,7 +65,7 @@
 
   const sections = [
     { key: 'picks', title: 'Top picks', items: pick(PINNED) },
-    { key: 'recommended', title: 'Recommended', items: pick(RECOMMENDED) },
+    { key: 'recommended', title: 'Recommended', items: pick(RECOMMENDED).filter(p => !PINNED.includes(p.id)) },
     { key: 'more', title: 'More providers', items: liveSorted.filter(p => !curated.has(p.id)) },
     { key: 'offline', title: 'Offline', items: providers.filter(isOff)
       .sort((a, b) => String(a.name).replace(/\s+AI$/i, '').localeCompare(String(b.name).replace(/\s+AI$/i, ''), undefined, { sensitivity: 'base' })) }
@@ -103,7 +103,7 @@
     ['Joining', 'Free'],
     ['Reward amounts', 'Small and variable; see dashboard'],
     ['Referrals', 'Optional']
-  ] : [
+  ] : p.productFeatures || [
     ['Authentication', authTypes(p).map(authLabel).join(', ')],
     ['Data format', p.dataFormat || 'Not documented'],
     ['Rate limit', p.rateLimit || (metrics(p)[0].value === null ? 'Not documented' : metrics(p)[0].display + ' requests/min')],

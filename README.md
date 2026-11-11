@@ -28,7 +28,9 @@ Visit http://localhost:8080. No backend or API key is required to browse. The si
 
 Existing provider records remain the source of truth. Optional fields can add new categories, documented auth methods, feature data, and published metrics:
 
-AdSelect appears directly after PixRouter; UTIM appears directly after TokenForge in the default order and Top picks. AdSelect uses the supplied logo and exact referral URL. Its `rewards` metadata gives the card and details earning activities, payout rules and onboarding steps, with a rewards signup action and no API setup links. Reward amounts are variable; current terms belong to the member dashboard.
+Zurelay replaces AdSelect, and Qoder joins the directory with the supplied logos and exact referral URLs. The curated All providers and Top picks order begins **PixRouter → Zurelay → AgentRouter → Qoder → UTIM**, keeping the new entries near the top and Qoder beside UTIM. Zurelay, AgentRouter and Qoder carry persistent Featured badges, accented borders and highlighted signup actions. Other sort options keep their requested order, and offline entries lose featured styling.
+
+Zurelay documents prepaid API access with OpenAI/Anthropic endpoints; no free credits or referral bonus amounts are assumed. Qoder is a coding platform with IDE, CLI and JetBrains tools, so its primary action reads **Open activities** and its Docs link opens its own documentation. Referral offers and eligibility belong to the provider's current activities page. Optional `featured`, `actionLabel` and `productFeatures` metadata control this presentation without changing the exact outbound URLs.
 
 ```js
 {

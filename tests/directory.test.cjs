@@ -111,7 +111,7 @@ function harness(fixtures, options = {}) {
 
 test('all source providers appear once, with feature lists and three honest metrics', () => {
   const h = harness(), records = h.context.window.PROVIDERS;
-  assert.equal(records.length, 67);
+  assert.equal(records.length, 68);
   assert.equal(h.ids().length, records.length);
   assert.equal(new Set(h.ids()).size, records.length);
   assert.deepEqual(new Set(h.ids()), new Set(records.map(p => p.id)));
@@ -152,7 +152,7 @@ test('every card and modal preserve exact provider endpoints and disable only of
     if (p.rewards) {
       assert.deepEqual([...segment.matchAll(/href="([^"]+)"/g)].map(m => m[1]), [A.esc(p.url)]);
       assert.deepEqual([...actions.matchAll(/href="([^"]+)"/g)].map(m => m[1]), [A.esc(p.url)]);
-      assert.ok(actions.includes('Join AdSelect &amp; earn rewards'));
+      assert.ok(actions.includes(A.esc('Join ' + p.name + ' & earn rewards')));
       assert.ok(segment.includes('Join &amp; earn rewards'));
       assert.ok(!segment.includes('Models not documented'));
       assert.ok(h.get('[data-prov-rewards]').innerHTML.includes('USDT (BEP20)'));
@@ -239,6 +239,45 @@ test('recommended UTIM keeps its API signup and adds a separate official website
   assert.ok(actions.includes('Get API'));
 });
 
+test('new featured providers replace AdSelect and keep accurate referral actions under search and offline states', () => {
+  const h = harness(), A = h.context.window.Adapters;
+  assert.ok(!A.providers.some(p => p.id === 'adselect'));
+  const expected = [
+    ['zurelay', 'https://zurelay.com/signup?ref=HABI6Z6Z', 'assets/zurelay-logo.svg', 'Get API'],
+    ['qoder', 'https://qoder.com/activities?referral_code=J7alB0RB6kGqmZGIqbVuC0VWwVNVEpXy', 'assets/qoder-logo.png', 'Open activities']
+  ];
+  for (const [id, url, logo, action] of expected) {
+    const p = A.providers.find(p => p.id === id);
+    assert.equal(p.url, url);
+    assert.equal(p.logo, logo);
+    assert.ok(fs.existsSync(path.join(root, logo)));
+    h.search(p.name);
+    assert.deepEqual(h.ids(), [id]);
+    const markup = h.get('[data-provider-grid]').innerHTML;
+    assert.ok(markup.includes('api-featured'));
+    assert.ok(markup.includes('>Featured</span>'));
+    assert.ok(markup.includes('href="' + A.esc(url) + '"'));
+    assert.ok(markup.includes('>' + action + '<i'));
+    h.context.window.Views.openProvider(id);
+    assert.ok(h.get('.prov-act').innerHTML.includes('>' + action + '<i'));
+    h.context.window.Views.closeModal();
+  }
+  h.search('Qoder');
+  assert.ok(!h.get('[data-provider-grid]').innerHTML.includes('Get API'));
+  h.change('protocol', 'openai');
+  assert.deepEqual(h.ids(), []);
+  h.search('Zurelay');
+  assert.deepEqual(h.ids(), ['zurelay']);
+  const fixtures = A.providers.map(p => p.featured ? { ...p, status: 'off' } : p);
+  const offline = harness(fixtures);
+  assert.ok(!offline.get('[data-provider-grid]').innerHTML.includes('api-featured'));
+  for (const key of ['all', 'picks']) {
+    const ids = offline.context.window.Adapters.collections.find(c => c.key === key).items.map(p => p.id);
+    assert.equal(new Set(ids).size, ids.length);
+    if (key === 'picks') assert.ok(!ids.includes('zurelay') && !ids.includes('qoder') && !ids.includes('agentrouter'));
+  }
+});
+
 test('checkboxes use OR within groups and AND across groups; search includes offline models', () => {
   const h = harness(), A = h.context.window.Adapters;
   h.change('status', 'off');
@@ -265,16 +304,14 @@ test('collections and sort controls update generated cards', () => {
   const h = harness(), A = h.context.window.Adapters;
   assert.equal(h.ids()[h.ids().indexOf('qronos') - 1], 'artbloom');
   assert.equal(h.ids()[h.ids().indexOf('qronos') + 1], 'tokenforge');
-  assert.equal(h.ids()[h.ids().indexOf('pixrouter') + 1], 'adselect');
-  assert.equal(h.ids()[h.ids().indexOf('tokenforge') + 1], 'utim');
+  assert.deepEqual(h.ids().slice(0, 5), ['pixrouter', 'zurelay', 'agentrouter', 'qoder', 'utim']);
   for (const collection of A.collections) {
     h.emit('click', h.target('[data-collection]', { collection: collection.key }));
     assert.deepEqual(new Set(h.ids()), new Set(collection.items.map(p => p.id)));
     if (['all', 'picks'].includes(collection.key)) {
       assert.equal(h.ids()[h.ids().indexOf('qronos') - 1], 'artbloom');
       assert.equal(h.ids()[h.ids().indexOf('qronos') + 1], 'tokenforge');
-      assert.equal(h.ids()[h.ids().indexOf('pixrouter') + 1], 'adselect');
-      assert.equal(h.ids()[h.ids().indexOf('tokenforge') + 1], 'utim');
+      assert.deepEqual(h.ids().slice(0, 5), ['pixrouter', 'zurelay', 'agentrouter', 'qoder', 'utim']);
     }
   }
   h.emit('click', h.target('[data-collection]', { collection: 'all' }));
@@ -353,7 +390,7 @@ test('fresh visit opens notice after rendering directory and locks background in
   assert.equal(h.get('[data-directory-shell]').inert, true);
   assert.equal(h.get('.skip-link').inert, true);
   assert.equal(h.document.body.classList.contains('modal-open'), true);
-  assert.equal(h.ids().length, 67);
+  assert.equal(h.ids().length, 68);
   assert.equal(h.storage.has(NOTICE_KEY), false);
   h.emit('click', h.target('[data-prov-open]', { provOpen: 'museai' }));
   assert.equal(h.get('[data-prov-modal]').hidden, true);
@@ -506,7 +543,7 @@ test('notice initialization error leaves directory interactive', () => {
   assert.equal(h.get('[data-community-modal]').hidden, true);
   assert.equal(h.get('[data-directory-shell]').inert, false);
   assert.equal(h.document.body.classList.contains('modal-open'), false);
-  assert.equal(h.ids().length, 67);
+  assert.equal(h.ids().length, 68);
 });
 
 test('notice markup has exact approved copy, existing favicon, decorative mosaic and one CTA', () => {
