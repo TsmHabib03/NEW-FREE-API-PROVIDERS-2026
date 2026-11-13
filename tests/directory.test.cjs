@@ -111,15 +111,15 @@ function harness(fixtures, options = {}) {
 
 test('all source providers appear once, with feature lists and three honest metrics', () => {
   const h = harness(), records = h.context.window.PROVIDERS;
-  assert.equal(records.length, 69);
+  assert.equal(records.length, 68);
   assert.equal(h.ids().length, records.length);
   assert.equal(new Set(h.ids()).size, records.length);
   assert.deepEqual(new Set(h.ids()), new Set(records.map(p => p.id)));
   const markup = h.get('[data-provider-grid]').innerHTML;
   assert.equal((markup.match(/class="api-features"/g) || []).length, records.length);
   assert.equal((markup.match(/class="api-metrics"/g) || []).length, records.length);
-  assert.equal((markup.match(/Not listed/g) || []).length, records.filter(p => !p.rewards).length * 3);
-  assert.equal(h.context.window.Adapters.stats.off, 14);
+  assert.equal((markup.match(/Not listed/g) || []).length, records.length * 3);
+  assert.equal(h.context.window.Adapters.stats.off, 13);
 });
 
 test('every card and modal preserve exact provider endpoints and disable only offline/missing URLs', () => {
@@ -129,14 +129,14 @@ test('every card and modal preserve exact provider endpoints and disable only of
     // Feature list closes with </ul>; split by the next card rather than nested li.
     const segment = markup.split('data-provider-id="' + p.id + '"')[1].split('<li class="api-card')[0];
     const docs = A.docsUrl(p);
-    if (!p.rewards) assert.ok(segment.includes('href="' + A.esc(docs) + '"'), p.id + ' docs');
+    assert.ok(segment.includes('href="' + A.esc(docs) + '"'), p.id + ' docs');
     const opener = h.target('[data-prov-open]', { provOpen: p.id }); opener.focus();
     h.emit('click', opener);
     assert.equal(h.get('[data-prov-modal-name]').textContent, p.name);
     assert.equal(h.get('[data-prov-modal-logo]').src, A.logo(p));
     assert.equal(h.get('[data-prov-modal-blurb]').textContent, p.blurb);
     const actions = h.get('.prov-act').innerHTML;
-    if (!p.rewards) assert.ok(actions.includes('href="' + A.esc(docs) + '"'), p.id + ' modal docs');
+    assert.ok(actions.includes('href="' + A.esc(docs) + '"'), p.id + ' modal docs');
     if (p.status === 'off' || !p.url) {
       assert.ok(actions.includes('aria-disabled="true"'), p.id);
       assert.ok(!actions.includes('class="prov-signin"'), p.id);
@@ -145,20 +145,7 @@ test('every card and modal preserve exact provider endpoints and disable only of
       assert.ok(segment.includes('href="' + A.esc(p.url) + '"'), p.id + ' card signup');
       assert.ok(actions.includes('href="' + A.esc(p.url) + '"'), p.id + ' modal signup');
     }
-    assert.equal(h.get('[data-prov-docs-note]').hidden, !!p.rewards || docs !== 'setup.html');
-    assert.equal(h.get('[data-prov-rewards]').hidden, !p.rewards);
-    assert.equal(h.get('.prov-technical').hidden, !!p.rewards);
-    assert.equal(h.get('[data-prov-modal-route]').hidden, !!p.rewards);
-    if (p.rewards) {
-      assert.deepEqual([...segment.matchAll(/href="([^"]+)"/g)].map(m => m[1]), [A.esc(p.url)]);
-      assert.deepEqual([...actions.matchAll(/href="([^"]+)"/g)].map(m => m[1]), [A.esc(p.url)]);
-      assert.ok(actions.includes(A.esc('Join ' + p.name + ' & earn rewards')));
-      assert.ok(segment.includes('Join &amp; earn rewards'));
-      assert.ok(!segment.includes('Models not documented'));
-      assert.ok(h.get('[data-prov-rewards]').innerHTML.includes('USDT (BEP20)'));
-      assert.ok(h.get('[data-prov-rewards]').innerHTML.includes('$100'));
-      assert.ok(h.get('[data-prov-rewards]').innerHTML.includes('no fixed or guaranteed returns'));
-    }
+    assert.equal(h.get('[data-prov-docs-note]').hidden, docs !== 'setup.html');
     h.context.window.Views.closeModal();
     assert.equal(h.document.activeElement, opener);
   }
@@ -239,12 +226,11 @@ test('recommended UTIM keeps its API signup and adds a separate official website
   assert.ok(actions.includes('Get API'));
 });
 
-test('only AdSelect and AgentRouter have highlighted borders; new providers retain referral actions', () => {
+test('only AgentRouter has a highlighted border; new providers retain referral actions', () => {
   const h = harness(), A = h.context.window.Adapters;
-  assert.equal(A.providers.find(p => p.id === 'adselect').url, 'https://adselect.biz/register?ref=tsmhabib03');
-  assert.deepEqual(Array.from(A.providers.filter(p => p.featured), p => p.id).sort(), ['adselect', 'agentrouter']);
+  assert.deepEqual(Array.from(A.providers.filter(p => p.featured), p => p.id), ['agentrouter']);
   const initialMarkup = h.get('[data-provider-grid]').innerHTML;
-  assert.deepEqual([...initialMarkup.matchAll(/class="api-card api-featured" data-provider-id="([^"]+)"/g)].map(m => m[1]), ['adselect', 'agentrouter']);
+  assert.deepEqual([...initialMarkup.matchAll(/class="api-card api-featured" data-provider-id="([^"]+)"/g)].map(m => m[1]), ['agentrouter']);
   assert.ok(!initialMarkup.includes('>Featured</span>'));
   const expected = [
     ['zurelay', 'https://zurelay.com/signup?ref=HABI6Z6Z', 'assets/zurelay-logo.svg', 'Get API'],
@@ -280,7 +266,7 @@ test('only AdSelect and AgentRouter have highlighted borders; new providers reta
     const ids = offline.context.window.Adapters.collections.find(c => c.key === key).items.map(p => p.id);
     assert.equal(new Set(ids).size, ids.length);
     if (key === 'picks') {
-      assert.ok(!ids.includes('adselect') && !ids.includes('agentrouter'));
+      assert.ok(!ids.includes('agentrouter'));
       assert.ok(ids.includes('zurelay') && ids.includes('qoder'));
     }
   }
@@ -310,14 +296,19 @@ test('checkboxes use OR within groups and AND across groups; search includes off
 
 test('collections and sort controls update generated cards', () => {
   const h = harness(), A = h.context.window.Adapters;
+  const threerouter = A.providers.find(p => p.id === 'threerouter');
+  assert.equal(threerouter.name, 'ThreeRouter');
+  assert.equal(threerouter.status, 'live');
+  assert.equal(threerouter.url, 'https://www.threerouter.com/register?aff=JFSEE6WJFQPE');
+  assert.ok(fs.existsSync(path.join(root, threerouter.logo)));
   assert.equal(h.ids()[h.ids().indexOf('tokenforge') + 1], 'qronos');
-  assert.deepEqual(h.ids().slice(0, 9), ['pixrouter', 'adselect', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim']);
+  assert.deepEqual(h.ids().slice(0, 9), ['pixrouter', 'threerouter', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim']);
   for (const collection of A.collections) {
     h.emit('click', h.target('[data-collection]', { collection: collection.key }));
     assert.deepEqual(new Set(h.ids()), new Set(collection.items.map(p => p.id)));
     if (['all', 'picks'].includes(collection.key)) {
       assert.equal(h.ids()[h.ids().indexOf('tokenforge') + 1], 'qronos');
-      assert.deepEqual(h.ids().slice(0, 9), ['pixrouter', 'adselect', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim']);
+      assert.deepEqual(h.ids().slice(0, 9), ['pixrouter', 'threerouter', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim']);
     }
   }
   h.emit('click', h.target('[data-collection]', { collection: 'all' }));
@@ -396,7 +387,7 @@ test('fresh visit opens notice after rendering directory and locks background in
   assert.equal(h.get('[data-directory-shell]').inert, true);
   assert.equal(h.get('.skip-link').inert, true);
   assert.equal(h.document.body.classList.contains('modal-open'), true);
-  assert.equal(h.ids().length, 69);
+  assert.equal(h.ids().length, h.context.window.PROVIDERS.length);
   assert.equal(h.storage.has(NOTICE_KEY), false);
   h.emit('click', h.target('[data-prov-open]', { provOpen: 'museai' }));
   assert.equal(h.get('[data-prov-modal]').hidden, true);
@@ -549,7 +540,7 @@ test('notice initialization error leaves directory interactive', () => {
   assert.equal(h.get('[data-community-modal]').hidden, true);
   assert.equal(h.get('[data-directory-shell]').inert, false);
   assert.equal(h.document.body.classList.contains('modal-open'), false);
-  assert.equal(h.ids().length, 69);
+  assert.equal(h.ids().length, h.context.window.PROVIDERS.length);
 });
 
 test('notice markup has exact approved copy, existing favicon, decorative mosaic and one CTA', () => {

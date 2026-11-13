@@ -43,7 +43,7 @@
      guide         the provider's own setup guide URL, or null.
 
    Verified 2026-10-31. Round 17 added KVOTUM, Moyuu and FREE-PI at the owner's request.
-   Three Router is currently disabled by the maintainer; its URL is retained for possible reactivation.
+   ThreeRouter was reactivated with the owner's updated referral link on 2026-11-13.
    Round 16 replaced MegaNova AI and Plugsky with three owner-requested referral links.
    Round 14 added HyxAPI, xKiro and Three Router (owner-requested referral links).
    Round 13 added PixRouter (owner-requested invite link). Round 12 turns
@@ -466,25 +466,6 @@ window.PROVIDERS = [
     models: [], modelsNote: null,
     blurb: "AI API routing platform for developers - one place to explore and integrate AI capabilities into your projects. Register through the invite link, then take the base URL, key and model from the dashboard.",
     offer: "Invite sign-up - check the dashboard for current terms", guide: null },
-  /* AdSelect restored with the owner's updated referral URL on 2026-11-11. */
-  { id: "adselect", name: "AdSelect", url: "https://adselect.biz/register?ref=tsmhabib03", logo: "assets/adselect-logo.png",
-    status: "live", flags: [], addedAt: "2026-11-10", updatedAt: "2026-11-11", rank: null, featured: true,
-    kind: "advertising-rewards", category: ["Advertising rewards"], protocol: [], freeShape: "unknown",
-    noCard: false, signupCredit: false, inviteOnly: false,
-    models: [], modelsNote: null,
-    blurb: "Earn rewards by viewing partner ads, checking in daily, sharing stories and inviting friends. AdSelect is a community and advertising platform with small, variable rewards paid in USDT (BEP20). Joining is free.",
-    offer: "Free to join · USDT (BEP20) payouts · $100 minimum withdrawal", guide: null,
-    rewards: {
-      activities: ["Partner ad views", "Daily check-in", "Story sharing", "Referrals"],
-      minimumWithdrawal: "$100", withdrawalFee: "Currently 0%", payoutAsset: "USDT (BEP20)",
-      terms: "Reward amounts are shown in the member dashboard and can change with advertiser demand. Referrals are optional. Withdrawals follow the platform's payout schedule. AdSelect is not an investment platform and promises no fixed or guaranteed returns.",
-      steps: [
-        "Create your free account with your name, email and mobile number.",
-        "Complete partner ad tasks, daily check-ins and story shares in your dashboard.",
-        "Optionally invite friends with your referral link. Fake or duplicate accounts are not allowed.",
-        "Request a withdrawal to your own USDT (BEP20) wallet once your balance reaches $100."
-      ]
-    } },
   /* Zurelay and Qoder — owner-requested links and logos added 2026-11-11.
      Product descriptions checked against their public sites; referral rewards are not assumed. */
   { id: "zurelay", name: "Zurelay", url: "https://zurelay.com/signup?ref=HABI6Z6Z", logo: "assets/zurelay-logo.svg",
@@ -564,9 +545,8 @@ window.PROVIDERS = [
     models: [], modelsNote: null,
     blurb: "Referral sign-up for an AI API gateway. Register, then check the dashboard for the current endpoint, key and model details.",
     offer: "Referral sign-up - check the dashboard for current terms", guide: null },
-  { id: "threerouter", name: "Three Router", url: "https://www.threerouter.com/register?aff=DB35EA93EF6G", logo: "assets/three-router-logo.webp",
-    status: "off", flags: [], addedAt: "2026-10-26", rank: null,
-    statusNote: "Disabled by the maintainer - sign-up link is off until the provider is rechecked.",
+  { id: "threerouter", name: "ThreeRouter", url: "https://www.threerouter.com/register?aff=JFSEE6WJFQPE", logo: "assets/three-router-logo.webp",
+    status: "live", flags: [], addedAt: "2026-10-26", updatedAt: "2026-11-13", rank: null,
     kind: "gateway", protocol: [], freeShape: "unknown",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,

@@ -48,10 +48,10 @@
     ]
   };
 
-  /* curated rows: PixRouter / AdSelect / AgentRouter, Zurelay / Qoder / ArtBloom,
+  /* curated rows: PixRouter / ThreeRouter / AgentRouter, Zurelay / Qoder / ArtBloom,
      TokenForge / Qronos / UTIM. Ids stay here (not in providers.js) so ordering is a
      presentation concern and every row can still be turned off by flipping status alone. */
-  const PINNED = ['pixrouter', 'adselect', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim', 'kvotum', 'moyuu', 'freepi', 'floodgate', 'fxqidian', 'kiosapi', 'hyxapi', 'xkiro', 'threerouter', 'foundable', 'museai', 'zcode', 'hcnsec', 'freemodelin'];
+  const PINNED = ['pixrouter', 'threerouter', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim', 'kvotum', 'moyuu', 'freepi', 'floodgate', 'fxqidian', 'kiosapi', 'hyxapi', 'xkiro', 'foundable', 'museai', 'zcode', 'hcnsec', 'freemodelin'];
   const RECOMMENDED = ['agentrouter', 'miarouter', 'emtf', 'kktoken', 'seekai', 'justdowork',
     'bluesminds', 'budsai', 'flushai', 'geminiapi'];
   const byId = new Map(providers.map(p => [p.id, p]));
@@ -98,12 +98,7 @@
     { key: 'latencyMs', label: 'Latency', value: metricNumber(p.metrics?.latencyMs), unit: ' ms' },
     { key: 'uptimePercent', label: 'Uptime %', value: metricNumber(p.metrics?.uptimePercent, 100), unit: '%' }
   ].map(m => ({ ...m, display: m.value === null ? 'Not listed' : m.value.toLocaleString('en-US', { maximumFractionDigits: 2 }) + m.unit }));
-  const features = p => p.rewards ? [
-    ['Earn by', p.rewards.activities.join(', ')],
-    ['Joining', 'Free'],
-    ['Reward amounts', 'Small and variable; see dashboard'],
-    ['Referrals', 'Optional']
-  ] : p.productFeatures || [
+  const features = p => p.productFeatures || [
     ['Authentication', authTypes(p).map(authLabel).join(', ')],
     ['Data format', p.dataFormat || 'Not documented'],
     ['Rate limit', p.rateLimit || (metrics(p)[0].value === null ? 'Not documented' : metrics(p)[0].display + ' requests/min')],
