@@ -111,7 +111,7 @@ function harness(fixtures, options = {}) {
 
 test('all source providers appear once, with feature lists and three honest metrics', () => {
   const h = harness(), records = h.context.window.PROVIDERS;
-  assert.equal(records.length, 70);
+  assert.equal(records.length, 72);
   assert.equal(h.ids().length, records.length);
   assert.equal(new Set(h.ids()).size, records.length);
   assert.deepEqual(new Set(h.ids()), new Set(records.map(p => p.id)));
@@ -234,6 +234,8 @@ test('only AgentRouter has a highlighted border; new providers retain referral a
   assert.ok(!initialMarkup.includes('>Featured</span>'));
   const expected = [
     ['zurelay', 'https://zurelay.com/signup?ref=HABI6Z6Z', 'assets/zurelay-logo.svg', 'Get API'],
+    ['freegg', 'https://freegg.app/sign-up?aff=JkOS', 'assets/gorouterlogo.png', 'Get API'],
+    ['xingchiapi', 'https://xingchiapi.com/register?aff=UYPXP6PBYD4X', 'assets/xingchiapi-logo.svg', 'Get API'],
     ['qoder', 'https://qoder.com/activities?referral_code=J7alB0RB6kGqmZGIqbVuC0VWwVNVEpXy', 'assets/qoder-logo.png', 'Open activities']
   ];
   for (const [id, url, logo, action] of expected) {
@@ -302,13 +304,13 @@ test('collections and sort controls update generated cards', () => {
   assert.equal(threerouter.url, 'https://www.threerouter.com/register?aff=JFSEE6WJFQPE');
   assert.ok(fs.existsSync(path.join(root, threerouter.logo)));
   assert.equal(h.ids()[h.ids().indexOf('tokenforge') + 1], 'qronos');
-  assert.deepEqual(h.ids().slice(0, 12), ['pixrouter', 'threerouter', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim', 'tokeness', 'truesota', 'kvotum']);
+  assert.deepEqual(h.ids().slice(0, 14), ['pixrouter', 'freegg', 'agentrouter', 'zurelay', 'xingchiapi', 'artbloom', 'tokenforge', 'qronos', 'utim', 'threerouter', 'qoder', 'tokeness', 'truesota', 'kvotum']);
   for (const collection of A.collections) {
     h.emit('click', h.target('[data-collection]', { collection: collection.key }));
     assert.deepEqual(new Set(h.ids()), new Set(collection.items.map(p => p.id)));
     if (['all', 'picks'].includes(collection.key)) {
       assert.equal(h.ids()[h.ids().indexOf('tokenforge') + 1], 'qronos');
-      assert.deepEqual(h.ids().slice(0, 12), ['pixrouter', 'threerouter', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim', 'tokeness', 'truesota', 'kvotum']);
+      assert.deepEqual(h.ids().slice(0, 14), ['pixrouter', 'freegg', 'agentrouter', 'zurelay', 'xingchiapi', 'artbloom', 'tokenforge', 'qronos', 'utim', 'threerouter', 'qoder', 'tokeness', 'truesota', 'kvotum']);
     }
   }
   h.emit('click', h.target('[data-collection]', { collection: 'all' }));
