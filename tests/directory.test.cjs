@@ -111,7 +111,7 @@ function harness(fixtures, options = {}) {
 
 test('all source providers appear once, with feature lists and three honest metrics', () => {
   const h = harness(), records = h.context.window.PROVIDERS;
-  assert.equal(records.length, 68);
+  assert.equal(records.length, 70);
   assert.equal(h.ids().length, records.length);
   assert.equal(new Set(h.ids()).size, records.length);
   assert.deepEqual(new Set(h.ids()), new Set(records.map(p => p.id)));
@@ -119,7 +119,7 @@ test('all source providers appear once, with feature lists and three honest metr
   assert.equal((markup.match(/class="api-features"/g) || []).length, records.length);
   assert.equal((markup.match(/class="api-metrics"/g) || []).length, records.length);
   assert.equal((markup.match(/Not listed/g) || []).length, records.length * 3);
-  assert.equal(h.context.window.Adapters.stats.off, 13);
+  assert.equal(h.context.window.Adapters.stats.off, 17);
 });
 
 test('every card and modal preserve exact provider endpoints and disable only offline/missing URLs', () => {
@@ -302,13 +302,13 @@ test('collections and sort controls update generated cards', () => {
   assert.equal(threerouter.url, 'https://www.threerouter.com/register?aff=JFSEE6WJFQPE');
   assert.ok(fs.existsSync(path.join(root, threerouter.logo)));
   assert.equal(h.ids()[h.ids().indexOf('tokenforge') + 1], 'qronos');
-  assert.deepEqual(h.ids().slice(0, 9), ['pixrouter', 'threerouter', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim']);
+  assert.deepEqual(h.ids().slice(0, 12), ['pixrouter', 'threerouter', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim', 'tokeness', 'truesota', 'kvotum']);
   for (const collection of A.collections) {
     h.emit('click', h.target('[data-collection]', { collection: collection.key }));
     assert.deepEqual(new Set(h.ids()), new Set(collection.items.map(p => p.id)));
     if (['all', 'picks'].includes(collection.key)) {
       assert.equal(h.ids()[h.ids().indexOf('tokenforge') + 1], 'qronos');
-      assert.deepEqual(h.ids().slice(0, 9), ['pixrouter', 'threerouter', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim']);
+      assert.deepEqual(h.ids().slice(0, 12), ['pixrouter', 'threerouter', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim', 'tokeness', 'truesota', 'kvotum']);
     }
   }
   h.emit('click', h.target('[data-collection]', { collection: 'all' }));

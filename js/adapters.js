@@ -49,9 +49,9 @@
   };
 
   /* curated rows: PixRouter / ThreeRouter / AgentRouter, Zurelay / Qoder / ArtBloom,
-     TokenForge / Qronos / UTIM. Ids stay here (not in providers.js) so ordering is a
+     TokenForge / Qronos / UTIM, then Tokeness / TrueSOTA / KVOTUM. Ids stay here (not in providers.js) so ordering is a
      presentation concern and every row can still be turned off by flipping status alone. */
-  const PINNED = ['pixrouter', 'threerouter', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim', 'kvotum', 'moyuu', 'freepi', 'floodgate', 'fxqidian', 'kiosapi', 'hyxapi', 'xkiro', 'foundable', 'museai', 'zcode', 'hcnsec', 'freemodelin'];
+  const PINNED = ['pixrouter', 'threerouter', 'agentrouter', 'zurelay', 'qoder', 'artbloom', 'tokenforge', 'qronos', 'utim', 'tokeness', 'truesota', 'kvotum', 'moyuu', 'freepi', 'floodgate', 'fxqidian', 'kiosapi', 'hyxapi', 'xkiro', 'foundable', 'museai', 'zcode', 'hcnsec', 'freemodelin'];
   const RECOMMENDED = ['agentrouter', 'miarouter', 'emtf', 'kktoken', 'seekai', 'justdowork',
     'bluesminds', 'budsai', 'flushai', 'geminiapi'];
   const byId = new Map(providers.map(p => [p.id, p]));

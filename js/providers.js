@@ -44,6 +44,8 @@
 
    Verified 2026-10-31. Round 17 added KVOTUM, Moyuu and FREE-PI at the owner's request.
    ThreeRouter was reactivated with the owner's updated referral link on 2026-11-13.
+   Tokeness and TrueSOTA were added on 2026-11-14; HyxAPI, SeekAI, JustDoWork and
+   KKToken were disabled at the owner's request, with their original URLs preserved.
    Round 16 replaced MegaNova AI and Plugsky with three owner-requested referral links.
    Round 14 added HyxAPI, xKiro and Three Router (owner-requested referral links).
    Round 13 added PixRouter (owner-requested invite link). Round 12 turns
@@ -149,21 +151,24 @@ window.PROVIDERS = [
     blurb: "New API gateway focused on Gemini models with free access. Sign up, copy the API key from the dashboard, and start sending requests right away.",
     offer: "Free models - sign up and start", guide: null },
   { id: "justdowork", name: "JustDoWork", url: "https://api.justwoker.icu/sign-up?aff=8OUO", logo: "assets/gorouterlogo.png",
-    status: "live", flags: ["newapi"], addedAt: "2026-08-22", rank: null,
+    status: "off", flags: ["newapi"], addedAt: "2026-08-22", rank: null,
+    statusNote: "Disabled by the maintainer - sign-up link is off until the provider is rechecked.",
     kind: "newapi-gateway", protocol: [], freeShape: "free-tier",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,
     blurb: "New API gateway with a free endpoint — live in under a minute. Register, copy your key, and set the base URL in your coding client.",
     offer: "Free endpoint - live in under a minute", guide: null },
   { id: "kktoken", name: "KKToken", url: "https://kktoken.cc/sign-up?aff=J11c", logo: "assets/gorouterlogo.png",
-    status: "live", flags: ["newapi"], addedAt: "2026-09-10", rank: null,
+    status: "off", flags: ["newapi"], addedAt: "2026-09-10", rank: null,
+    statusNote: "Disabled by the maintainer - sign-up link is off until the provider is rechecked.",
     kind: "newapi-gateway", protocol: [], freeShape: "signup-credit",
     noCard: true, signupCredit: true, inviteOnly: false,
     models: [], modelsNote: null,
     blurb: "New API gateway with free credits for new accounts. Register, then confirm the current endpoint and model names in the dashboard.",
     offer: "Free API credits on sign-up - no card needed", guide: null },
   { id: "seekai", name: "SeekAI", url: "https://seekai.cc/sign-up?aff=kwMe", logo: "assets/gorouterlogo.png",
-    status: "live", flags: ["newapi"], addedAt: "2026-09-10", rank: null,
+    status: "off", flags: ["newapi"], addedAt: "2026-09-10", rank: null,
+    statusNote: "Disabled by the maintainer - sign-up link is off until the provider is rechecked.",
     kind: "newapi-gateway", protocol: [], freeShape: "signup-credit",
     noCard: true, signupCredit: true, inviteOnly: false,
     models: [], modelsNote: null,
@@ -425,6 +430,20 @@ window.PROVIDERS = [
     offer: "Free tier - autonomous terminal agent with 66+ models",
     gatewayFeatures: ["MCP tool support", "Project planning", "Code editing", "Test execution", "Instant /undo"],
     guide: null },
+  { id: "tokeness", name: "Tokeness", url: "https://tokeness.ai/sign-up?aff=ArdD", logo: "assets/tokeness-logo.svg",
+    status: "live", flags: [], addedAt: "2026-11-14", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Referral sign-up for Tokeness. Create an account, then check the dashboard for the current endpoint, key and model details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
+  { id: "truesota", name: "TrueSOTA", url: "https://true-sota.com/register?aff=LNUW6HKJSM8W", logo: "assets/truesota-wordmark.png",
+    status: "live", flags: [], addedAt: "2026-11-14", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Referral sign-up for TrueSOTA. Register, then check the dashboard for the current endpoint, key and model details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
   { id: "vyceai", name: "vyceai", url: "https://vyceai.com/signup?ref=VYCE_8RRA6P", logo: "assets/vyceai-logo.svg",
     status: "live", flags: [], addedAt: "2026-10-01", rank: null,
     kind: "gateway", protocol: [], freeShape: "free-tier",
@@ -532,7 +551,8 @@ window.PROVIDERS = [
     offer: "Referral sign-up - check the dashboard for current terms", guide: null },
   /* Round 14 — owner-requested referral links added 2026-10-26. */
   { id: "hyxapi", name: "HyxAPI", url: "https://hyxware.com/auth?mode=register&aff=ICTh", logo: "assets/hyxapi-logo.png",
-    status: "live", flags: [], addedAt: "2026-10-26", rank: null,
+    status: "off", flags: [], addedAt: "2026-10-26", rank: null,
+    statusNote: "Disabled by the maintainer - sign-up link is off until the provider is rechecked.",
     kind: "gateway", protocol: [], freeShape: "unknown",
     noCard: false, signupCredit: false, inviteOnly: false,
     models: [], modelsNote: null,
