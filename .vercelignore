@@ -1,0 +1,9 @@
+.git/
+.shots/
+.vercel/
+.env*
+node_modules/
+tests/
+*.md
+*.csv
+package-lock.json

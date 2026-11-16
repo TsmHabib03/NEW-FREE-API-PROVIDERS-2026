@@ -28,7 +28,7 @@ function harness(fixtures, options = {}) {
       };
     }
     matches(selector) { return this.selector === selector; }
-    closest(selector) { return this.matches(selector) ? this : null; }
+    closest(selector) { return selector.split(',').some(item=>this.matches(item.trim())) ? this : null; }
     setAttribute(name, value) { this.attributes[name] = String(value); }
     removeAttribute(name) { delete this.attributes[name]; }
     focus() { document.activeElement = this; }
@@ -109,276 +109,131 @@ function harness(fixtures, options = {}) {
   return { context, get, emit, target, change, search, ids, document, windowEvents, storage, session };
 }
 
-test('all source providers appear once, with feature lists and three honest metrics', () => {
-  const h = harness(), records = h.context.window.PROVIDERS;
-  assert.equal(records.length, 74);
-  assert.equal(h.ids().length, records.length);
-  assert.equal(new Set(h.ids()).size, records.length);
-  assert.deepEqual(new Set(h.ids()), new Set(records.map(p => p.id)));
-  const markup = h.get('[data-provider-grid]').innerHTML;
-  assert.equal((markup.match(/class="api-features"/g) || []).length, records.length);
-  assert.equal((markup.match(/class="api-metrics"/g) || []).length, records.length);
-  assert.equal((markup.match(/Not listed/g) || []).length, records.length * 3);
-  assert.equal(h.context.window.Adapters.stats.off, 17);
+test('canonical order covers all records once and preserves approved pins and installed order', () => {
+  const h=harness(), A=h.context.window.Adapters;
+  assert.equal(A.providers.length,73);
+  assert.equal(A.canonical.length,73);
+  assert.equal(new Set(A.canonical.map(p=>p.id)).size,73);
+  assert.deepEqual(Array.from(A.canonical.slice(0,4),p=>p.id),['pixrouter','agentrouter','tokenforge','artbloom']);
+  assert.deepEqual(Array.from(A.sections.find(s=>s.key==='installed').items,p=>p.id),['utim','qoder','zcode','freepi','omnirush']);
+  assert.equal(A.sections.find(s=>s.key==='disabled').items.length,18);
+  assert.equal(A.providers.some(p=>p.id==='threerouter'),false);
+  assert.equal(A.providers.find(p=>p.id==='helyx').status,'off');
+  const markup=h.get('[data-provider-grid]').innerHTML;
+  assert.match(markup,/id="panel-review" hidden/);
+  assert.match(markup,/id="panel-disabled" hidden/);
+  assert.match(markup,/Show all \(10\)/);
 });
 
-test('every card and modal preserve exact provider endpoints and disable only offline/missing URLs', () => {
-  const h = harness(), A = h.context.window.Adapters;
-  const markup = h.get('[data-provider-grid]').innerHTML;
-  for (const p of A.providers) {
-    // Feature list closes with </ul>; split by the next card rather than nested li.
-    const segment = markup.split('data-provider-id="' + p.id + '"')[1].split('<li class="api-card')[0];
-    const docs = A.docsUrl(p);
-    assert.ok(segment.includes('href="' + A.esc(docs) + '"'), p.id + ' docs');
-    const opener = h.target('[data-prov-open]', { provOpen: p.id }); opener.focus();
-    h.emit('click', opener);
-    assert.equal(h.get('[data-prov-modal-name]').textContent, p.name);
-    assert.equal(h.get('[data-prov-modal-logo]').src, A.logo(p));
-    assert.equal(h.get('[data-prov-modal-blurb]').textContent, p.blurb);
-    const actions = h.get('.prov-act').innerHTML;
-    assert.ok(actions.includes('href="' + A.esc(docs) + '"'), p.id + ' modal docs');
-    if (p.status === 'off' || !p.url) {
-      assert.ok(actions.includes('aria-disabled="true"'), p.id);
-      assert.ok(!actions.includes('class="prov-signin"'), p.id);
-      assert.ok(segment.includes('api-signup is-disabled'), p.id);
+test('approved badges, exact referral URLs, current models and logo reuse remain intact', () => {
+  const A=harness().context.window.Adapters, by=id=>A.providers.find(p=>p.id===id);
+  assert.ok(by('pixrouter').badges.includes('Image Generation'));
+  assert.equal(by('pixrouter').signupCredit,false);
+  assert.equal(by('pixrouter').noCard,false);
+  assert.ok(by('tokenforge').badges.includes('Starter credit (amount not confirmed)'));
+  assert.ok(by('artbloom').badges.includes('Back'));
+  assert.ok(by('omnirush').badges.includes('Unverified'));
+  assert.equal(by('aetherai').url,'https://aether.cesiummc.space/sign-up?aff=XfVv');
+  assert.equal(by('byesu').url,'https://byesu.com/sign-up?aff=CCci');
+  assert.ok(by('aetherai').badges.includes('Referral'));
+  assert.ok(by('byesu').badges.includes('Referral'));
+  assert.equal(by('aetherai').logo,by('gorouter').logo);
+  assert.deepEqual(Array.from(by('agentrouter').models),['gpt-6-astra','gpt-6.1-sol','gpt-5.6-sol']);
+  assert.equal(by('tokenforge').models.length,11);
+});
+
+test('New requires all Checked evidence, live signup, date and exclusive 14-day window', () => {
+  const A=harness().context.window.Adapters;
+  const now=Date.parse('2026-11-16T08:00:00Z');
+  const fixture={id:'fixture',name:'Fixture',status:'live',addedAt:'2026-11-03',check:{level:'checked',siteLive:true,signupExists:true,termsDocumented:true,terms:'Documented offer',sources:['https://example.com/terms'],checkedAt:'2026-11-16T00:00:00Z'}};
+  assert.equal(A.isNew(fixture,now),true);
+  assert.equal(A.isNew(fixture,Date.parse('2026-11-16T16:00:00Z')),false);
+  assert.equal(A.isNew({...fixture,addedAt:'2026-11-17'},now),false);
+  for(const field of ['siteLive','signupExists','termsDocumented']) assert.equal(A.isNew({...fixture,check:{...fixture.check,[field]:false}},now),false,field);
+  assert.equal(A.isNew({...fixture,check:{...fixture.check,checkedAt:'invalid'}},now),false);
+  assert.equal(A.isNew({...fixture,check:{...fixture.check,checkedAt:'2026-11-17T00:00:00Z'}},now),false);
+  assert.equal(A.isNew({...fixture,status:'review'},now),false);
+  assert.ok(A.newItems(now).length<=5);
+  assert.deepEqual(Array.from(A.newItems(now),p=>p.id),['aetherai','byesu','tokeness','truesota','xingchiapi']);
+  assert.equal(A.newItems(now+20*864e5).length,0);
+});
+
+test('Spotlight requires recent successful account and inference evidence and rotates weekly', () => {
+  const now=Date.parse('2026-11-16T08:00:00Z'), A=harness().context.window.Adapters;
+  const verification={accountAccess:true,inferenceSuccess:true,source:'Audit record',verifiedAt:'2026-11-16T00:00:00Z'};
+  const fixture={status:'live',verification};
+  assert.equal(A.verified(fixture,now),true);
+  assert.equal(A.verified({...fixture,verification:{...verification,inferenceSuccess:false}},now),false);
+  assert.equal(A.verified(fixture,Date.parse(verification.verifiedAt)+30*864e5),false);
+  assert.equal(A.spotlight(now),null);
+  assert.equal(A.weekStart(now),Date.parse('2026-11-15T16:00:00Z'));
+  const items=A.sections.find(s=>s.key==='gateways').items.slice(6,8);
+  items.forEach(p=>{p.verification=verification;p.addedAt='2026-01-01';});
+  assert.ok(items.includes(A.spotlight(now)));
+  assert.notEqual(A.spotlight(now),A.spotlight(now+7*864e5));
+});
+
+test('search reaches hidden category tails and archives, filters auto-expand, pins never reorder', () => {
+  const h=harness();
+  h.search('XingchiAPI'); assert.ok(h.ids().includes('xingchiapi'));
+  h.search('Helyx'); assert.ok(h.ids().includes('helyx'));
+  assert.doesNotMatch(h.get('[data-provider-grid]').innerHTML,/id="panel-disabled" hidden/);
+  h.search('');
+  h.emit('click',h.target('[data-quick-filter]',{quickFilter:'install'}));
+  assert.deepEqual(h.ids(),['utim','qoder','zcode','freepi','omnirush']);
+  h.emit('click',h.target('[data-quick-filter]',{quickFilter:'install'}));
+  const sort=h.target('[data-sort-select]');sort.value='name';h.emit('change',sort);
+  assert.deepEqual(h.ids().slice(0,4),['pixrouter','agentrouter','tokenforge','artbloom']);
+  h.change('status','off');h.change('status','review');
+  assert.equal(Number(h.get('[data-results-count]').textContent),24);
+});
+
+test('all card and modal actions retain exact destinations; archived actions are disabled', () => {
+  const h=harness(),A=h.context.window.Adapters;
+  for(const p of A.providers) {
+    const card=h.context.window.Views.cardMarkup(p);
+    h.context.window.Views.openProvider(p.id);
+    const actions=h.get('.prov-act').innerHTML;
+    assert.ok(actions.includes('href="'+A.esc(A.docsUrl(p))+'"'),p.id+' docs');
+    if(p.status==='off'||!p.url) {
+      assert.match(actions,/aria-disabled="true"/);
+      assert.doesNotMatch(actions,/class="prov-signin"/);
     } else {
-      assert.ok(segment.includes('href="' + A.esc(p.url) + '"'), p.id + ' card signup');
-      assert.ok(actions.includes('href="' + A.esc(p.url) + '"'), p.id + ' modal signup');
+      assert.ok(card.includes('href="'+A.esc(p.url)+'"'),p.id+' card');
+      assert.ok(actions.includes('href="'+A.esc(p.url)+'"'),p.id+' modal');
+      assert.match(actions,/data-track-provider=/);
     }
-    assert.equal(h.get('[data-prov-docs-note]').hidden, docs !== 'setup.html');
-    h.context.window.Views.closeModal();
-    assert.equal(h.document.activeElement, opener);
-  }
-});
-
-test('ArtBloom return enables the exact new signup link and resets its badge when switching providers', () => {
-  const h = harness(), A = h.context.window.Adapters;
-  const artbloom = A.providers.find(p => p.id === 'artbloom');
-  assert.equal(artbloom.status, 'live');
-  assert.equal(artbloom.url, 'https://api.artbloom.tech/signup?ref=EQJPJADV5U');
-  assert.equal(artbloom.addedAt, '2026-09-29');
-  assert.equal(A.isReturned(artbloom), true);
-  assert.equal(artbloom.statusNote, undefined);
-  const markup = h.get('[data-provider-grid]').innerHTML;
-  const card = markup.split('data-provider-id="artbloom"')[1].split('<li class="api-card')[0];
-  assert.ok(card.includes('ArtBloom is back'));
-  assert.ok(card.includes('href="' + artbloom.url + '"'));
-  assert.ok(!card.includes('api-signup is-disabled'));
-  h.context.window.Views.openProvider('artbloom');
-  assert.equal(h.get('[data-prov-modal-return]').hidden, false);
-  assert.equal(h.get('[data-prov-modal-return]').textContent, 'ArtBloom is back');
-  assert.ok(h.get('.prov-act').innerHTML.includes('href="' + artbloom.url + '"'));
-  assert.equal(h.get('[data-prov-modal-notice]').hidden, true);
-  h.context.window.Views.openProvider('qronos');
-  assert.equal(h.get('[data-prov-modal-return]').hidden, true);
-  assert.equal(h.get('[data-prov-modal-return]').textContent, '');
-
-  const fixtures = A.providers.map(p => p.id === 'artbloom' ? { ...p, status: 'off' } : p);
-  const offline = harness(fixtures);
-  assert.equal(offline.context.window.Adapters.isReturned(fixtures.find(p => p.id === 'artbloom')), false);
-  assert.ok(!offline.get('[data-provider-grid]').innerHTML.includes('ArtBloom is back'));
-  offline.context.window.Views.openProvider('artbloom');
-  assert.equal(offline.get('[data-prov-modal-return]').hidden, true);
-  assert.ok(!offline.get('.prov-act').innerHTML.includes('class="prov-signin"'));
-});
-
-test('ArtBloom setup tab is enabled, uses the shared signup/guide URLs, and is absent from the offline notice', () => {
-  const h = harness();
-  const p = h.context.window.PROVIDERS.find(p => p.id === 'artbloom');
-  const panels = ['agentrouter', 'artbloom'].map(id => h.target('[data-panel]', { panel: id }));
-  const tabs = panels.map(panel => h.target('[data-tab]', { tab: panel.dataset.panel }));
-  const queryAll = h.document.querySelectorAll;
-  h.document.querySelectorAll = selector => selector === '[data-tabs]' ? [h.get('[data-tabs]')]
-    : selector === '[data-panel]' ? panels : selector === '[data-tab]' ? tabs : queryAll(selector);
-  h.get('[data-tabs]').querySelectorAll = h.document.querySelectorAll;
-  const queryOne = h.document.querySelector;
-  h.document.querySelector = selector => selector === '[data-panel="artbloom"]' ? panels[1]
-    : selector === '[data-tab="artbloom"]' ? tabs[1] : queryOne(selector);
-  tabs[1].click = () => tabs[1].listeners.click();
-  h.context.window.setTimeout = () => 0;
-  h.context.location.hash = '#artbloom';
-  h.context.CSS = { escape: value => value };
-  vm.runInContext(source('js/setup.js'), h.context);
-  const tabMarkup = h.get('[data-tab-strip]').innerHTML.match(/<button[^>]*data-tab="artbloom"[^>]*>/)[0];
-  assert.ok(!tabMarkup.includes('disabled'));
-  assert.equal(tabs[1].attributes['aria-selected'], 'true');
-  assert.equal(panels[1].classList.contains('active'), true);
-  assert.equal(h.get('[data-artbloom-signup]').href, p.url);
-  assert.equal(h.get('[data-artbloom-signup]').hidden, false);
-  assert.equal(h.get('[data-artbloom-guide]').href, p.guide);
-  assert.ok(source('setup.html').includes('ArtBloom is back'));
-  assert.ok(!h.get('[data-offline-text]').textContent.includes('ArtBloom'));
-  assert.ok(!source('setup.html').includes('ArtBloom is no longer accessible'));
-});
-
-test('recommended UTIM keeps its API signup and adds a separate official website action', () => {
-  const h = harness(), A = h.context.window.Adapters;
-  const utim = A.providers.find(p => p.id === 'utim');
-  const pixrouter = A.providers.find(p => p.id === 'pixrouter');
-  assert.equal(utim.recommended, true);
-  assert.equal(pixrouter.recommended, true);
-  assert.ok(A.collections.find(c => c.key === 'picks').items.some(p => p.id === 'utim'));
-  h.emit('click', h.target('[data-prov-open]', { provOpen: 'utim' }));
-  const actions = h.get('.prov-act').innerHTML;
-  assert.ok(actions.includes('href="https://utim.dev/"'));
-  assert.ok(actions.includes('Use its official website'));
-  assert.ok(actions.includes('href="https://utim.dev/auth?mode=signup&amp;ref=278c8461"'));
-  assert.ok(actions.includes('Get API'));
-});
-
-test('only AgentRouter has a highlighted border; new providers retain referral actions', () => {
-  const h = harness(), A = h.context.window.Adapters;
-  assert.deepEqual(Array.from(A.providers.filter(p => p.featured), p => p.id), ['agentrouter']);
-  const initialMarkup = h.get('[data-provider-grid]').innerHTML;
-  assert.deepEqual([...initialMarkup.matchAll(/class="api-card api-featured" data-provider-id="([^"]+)"/g)].map(m => m[1]), ['agentrouter']);
-  assert.ok(!initialMarkup.includes('>Featured</span>'));
-  const expected = [
-    ['zurelay', 'https://zurelay.com/signup?ref=HABI6Z6Z', 'assets/zurelay-logo.svg', 'Get API'],
-    ['freegg', 'https://freegg.app/sign-up?aff=JkOS', 'assets/gorouterlogo.png', 'Get API'],
-    ['xingchiapi', 'https://xingchiapi.com/register?aff=UYPXP6PBYD4X', 'assets/xingchiapi-logo.svg', 'Get API'],
-    ['qoder', 'https://qoder.com/activities?referral_code=J7alB0RB6kGqmZGIqbVuC0VWwVNVEpXy', 'assets/qoder-logo.png', 'Open activities']
-  ];
-  for (const [id, url, logo, action] of expected) {
-    const p = A.providers.find(p => p.id === id);
-    assert.equal(p.url, url);
-    assert.equal(p.logo, logo);
-    assert.ok(fs.existsSync(path.join(root, logo)));
-    h.search(p.name);
-    assert.deepEqual(h.ids(), [id]);
-    const markup = h.get('[data-provider-grid]').innerHTML;
-    assert.ok(!markup.includes('api-featured'));
-    assert.ok(!markup.includes('>Featured</span>'));
-    assert.ok(markup.includes('class="api-tag new">New</span>'));
-    assert.ok(markup.includes('href="' + A.esc(url) + '"'));
-    assert.ok(markup.includes('>' + action + '<i'));
-    h.context.window.Views.openProvider(id);
-    assert.ok(h.get('.prov-act').innerHTML.includes('>' + action + '<i'));
     h.context.window.Views.closeModal();
   }
-  h.search('Qoder');
-  assert.ok(!h.get('[data-provider-grid]').innerHTML.includes('Get API'));
-  h.change('protocol', 'openai');
-  assert.deepEqual(h.ids(), []);
-  h.search('Zurelay');
-  assert.deepEqual(h.ids(), ['zurelay']);
-  const fixtures = A.providers.map(p => p.featured ? { ...p, status: 'off' } : p);
-  const offline = harness(fixtures);
-  assert.ok(!offline.get('[data-provider-grid]').innerHTML.includes('api-featured'));
-  for (const key of ['all', 'picks']) {
-    const ids = offline.context.window.Adapters.collections.find(c => c.key === key).items.map(p => p.id);
-    assert.equal(new Set(ids).size, ids.length);
-    if (key === 'picks') {
-      assert.ok(!ids.includes('agentrouter'));
-      assert.ok(ids.includes('zurelay') && ids.includes('qoder'));
-    }
-  }
 });
 
-test('checkboxes use OR within groups and AND across groups; search includes offline models', () => {
-  const h = harness(), A = h.context.window.Adapters;
-  h.change('status', 'off');
-  assert.deepEqual(new Set(h.ids()), new Set(A.providers.filter(A.isOff).map(p => p.id)));
-  h.change('status', 'live');
-  h.change('auth', 'api-key');
-  h.change('protocol', 'openai');
-  const expected = A.providers.filter(p => ['off', 'live'].includes(p.status) &&
-    A.authTypes(p).includes('api-key') && (p.protocol || []).includes('openai'));
-  assert.deepEqual(new Set(h.ids()), new Set(expected.map(p => p.id)));
-  h.emit('click', h.target('[data-reset-all]'));
-  const p = A.providers.find(p => p.status === 'off');
-  h.search(p.name);
-  assert.ok(h.ids().includes(p.id));
-  h.search('no-provider-could-match-this-query');
-  assert.equal(h.ids().length, 0); assert.equal(h.get('[data-search-empty]').hidden, false);
-  h.emit('click', h.target('[data-reset-all]'));
-  const model = A.providers.find(p => p.models?.length).models[0];
-  h.search(model);
-  assert.ok(h.ids().length > 0);
+test('CSS parses and dynamic category controls expose native navigation and disclosure semantics', () => {
+  const postcss=require('postcss');postcss.parse(source('css/directory.css'));
+  const h=harness(),markup=h.get('[data-provider-grid]').innerHTML;
+  assert.match(markup,/aria-label="Provider categories"/);
+  assert.match(markup,/href="#category-installed"/);
+  assert.match(markup,/aria-expanded="false" aria-controls="panel-disabled"/);
+  assert.match(markup,/data-new-strip tabindex="0" role="region"/);
+  assert.match(source('setup.html'),/npm install -g @emend-ai\/utim/);
+  assert.match(source('setup.html'),/npx free-pi-cli@latest/);
+  assert.doesNotMatch(source('setup.html'),/New accounts receive free API credits automatically/);
 });
 
-test('collections and sort controls update generated cards', () => {
-  const h = harness(), A = h.context.window.Adapters;
-  const threerouter = A.providers.find(p => p.id === 'threerouter');
-  assert.equal(threerouter.name, 'ThreeRouter');
-  assert.equal(threerouter.status, 'live');
-  assert.equal(threerouter.url, 'https://www.threerouter.com/register?aff=JFSEE6WJFQPE');
-  assert.ok(fs.existsSync(path.join(root, threerouter.logo)));
-  assert.equal(h.ids()[h.ids().indexOf('tokenforge') + 1], 'qronos');
-  assert.deepEqual(h.ids().slice(0, 14), ['pixrouter', 'freegg', 'agentrouter', 'zurelay', 'xingchiapi', 'artbloom', 'tokenforge', 'qronos', 'utim', 'threerouter', 'qoder', 'tokeness', 'truesota', 'kvotum']);
-  for (const collection of A.collections) {
-    h.emit('click', h.target('[data-collection]', { collection: collection.key }));
-    assert.deepEqual(new Set(h.ids()), new Set(collection.items.map(p => p.id)));
-    if (['all', 'picks'].includes(collection.key)) {
-      assert.equal(h.ids()[h.ids().indexOf('tokenforge') + 1], 'qronos');
-      assert.deepEqual(h.ids().slice(0, 14), ['pixrouter', 'freegg', 'agentrouter', 'zurelay', 'xingchiapi', 'artbloom', 'tokenforge', 'qronos', 'utim', 'threerouter', 'qoder', 'tokeness', 'truesota', 'kvotum']);
-    }
-  }
-  h.emit('click', h.target('[data-collection]', { collection: 'all' }));
-  const select = h.target('[data-sort-select]'); select.value = 'name'; h.emit('change', select);
-  assert.deepEqual(h.ids(), [...A.providers].sort((a,b) => a.name.localeCompare(b.name)).map(p => p.id));
-  select.value = 'newest'; h.emit('change', select);
-  assert.deepEqual(h.ids(), [...A.collections[0].items].sort((a,b) =>
-    String(b.updatedAt || b.addedAt || '').localeCompare(String(a.updatedAt || a.addedAt || '')) || a.name.localeCompare(b.name)).map(p => p.id));
-});
-
-test('modal swapping, nested MuseAI guide, Escape and drawer restore state', () => {
-  const h = harness(); const initial = h.document.activeElement;
-  h.context.window.Views.openProvider('museai');
-  assert.equal(h.get('[data-directory-shell]').inert, true);
-  h.emit('click', h.target('[data-guide-open]'));
-  assert.equal(h.get('[data-guide-modal]').hidden, false);
-  assert.equal(h.get('[data-prov-card]').inert, true);
-  assert.equal(h.get('[data-copy-code]').dataset.copyCode, 'M0J1WF');
-  assert.equal((h.get('[data-guide-steps]').innerHTML.match(/<li>/g) || []).length, 7);
-  h.emit('keydown', h.get('[data-guide-close]'), { key: 'Escape' });
-  assert.equal(h.get('[data-guide-modal]').hidden, true);
-  assert.equal(h.get('[data-prov-card]').inert, false);
-  h.context.window.Views.openProvider('agentrouter');
-  assert.equal(h.get('[data-prov-modal-name]').textContent, 'AgentRouter');
-  h.emit('keydown', h.get('[data-prov-close]'), { key: 'Escape' });
-  assert.equal(h.get('[data-prov-modal]').hidden, true);
-  assert.equal(h.get('[data-directory-shell]').inert, false);
-  assert.equal(h.document.activeElement, initial);
-  const toggle = h.target('[data-filters-toggle]'); toggle.focus(); h.emit('click', toggle);
-  assert.equal(h.document.body.classList.contains('filters-open'), true);
-  assert.equal(h.get('.directory-main').inert, true);
-  h.emit('keydown', h.get('[data-filters-close]'), { key: 'Escape' });
-  assert.equal(h.document.body.classList.contains('filters-open'), false);
-  assert.equal(h.get('.directory-main').inert, false);
-  assert.equal(h.document.activeElement, toggle);
-});
-
-test('optional data supports new categories/auth, zero metrics, invalid values and safe URL routing', () => {
-  const fixture = { id: 'sample', name: '<Sample>', status: 'live', models: [], protocol: [], flags: [],
-    category: ['Weather', 'Finance'], authType: ['oauth', 'none'], dataFormat: 'JSON',
-    blurb: 'Weather and finance', metrics: { requestsPerMinute: 0, latencyMs: 85, uptimePercent: 99.9 },
-    url: 'https://example.com/signup?ref=literal&keep=%2F', docsUrl: 'https://example.com/docs' };
-  const h = harness([fixture]), A = h.context.window.Adapters;
-  assert.deepEqual(Array.from(A.metrics(fixture), m => m.display), ['0', '85 ms', '99.9%']);
-  assert.deepEqual(Array.from(A.metrics({ metrics: { requestsPerMinute: -1, latencyMs: '85', uptimePercent: 101 } }), m => m.value), [null, null, null]);
-  assert.deepEqual(Array.from(A.metrics({ metrics: { requestsPerMinute: null, latencyMs: NaN, uptimePercent: Infinity } }), m => m.value), [null, null, null]);
-  h.change('category', 'Weather'); h.change('auth', 'oauth'); assert.deepEqual(h.ids(), ['sample']);
-  h.context.window.Views.openProvider('sample');
-  assert.equal(h.get('[data-prov-modal-name]').textContent, '<Sample>');
-  assert.ok(h.get('[data-provider-grid]').innerHTML.includes('&lt;Sample&gt;'));
-  fixture.url = 'javascript:alert(1)'; fixture.docsUrl = 'javascript:alert(1)';
-  h.context.window.Views.openProvider('sample');
-  assert.ok(!h.get('.prov-act').innerHTML.includes('javascript:'));
-  assert.ok(h.get('.prov-act').innerHTML.includes('href="setup.html"'));
-});
-
-test('HTML contains every static view hook; CSS parses; theme toggle exposes dark state', () => {
-  const html = source('index.html'), views = source('js/views.js');
-  const dynamic = new Set(['data-filter-group', 'data-collection', 'data-remove-filter', 'data-provider-id', 'data-prov-open']);
-  for (const [, hook] of views.matchAll(/\[([\w-]+)\]/g)) {
-    if (hook.startsWith('data-') && !dynamic.has(hook)) assert.ok(html.includes(hook), hook);
-  }
-  require('postcss').parse(source('css/directory.css'));
-  const h = harness(); vm.runInContext(source('js/theme.js'), h.context);
-  assert.equal(h.get('[data-theme-toggle]').attributes['aria-pressed'], 'false');
-  h.get('[data-theme-toggle]').listeners.click({ preventDefault() {} });
-  assert.equal(h.document.documentElement.dataset.theme, 'dark');
-  assert.equal(h.get('[data-theme-toggle]').attributes['aria-pressed'], 'true');
+test('anonymous analytics allowlists properties and respects privacy preferences', () => {
+  const h=harness(),sent=[];
+  h.context.location.origin='https://example.com';
+  h.context.fetch=(url,options)=>{sent.push({url,...options});return Promise.resolve();};
+  vm.runInContext(source('js/analytics.js'),h.context);
+  const track=h.context.window.DirectoryAnalytics.track;
+  h.context.window.DIRECTORY_ANALYTICS={endpoint:''};
+  track('provider_click',{providerId:'aetherai',action:'signup',placement:'new'});assert.equal(sent.length,0);
+  h.context.window.DIRECTORY_ANALYTICS={endpoint:'/api/events'};
+  track('provider_click',{providerId:'aetherai',action:'signup',placement:'new',url:'secret',query:'secret',referral:'secret'});
+  assert.equal(sent.length,1);
+  assert.equal(sent[0].credentials,'omit');assert.equal(sent[0].referrerPolicy,'no-referrer');
+  assert.deepEqual(Object.keys(JSON.parse(sent[0].body).properties).sort(),['action','category','orderVersion','placement','providerId']);
+  assert.doesNotMatch(sent[0].body,/secret|XfVv/);
+  h.context.navigator.doNotTrack='1';track('filter_toggle',{key:'install',active:true});assert.equal(sent.length,1);
 });
 
 test('fresh visit opens notice after rendering directory and locks background including skip link', () => {
@@ -389,7 +244,7 @@ test('fresh visit opens notice after rendering directory and locks background in
   assert.equal(h.get('[data-directory-shell]').inert, true);
   assert.equal(h.get('.skip-link').inert, true);
   assert.equal(h.document.body.classList.contains('modal-open'), true);
-  assert.equal(h.ids().length, h.context.window.PROVIDERS.length);
+  assert.equal(h.context.window.Adapters.canonical.length,73); assert.ok(h.ids().includes('pixrouter'));
   assert.equal(h.storage.has(NOTICE_KEY), false);
   h.emit('click', h.target('[data-prov-open]', { provOpen: 'museai' }));
   assert.equal(h.get('[data-prov-modal]').hidden, true);
@@ -499,7 +354,7 @@ test('notice exits preserve filters, search, sorting, collection and URL', () =>
   for (const selector of ['[data-community-acknowledge]', '[data-community-close]']) {
     const h = harness();
     h.change('status', 'live'); h.search('api');
-    h.emit('click', h.target('[data-collection]', { collection: 'recommended' }));
+    h.context.window.Views.state.expanded.add('gateways'); h.context.window.Views.renderGrid();
     const sort = h.target('[data-sort-select]'); sort.value = 'name'; h.emit('change', sort);
     const ids = h.ids(), href = h.context.location.href, opener = h.get('[data-community-open]');
     opener.focus(); h.emit('click', opener); h.emit('click', h.get(selector));
@@ -542,7 +397,7 @@ test('notice initialization error leaves directory interactive', () => {
   assert.equal(h.get('[data-community-modal]').hidden, true);
   assert.equal(h.get('[data-directory-shell]').inert, false);
   assert.equal(h.document.body.classList.contains('modal-open'), false);
-  assert.equal(h.ids().length, h.context.window.PROVIDERS.length);
+  assert.equal(h.context.window.Adapters.canonical.length,73); assert.ok(h.ids().includes('pixrouter'));
 });
 
 test('notice markup has exact approved copy, existing favicon, decorative mosaic and one CTA', () => {

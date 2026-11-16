@@ -21,6 +21,7 @@ Visit http://localhost:8080. No backend or API key is required to browse. The si
 - js/views.js: search/filter state, cards, dynamic modal, endpoint actions, focus management, and guide copying.
 - js/icons.js: bundled SVG icon set.
 - js/theme.js: persisted directory theme.
+- js/analytics.js and api/events.js: anonymous click events and Vercel receiver.
 - assets/gorouterlogo.png: existing site favicon and brand mark, reused by the community notice.
 - setup.html and its existing CSS/scripts: client setup documentation.
 
@@ -28,11 +29,15 @@ Visit http://localhost:8080. No backend or API key is required to browse. The si
 
 Existing provider records remain the source of truth. Optional fields can add new categories, documented auth methods, feature data, and published metrics:
 
-The curated All providers and Top picks order starts with four desktop rows: **PixRouter → FreeGG → AgentRouter**, **Zurelay → XingChiAPI → ArtBloom**, **TokenForge → Qronos AI → UTIM**, and **ThreeRouter → Qoder → Tokeness**. FreeGG uses `https://freegg.app/sign-up?aff=JkOS`, reuses the existing GoRouter logo and carries the New API flag. XingChiAPI uses `https://xingchiapi.com/register?aff=UYPXP6PBYD4X` and the supplied SVG logo. ThreeRouter keeps `https://www.threerouter.com/register?aff=JFSEE6WJFQPE`; ThreeRouter and Qoder now follow UTIM. Only AgentRouter has a highlighted border; card backgrounds and actions use the normal styles, with no Featured badges. New badges appear during each provider's first week. Other sort options keep their requested order, and offline entries lose border highlighting.
+The directory contains 73 providers with fixed pins **PixRouter -> AgentRouter -> Token Forge -> ArtBloom**. PixRouter carries **Image Generation**, with no confirmed free-credit claim. Token Forge carries **Starter credit (amount not confirmed)**; ArtBloom carries **Back**. AgentRouter lists exactly `gpt-6-astra`, `gpt-6.1-sol`, and `gpt-5.6-sol`.
 
-Tokeness and TrueSOTA follow ThreeRouter and Qoder in All providers and Top picks. Their exact sign-up URLs are `https://tokeness.ai/sign-up?aff=ArdD` and `https://true-sota.com/register?aff=LNUW6HKJSM8W`, with the supplied SVG and PNG logos bundled locally. Free credits, models and client compatibility remain undocumented for FreeGG, XingChiAPI, Tokeness and TrueSOTA. HyxAPI, SeekAI, JustDoWork (justwoker) and KKToken are disabled by the maintainer; they remain in the offline directory with their original URLs preserved and their sign-up actions disabled.
+Non-pinned providers follow dated public evidence and service categories. Each section shows its first six entries with **Show all (N)**. **Needs review** and **Disabled** start collapsed. Search covers every record, including section tails and archives; search and quick filters expand matching sections. Installed tools appear as **Utim -> Qoder -> ZCode -> FREE-PI -> OmniRush (Unverified)**. Helyx remains archived with signup disabled; ThreeRouter was removed at the owner's request.
 
-AetherAI and Byesu API were added on 2026-11-16 with the exact referral links `https://aether.cesiummc.space/sign-up?aff=XfVv` and `https://byesu.com/sign-up?aff=CCci`. AetherAI reuses the existing GoRouter logo; Byesu API uses the supplied JPG, bundled as `assets/byesu-logo.jpg`. Both appear in the directory and search with a New badge during their first week. Free credits, models and client compatibility remain undocumented.
+**New this week** is a horizontal strip of at most five entries, newest first, expiring 14 days after the original addition date. Eligibility requires a dated **Checked** record: site live, signup exists, and public terms documented. Each card states **Not tested for inference**. The weekly Manila-time **Spotlight** requires recent successful account/inference evidence; it remains hidden when no provider qualifies. Same-software observations appear only in details and do not affect ranking while visual comparison is pending.
+
+AetherAI and Byesu API retain their exact referral links `https://aether.cesiummc.space/sign-up?aff=XfVv` and `https://byesu.com/sign-up?aff=CCci`, with **Referral** badges. AetherAI reuses the GoRouter logo; Byesu uses `assets/byesu-logo.jpg`. Retained outbound URLs are unchanged.
+
+See [the research report](PROVIDER-RESEARCH-2026-11-16.md), [actual-build order diff](PROVIDER-ORDER-DIFF.md), and [preview review and screenshots](PROVIDER-PREVIEW-REVIEW.md). Public-page checks do not establish model authenticity, inference quality, or continuous availability.
 
 Zurelay documents prepaid API access with OpenAI/Anthropic endpoints; no free credits or referral bonus amounts are assumed. Qoder is a coding platform with IDE, CLI and JetBrains tools, so its primary action reads **Open activities** and its Docs link opens its own documentation. Referral offers and eligibility belong to the provider's current activities page. Optional `featured` metadata controls border highlighting; `actionLabel` and `productFeatures` control the action and product details without changing the exact outbound URLs.
 
@@ -76,6 +81,10 @@ npm test
 
 Tests execute the real provider, adapter, and view scripts against a small DOM double. They cover record coverage, exact card/modal links, filters/search, collections/sorts, modal state, nested guide, optional metadata, unsafe URL rejection, and theme state. Notice coverage adds fresh display, persisted reloads, invalid/versioned records, storage exceptions, focus restoration/trapping, manual reopening, shortcut guards, state-preserving exits, overlay exclusivity, and missing-markup recovery. CSS parsing uses the existing PostCSS dependency.
 
-These tests do not validate browser layout, native focus behavior, accessibility trees, or screenshot fidelity. Desktop/mobile visual review remains necessary when browser access is available. The browser access host was unavailable and native Chrome access was rejected during this rebuild. Directory CSS is hand-authored and requires no build; the existing build:css command remains for the legacy Tailwind stylesheet.
+The approved preview passed real-browser ordering, complete-search, expansion, quick-filter, keyboard, disclosure, modal-focus and setup checks, with no overflow at 320, 390, 768 and 1440 pixels. Axe WCAG A/AA checks reported zero violations in tested light/dark desktop and mobile states; this does not replace a human screen-reader review. All 84 served static files matched the staged application. Directory CSS is hand-authored and requires no build; `build:css` remains for the legacy Tailwind stylesheet.
 
-Manual notice checks: vertical card and scrolling at 730px, 540px, 375px and 320px; short landscape screens and 200%/400% zoom; both themes; reduced motion and forced colors; heading announcement and paragraph reading; visible keyboard focus and scroll reachability; every dismissal and returning-visitor reload; provider/guide/filter behavior after dismissal. Browser review was unavailable during implementation, so these remain release verification limits.
+## Hosting and anonymous click events
+
+Vercel serves the directory and `api/events.js`. The receiver accepts only allowlisted event properties, validates same-origin requests, and writes basic events to Vercel logs. The client adds no cookies, identifiers, raw searches, URLs or referral codes, and honors DNT/GPC. No analytics dashboard or database is included. Platform access logs are separate from application event payloads.
+
+GitHub Pages can serve the static directory but cannot run the Vercel event receiver. Local static browsing also works without analytics. Deployment protection remains a Vercel project setting.

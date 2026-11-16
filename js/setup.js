@@ -7,7 +7,7 @@
 
   // Keep the restored provider's guide and signup actions on the shared record.
   const artbloom = providers.find(p => p.id === 'artbloom');
-  for (const [selector, url] of [['[data-artbloom-signup]', artbloom?.url], ['[data-artbloom-guide]', artbloom?.guide]]) {
+  for (const [selector, url] of [['[data-artbloom-signup]', artbloom?.url]]) {
     const link = $(selector);
     if (link) {
       link.hidden = !artbloom || artbloom.status === 'off' || !url;
@@ -104,7 +104,7 @@
   if (offlineText) {
     const names = providers.filter(p => p.status === 'off').sort(byName).map(p => p.name);
     const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
-    if (list) offlineText.textContent = `${list} are not usable right now, so their sign-up links are disabled and their guides are closed.`;
+    if (list) offlineText.textContent = `${list} are in the disabled archive. Their sign-up links and setup tabs are disabled in this directory.`;
   }
   /* status ranks: usable first, then flagged-but-reachable, offline last */
   const statusRank = p => p.status === 'off' ? 2 : (p.status === 'restricted' || p.status === 'auth') ? 1 : 0;
@@ -122,17 +122,34 @@
       strip.innerHTML = ordered.map(p => {
         const off = p.status === 'off';
         const active = p === firstLive;
-        return `<button class="tab${active ? ' active' : ''}" type="button" role="tab" aria-selected="${active}" data-tab="${p.id}"${off ? ' disabled' : ''}>${p.name}${p.flags.includes('newapi') ? ' <span class="newapi-chip">New API</span>' : ''}${statusBadge(p)}</button>`;
+        return `<button class="tab${active ? ' active' : ''}" id="setup-tab-${p.id}" type="button" role="tab" tabindex="${active ? 0 : -1}" aria-selected="${active}" aria-controls="setup-panel-${p.id}" data-tab="${p.id}"${off ? ' disabled' : ''}>${p.name}${statusBadge(p)}</button>`;
       }).join('');
     }
-    if (firstLive) panels.forEach(panel => panel.classList.toggle('active', panel.dataset.panel === firstLive.id));
+    panels.forEach(panel => {
+      panel.id = `setup-panel-${panel.dataset.panel}`;
+      panel.setAttribute('role', 'tabpanel');
+      panel.setAttribute('aria-labelledby', `setup-tab-${panel.dataset.panel}`);
+      panel.setAttribute('tabindex', '0');
+      panel.hidden = panel.dataset.panel !== firstLive?.id;
+      panel.classList.toggle('active', !panel.hidden);
+    });
     $$('[data-tab]', shell).forEach(tab => tab.addEventListener('click', () => {
       $$('[data-tab]', shell).forEach(item => {
         item.classList.toggle('active', item === tab);
         item.setAttribute('aria-selected', String(item === tab));
+        item.setAttribute('tabindex', item === tab ? '0' : '-1');
       });
-      panels.forEach(panel => panel.classList.toggle('active', panel.dataset.panel === tab.dataset.tab));
+      panels.forEach(panel => { panel.hidden = panel.dataset.panel !== tab.dataset.tab; panel.classList.toggle('active', !panel.hidden); });
     }));
+    strip?.addEventListener('keydown', event => {
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      const tabs = $$('[data-tab]', shell).filter(tab => !tab.disabled);
+      const current = tabs.indexOf(document.activeElement);
+      if (current < 0) return;
+      event.preventDefault();
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (current + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+      tabs[next].click(); tabs[next].focus();
+    });
   });
 
   /* deep link from the list (#agentrouter etc.): select that provider's tab */
@@ -141,7 +158,7 @@
     if (!id) return;
     const panel = $(`[data-panel="${CSS.escape ? CSS.escape(id) : id}"]`);
     const tab = $(`[data-tab="${id}"]`);
-    if (panel && tab && !tab.disabled) tab.click();
+    if (panel && tab && !tab.disabled) { tab.click(); panel.scrollIntoView({ block: 'start' }); }
   };
   jump();
   window.addEventListener('hashchange', jump);

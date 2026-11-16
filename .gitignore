@@ -1,0 +1,14 @@
+node_modules/
+.vercel/
+.env*
+!.env.example
+.shots/*
+!.shots/provider-preview/
+.shots/provider-preview/*
+!.shots/provider-preview/desktop-viewport.png
+!.shots/provider-preview/desktop-discovery.png
+!.shots/provider-preview/mobile-viewport.png
+!.shots/provider-preview/mobile-discovery.png
+!.shots/provider-preview/mobile-dark.png
+!.shots/provider-preview/desktop.png
+!.shots/provider-preview/mobile.png

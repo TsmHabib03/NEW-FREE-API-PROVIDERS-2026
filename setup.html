@@ -131,16 +131,19 @@ claude</code></pre>
         </div>
         <div class="tab-shell" data-tabs>
           <div class="tab-list" role="tablist" aria-label="Claude Code provider examples" data-tab-strip></div>
-          <div class="tab-panel active" data-panel="agentrouter"><p>GPT 6 Astra runs free on AgentRouter. Create an account and start sending requests right away.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
+          <div class="tab-panel" data-panel="utim"><p>Utim is an installed terminal coding agent. Install it with the documented command, then follow the official sign-in flow. Its signup allowance and conditions are documented on the provider site.</p><div class="code-block" data-code-block><div class="code-head"><span>Install Utim</span><button class="copy-button" type="button" data-copy><span>Copy</span></button></div><pre><code>npm install -g @emend-ai/utim</code></pre></div><p><a href="https://utim.dev" target="_blank" rel="noopener noreferrer">Official Utim instructions</a></p></div>
+<div class="tab-panel" data-panel="qoder"><p>Qoder is an IDE with signup credits. Download the application, sign in, and check the credit limits shown in your account. It is not a generic API gateway.</p><p><a href="https://docs.qoder.com" target="_blank" rel="noopener noreferrer">Qoder installation and account documentation</a></p></div>
+<div class="tab-panel" data-panel="zcode"><p>ZCode is an installed coding tool. Download it from the official site and follow its account setup. A free-credit amount has not been confirmed.</p><p><a href="https://zcode.z.ai" target="_blank" rel="noopener noreferrer">Official ZCode download and instructions</a></p></div>
+<div class="tab-panel" data-panel="freepi"><p>FREE-PI is an installed terminal coding tool. Run the package command and follow its documented onboarding. Review current credit conditions before use.</p><div class="code-block" data-code-block><div class="code-head"><span>Launch FREE-PI</span><button class="copy-button" type="button" data-copy><span>Copy</span></button></div><pre><code>npx free-pi-cli@latest</code></pre></div><p><a href="https://www.npmjs.com/package/free-pi-cli" target="_blank" rel="noopener noreferrer">Package instructions</a></p></div>
+<div class="tab-panel" data-panel="agentrouter"><p>AgentRouter currently lists only <code>gpt-6-astra</code>, <code>gpt-6.1-sol</code> and <code>gpt-5.6-sol</code>. Review the documented coding-use restrictions and limited daily supply around 10 AM Manila time. Copy the route-specific base URL, API key and model from its dashboard; inference has not been tested.</p></div>
+
+          <div class="tab-panel" data-panel="seekai"><p>Use the base URL and model shown in the SeekAI dashboard. Review the documented allowance and conditions in the provider dashboard.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
 $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
 $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
-          <div class="tab-panel" data-panel="seekai"><p>Use the base URL and model shown in the SeekAI dashboard. New accounts receive free API credits automatically.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
+          <div class="tab-panel" data-panel="kktoken"><p>Use the endpoint and model values documented by KKToken. Review the documented allowance and conditions in the provider dashboard.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
 $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
 $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
-          <div class="tab-panel" data-panel="kktoken"><p>Use the endpoint and model values documented by KKToken. New accounts receive free API credits automatically.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
-$env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
-$env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
-          <div class="tab-panel" data-panel="emtf"><p>Use the endpoint and model values documented by EMTF AI. New accounts receive free API credits automatically.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
+          <div class="tab-panel" data-panel="emtf"><p>Use the endpoint and model values documented by EMTF AI. Review the documented allowance and conditions in the provider dashboard.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
 $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
 $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
           <div class="tab-panel" data-panel="tabi"><div class="notice notice-warn"><i data-lucide="triangle-alert"></i><span>TaBi Token AI is no longer available. This setup guide is disabled - use any live provider tab instead.</span></div></div>
@@ -166,19 +169,14 @@ $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
  $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
  $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
           <div class="tab-panel" data-panel="inference"><div class="notice notice-warn"><i data-lucide="triangle-alert"></i><span>Inference AI is no longer accessible. This setup guide is disabled - use any live provider tab instead.</span></div></div>
-          <div class="tab-panel" data-panel="omnirush"><p>Use the endpoint and model values documented by OmniRush. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
- $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
- $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
-          <div class="tab-panel" data-panel="artbloom">
-            <p><strong>ArtBloom is back.</strong> Sign up, then follow the setup guide to copy your current base URL, API key, and model ID.</p>
-            <div class="cta-row provider-guide-actions">
-              <a class="button button-primary" data-artbloom-signup target="_blank" rel="noopener noreferrer">Sign up for ArtBloom <i data-lucide="arrow-up-right"></i></a>
-              <a class="button button-quiet" data-artbloom-guide target="_blank" rel="noopener noreferrer">Open setup guide <i data-lucide="book-open"></i></a>
-            </div>
-          </div>
-          <div class="tab-panel" data-panel="tokenforge"><p>Use the endpoint and model values documented by TokenForge. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
- $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
- $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
+          <div class="tab-panel" data-panel="omnirush"><p><strong>Unverified.</strong> OmniRush is listed as an installed coding tool. Installation and successful usage could not be confirmed in the public-page audit. Follow the provider documentation before attempting setup.</p><p><a href="https://omnirush.ai/docs" target="_blank" rel="noopener noreferrer">OmniRush documentation</a></p></div>
+
+          <div class="tab-panel" data-panel="artbloom"><p>ArtBloom is back. The public catalog documents OpenAI-compatible routes and the models <code>claude-sonnet-5-5</code> and <code>gpt-6.1-sol</code>. Sign up, copy your account API key and base URL, then choose a model supported by the specific client route. Inference has not been tested.</p><p><a class="button button-primary" data-artbloom-signup target="_blank" rel="noopener noreferrer">Sign up for ArtBloom</a></p><p>For an OpenAI-compatible client, use the base URL shown by ArtBloom, your own API key, and the exact model ID from its current catalog. Only use Codex CLI when the provider documents Responses API support.</p></div>
+
+          <div class="tab-panel" data-panel="tokenforge"><p><strong>Starter credit (amount not confirmed).</strong> Token Forge documents an Anthropic Messages-compatible route and 11 model IDs. Create an account, copy the base URL and token from its dashboard, and select an exact catalog model. Inference has not been tested.</p><div class="code-block" data-code-block><div class="code-head"><span>PowerShell · replace dashboard values</span><button class="copy-button" type="button" data-copy><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="YOUR_TOKEN_FORGE_BASE_URL"
+$env:ANTHROPIC_AUTH_TOKEN="YOUR_TOKEN_FORGE_TOKEN"
+$env:ANTHROPIC_MODEL="EXACT_CATALOG_MODEL_ID"</code></pre></div></div>
+
           <div class="tab-panel" data-panel="onomeo"><div class="notice notice-warn"><i data-lucide="triangle-alert"></i><span>Onomeo is turned off for now. This setup guide is closed - use any live provider tab instead.</span></div></div>
           <div class="tab-panel" data-panel="bearlab"><div class="notice notice-warn"><i data-lucide="triangle-alert"></i><span>BearLab AI sign-in is failing (invalid credentials / possible account ban). This setup guide is disabled - use any live provider tab instead.</span></div></div>
           <div class="tab-panel" data-panel="ireze"><p>Use the endpoint and model values documented by Ireze. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
@@ -260,9 +258,8 @@ $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
           <div class="tab-panel" data-panel="hcnsec"><p>Use the endpoint and model values shown in the HCNsec dashboard. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
   $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
   $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
-          <div class="tab-panel" data-panel="pixrouter"><p>Use the endpoint and model values shown in the PixRouter dashboard. Open the provider to get your API key.</p><div class="code-block" data-code-block><div class="code-head"><span>Provider variables</span><button class="copy-button" type="button" data-copy><i data-lucide="copy"></i><span>Copy</span></button></div><pre><code>$env:ANTHROPIC_BASE_URL="PROVIDER_BASE_URL"
-  $env:ANTHROPIC_AUTH_TOKEN="YOUR_API_KEY"
-  $env:ANTHROPIC_MODEL="YOUR_MODEL"</code></pre></div></div>
+          <div class="tab-panel" data-panel="pixrouter"><p><strong>Image Generation.</strong> PixRouter is pinned for its image-generation offering. Open its dashboard for the current image model IDs, request format and pricing. No free-credit allowance has been confirmed. Do not use generic Claude Code variables for image generation.</p></div>
+
           <div class="tab-panel" data-panel="odyssey"><div class="notice notice-warn"><i data-lucide="triangle-alert"></i><span>Odyssey's homepage returns 404. This setup guide is disabled - use any live provider tab instead.</span></div></div>
         </div>
         <div class="tip"><i data-lucide="lightbulb"></i><div><strong>Switch models inside Claude Code</strong><p>Use <code>/model</code> to inspect or select a model supported by the active gateway.</p></div></div>

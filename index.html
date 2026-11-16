@@ -23,7 +23,7 @@
       <a class="brand" href="./" aria-label="API Hub home"><span class="brand-mark"><img src="assets/gorouterlogo.png" alt="" width="34" height="34"></span><span>API Hub<span class="brand-caption">A little discovery. A lot of possibility.</span></span></a>
       <div class="prov-search" role="search">
         <i data-lucide="search"></i>
-        <input type="search" data-search-input placeholder="Search providers or models…" aria-label="Search providers or models" autocomplete="off" spellcheck="false">
+        <input type="search" data-search-input placeholder="Search all providers or models…" aria-label="Search all providers or models" autocomplete="off" spellcheck="false">
         <kbd class="search-shortcut">Ctrl K</kbd>
         <button type="button" class="prov-search-clear icon-button" data-search-clear aria-label="Clear search" hidden><i data-lucide="x"></i></button>
       </div>
@@ -31,19 +31,19 @@
       <button type="button" class="theme-toggle icon-button" data-theme-toggle aria-pressed="false" aria-label="Switch to dark mode"><i data-lucide="moon"></i></button>
     </header>
     <section class="directory-intro" aria-labelledby="directory-title">
-      <div><h1 id="directory-title">Find your next <span>API.</span></h1><p>Good ideas deserve great tools. Explore free APIs and start building.</p><button type="button" class="community-reopen" data-community-open aria-haspopup="dialog" aria-controls="community-notice" hidden>Community notice <i data-lucide="arrow-up-right"></i></button></div>
-      <div class="directory-health"><span class="status-dot"></span><span><strong data-live-count></strong> providers live<span class="health-caption">Ready for your next project</span></span></div>
+      <div><h1 id="directory-title">Find your next <span>API.</span></h1><p>Compare documented offers, coding tools, and API gateways.</p><button type="button" class="community-reopen" data-community-open aria-haspopup="dialog" aria-controls="community-notice" hidden>Community notice <i data-lucide="arrow-up-right"></i></button></div>
+      <div class="directory-health"><span class="status-dot"></span><span><strong data-live-count></strong> providers live<span class="health-caption">Public pages checked; inference not tested</span></span></div>
     </section>
     <div class="directory-layout">
-      <aside class="filter-sidebar" aria-label="Provider filters">
+      <div class="filter-sidebar" role="complementary" aria-label="Provider filters">
         <div class="filter-heading"><h2>Filters</h2><button type="button" class="text-button" data-filters-reset>Reset</button><button type="button" class="icon-button mobile-filter-close" data-filters-close aria-label="Close filters"><i data-lucide="x"></i></button></div>
         <div data-filter-groups></div>
         <p class="filter-note">Choose a few. Find your fit.<br>Filters work together.</p>
         <a class="sidebar-guide" href="setup.html"><i data-lucide="code"></i><strong>Your first API call?</strong><span>From API key to working request.</span><span class="sidebar-guide-link">Explore setup guides <i data-lucide="arrow-right"></i></span></a>
         <button type="button" class="mobile-filter-done button-primary" data-filters-close>Show providers</button>
-      </aside>
+      </div>
       <main id="main-content" class="directory-main" tabindex="-1">
-        <div class="collection-toolbar"><nav class="collection-tabs" data-collection-tabs aria-label="Provider collections"></nav><label class="sort-control"><span>Sort by</span><select data-sort-select aria-label="Sort providers"><option value="curated">Curated</option><option value="newest">Newest first</option><option value="name">Name A–Z</option></select><i data-lucide="chevron-down"></i></label></div>
+        <div class="discovery-controls"><div class="quick-filters" role="group" aria-label="Quick filters"><button type="button" data-quick-filter="noCard" aria-pressed="false"><i data-lucide="credit-card"></i>No card</button><button type="button" data-quick-filter="install" aria-pressed="false"><i data-lucide="download"></i>Install needed</button><button type="button" data-quick-filter="credits" aria-pressed="false"><i data-lucide="coins"></i>Free credits</button></div><label class="sort-control"><span>Within categories</span><select data-sort-select aria-label="Sort non-pinned providers within categories"><option value="curated">Curated order</option><option value="newest">Newest first</option><option value="name">Name A–Z</option></select><i data-lucide="chevron-down"></i></label></div>
         <div class="results-toolbar"><div class="results-title"><h2 data-results-heading>All providers</h2><span class="result-count" data-results-count></span></div><p data-search-meta role="status" aria-live="polite"></p><button class="mobile-filter-toggle button-secondary" type="button" data-filters-toggle aria-expanded="false"><i data-lucide="sliders-horizontal"></i>Filters<span data-filter-count hidden></span></button></div>
         <div class="active-filters" data-active-filters hidden></div>
         <div data-provider-grid></div>
@@ -70,6 +70,7 @@
         <p class="prov-notice" data-prov-modal-notice hidden></p>
         <div class="prov-act"></div>
         <p class="prov-route prov-docs-note" data-prov-docs-note hidden></p>
+        <div class="provider-evidence" data-prov-evidence></div>
         <details class="prov-technical">
           <summary>Models, metrics &amp; connection details <i data-lucide="chevron-down"></i></summary>
           <div class="prov-block"><h3>Documented models</h3><div class="prov-models"></div></div>
@@ -139,6 +140,6 @@
     </section>
   </div>
 
-  <script src="js/icons.js"></script><script src="js/providers.js"></script><script src="js/adapters.js"></script><script src="js/views.js"></script><script src="js/theme.js"></script>
+  <script src="js/icons.js"></script><script src="js/providers.js"></script><script src="js/adapters.js"></script><script src="js/analytics.js"></script><script src="js/views.js"></script><script src="js/theme.js"></script>
 </body>
 </html>

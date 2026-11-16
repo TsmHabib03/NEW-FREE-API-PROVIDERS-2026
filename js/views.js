@@ -10,7 +10,7 @@
   const shell = $('[data-directory-shell]');
   const sidebar = $('.filter-sidebar');
   const searchInput = $('[data-search-input]');
-  const state = { query: '', collection: 'all', sort: 'curated', filters: Object.fromEntries(A.filters.map(g => [g.key, new Set()])) };
+  const state = { query: '', quick: new Set(), expanded: new Set(), archives: new Set(), sort: 'curated', filters: Object.fromEntries(A.filters.map(g => [g.key, new Set()])) };
   const modal = {
     veil: $('[data-prov-modal]'), card: $('[data-prov-card]'), logo: $('[data-prov-modal-logo]'),
     name: $('[data-prov-modal-name]'), kind: $('[data-prov-modal-kind]'), blurb: $('[data-prov-modal-blurb]'),
@@ -95,7 +95,7 @@
   const docsLink = p => safeUrl(A.docsUrl(p)) || 'setup.html';
   const metricsMarkup = p => '<dl class="api-metrics" aria-label="Published API metrics">' + A.metrics(p).map(m =>
     '<div><dt>' + esc(m.label) + '</dt><dd class="' + (m.value === null ? 'is-unknown' : '') + '">' + esc(m.display) + '</dd></div>').join('') + '</dl>';
-  const external = url => url === 'setup.html' ? '' : ' target="_blank" rel="noopener noreferrer"';
+  const external = url => url.startsWith('setup.html') ? '' : ' target="_blank" rel="noopener noreferrer"';
   const dateLabel = p => {
     const value = p.updatedAt || p.addedAt;
     if (!value) return 'Date unknown';
@@ -134,7 +134,7 @@
     const facts = [
       ['Client route', routes || 'Not documented'], ['API Category', A.categories(p).join(', ')],
       ['Authentication', A.authTypes(p).map(A.authLabel).join(', ')], ['Card required', p.noCard ? 'No card needed' : 'Not documented'],
-      ['Added', p.addedAt || 'Not documented'],
+      ['Added', p.addedAt || 'Not documented'], ['Evidence checked', p.evidence?.checkedAt || 'Not documented'], ['Inference', 'Not tested for inference'], ...(p.softwareNote ? [['Software note', p.softwareNote + '. Visual UI comparison pending; no effect on rank.']] : []), ...(p.modelsNote ? [['Catalog note', p.modelsNote]] : []),
       ...(p.gatewayFeatures || []).map((feature, index) => ['Gateway feature ' + (index + 1), feature]),
       ...A.features(p).filter(([key]) => key === 'Data format' || key === 'Rate limit')
     ];
@@ -144,11 +144,13 @@
     const docsNote = $('[data-prov-docs-note]');
     docsNote.hidden = docs !== 'setup.html';
     docsNote.textContent = docs === 'setup.html' ? 'Provider documentation is not listed. View our client setup guides instead.' : '';
-    modal.act().innerHTML = (official ? '<a class="prov-docs" href="' + esc(official) + '" target="_blank" rel="noopener noreferrer"><i data-lucide="globe"></i>Use its official website</a>' : '') +
-      '<a class="prov-docs" href="' + esc(docs) + '"' + external(docs) + '><i data-lucide="book-open"></i>View Documentation</a>' +
+    modal.act().innerHTML = (official ? '<a class="prov-docs" data-track-action="docs" data-track-provider="' + esc(p.id) + '" href="' + esc(official) + '" target="_blank" rel="noopener noreferrer"><i data-lucide="globe"></i>Use its official website</a>' : '') +
+      '<a class="prov-docs" data-track-action="docs" data-track-provider="' + esc(p.id) + '" href="' + esc(docs) + '"' + external(docs) + '><i data-lucide="book-open"></i>View Documentation</a>' +
       (A.isOff(p) || !signup ? '<span class="prov-offline" aria-disabled="true"><i data-lucide="circle-off"></i>' +
-      (A.isOff(p) ? 'Unavailable — provider offline' : 'Sign-up link not available') + '</span>' :
-      '<a class="prov-signin" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer">' + esc(p.actionLabel || 'Get API') + '<i data-lucide="arrow-right"></i></a>');
+      (A.isOff(p) ? 'Disabled in this directory' : 'Sign-up link not available') + '</span>' :
+      '<a class="prov-signin" data-track-action="' + (p.installNeeded ? 'install' : p.actionLabel === 'View resource' ? 'resource' : 'signup') + '" data-track-provider="' + esc(p.id) + '" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer">' + esc(p.actionLabel || 'Get API') + '<i data-lucide="arrow-right"></i></a>');
+    const evidence = $('[data-prov-evidence]');
+    evidence.innerHTML = '<strong>' + (A.checked(p) ? 'Checked' : 'Public research') + '</strong><span>Not tested for inference · ' + esc(p.evidence?.checkedAt?.slice(0,10) || 'Date unknown') + '</span>' + (p.evidence?.sources?.length ? '<details><summary>Evidence sources</summary><ul>' + p.evidence.sources.map((url,i)=>safeUrl(url) ? '<li><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Source ' + (i+1) + ' · ' + esc(new URL(url).hostname) + '</a></li>' : '').join('') + '</ul></details>' : '');
     $('.prov-technical', modal.card).open = false;
     $('[data-prov-guide]').hidden = !p.onboarding;
     modal.card.scrollTop = 0;
@@ -266,11 +268,9 @@
   }
 
 
-  function matches(p) {
-    return Object.entries(state.filters).every(([key, values]) => !values.size || A.filterValues(p, key).some(value => values.has(value))) &&
-      state.query.toLowerCase().trim().split(/\s+/).filter(Boolean).every(token =>
-        [p.name, p.id, p.blurb, p.offer, ...A.categories(p), ...(p.models || [])].join(' ').toLowerCase().includes(token));
-  }
+  const track = (event,props) => window.DirectoryAnalytics?.track(event,props);
+  const filtering = () => !!state.query || !!state.quick.size || Object.values(state.filters).some(s=>s.size);
+  const matches = p => A.matches(p,state.query,state.quick,state.filters);
   function renderFilters() {
     $('[data-filter-groups]').innerHTML = A.filters.map(group =>
       '<fieldset class="filter-group"><legend>' + esc(group.title) + '</legend>' + group.options.map(option => {
@@ -280,63 +280,68 @@
           '</span><span class="filter-option-count">' + count + '</span></label>';
       }).join('') + '</fieldset>').join('');
   }
-  function cardMarkup(p) {
-    const off = A.isOff(p), docs = docsLink(p);
-    const signup = safeUrl(p.url);
-    const featured = p.featured && A.isLive(p) && !!signup;
-    const tags = [
-      FREE_SHAPE[p.freeShape] ? '<span class="api-tag">' + FREE_SHAPE[p.freeShape] + '</span>' : '',
-      ...A.authTypes(p).filter(type => type !== 'unknown').map(type => '<span class="api-tag auth">' + esc(A.authLabel(type)) + '</span>'),
-      ...(p.protocol || []).map(proto => '<span class="api-tag route">' + esc(protoLabel(proto)) + '</span>'),
-      A.isNew(p) ? '<span class="api-tag new">New</span>' : '',
-      !A.isLive(p) ? '<span class="api-tag status">' + A.statusLabel(p) + '</span>' : ''
-    ].filter(Boolean).slice(0, 4).join('') || '<span class="api-tag route">' + esc(A.categories(p).join(' · ')) + '</span>';
-    return '<li class="api-card' + (off ? ' is-off' : A.isCaveat(p) ? ' is-flagged' : '') + (featured ? ' api-featured' : '') + '" data-provider-id="' + esc(p.id) + '">' +
-      '<div class="api-card-top"><span class="api-logo"><img src="' + esc(A.logo(p)) + '" alt="" loading="lazy" width="40" height="40"></span>' +
-      '<div class="api-card-stamp">' +
-      (A.isReturned(p) ? '<span class="api-tag return-label">' + esc(p.name) + ' is back</span>' : '') +
-      (p.recommended ? '<span class="api-tag featured-label">Recommended</span>' : '') +
-      (p.event ? '<span class="api-tag event-label"><i data-lucide="zap"></i>' + esc(p.event.label) + '</span>' : '') +
-      '<time class="api-date"' + (p.updatedAt || p.addedAt ? ' datetime="' + esc(p.updatedAt || p.addedAt) + '"' : '') + ' title="' + (p.updatedAt ? 'Updated' : 'Added') + ' ' + esc(p.updatedAt || p.addedAt || '') + '">' + esc(dateLabel(p)) + '</time></div></div>' +
-      '<h3 class="api-title"><button type="button" data-prov-open="' + esc(p.id) + '" aria-label="Open details for ' + esc(p.name) + '">' + esc(p.name) + '</button></h3>' +
-      '<p class="api-desc">' + esc(p.blurb || 'Provider details are not documented yet.') + '</p><div class="api-tags">' + tags + '</div>' +
-      '<ul class="api-features">' + A.features(p).map(([key,value]) => '<li><span>' + esc(key) + '</span><strong>' + esc(value) + '</strong></li>').join('') + '</ul>' +
-      (!A.isLive(p) && p.statusNote ? '<p class="api-note">' + esc(p.statusNote) + '</p>' : '') +
-      '<div class="api-card-meta"><span class="status-dot"></span>' + esc(A.statusLabel(p)) + '<span>·</span>' +
-      ((p.models || []).length ? p.models.length + ' documented models' : 'Models not documented') + '</div>' + metricsMarkup(p) +
-      '<div class="api-actions"><button type="button" class="button-primary" data-prov-open="' + esc(p.id) + '" aria-label="Details for ' + esc(p.name) + '">Details</button>' +
-      '<a class="button-secondary" href="' + esc(docs) + '"' + external(docs) + ' aria-label="Documentation for ' + esc(p.name) + '">Docs<i data-lucide="arrow-up-right"></i></a>' +
-      (off || !signup ? '<span class="api-signup is-disabled" aria-disabled="true">' + (off ? 'Offline' : 'No link') + '</span>' :
-      '<a class="api-signup" href="' + esc(signup) + '" target="_blank" rel="noopener noreferrer" aria-label="' +
-      esc(p.actionLabel ? p.actionLabel + ' for ' : 'Get API from ') + esc(p.name) + '">' + esc(p.actionLabel || 'Get API') + '<i data-lucide="arrow-up-right"></i></a>') + '</div></li>';
+  function cardMarkup(p,placement='category') {
+    const off=A.isOff(p), docs=docsLink(p), signup=safeUrl(p.url);
+    const badges=[...(p.badges||[]),...(placement==='new'?['NEW','Checked']:[]),...(p.installNeeded && !(p.badges||[]).includes('Unverified')?['Install needed']:[])];
+    const tags=badges.map(b=>'<span class="api-tag essential '+(b==='Back'?'return-label':b==='NEW'?'new':b==='Referral'?'route':'')+'">'+esc(b)+'</span>').join('') + (p.noCard?'<span class="api-tag">No card</span>':'') + (p.signupCredit?'<span class="api-tag">Free credits</span>':'') + (p.protocol||[]).slice(0,2).map(proto=>'<span class="api-tag route">'+esc(protoLabel(proto))+'</span>').join('');
+    return '<li class="api-card'+(off?' is-off':A.isCaveat(p)?' is-flagged':'')+'" data-provider-id="'+esc(p.id)+'" data-placement="'+placement+'">'+
+      '<div class="api-card-top"><span class="api-logo"><img src="'+esc(A.logo(p))+'" alt="" loading="lazy" width="40" height="40"></span><span class="api-date">'+esc(p.serviceType||'Provider')+'</span></div>'+
+      '<h3 class="api-title"><button type="button" data-prov-open="'+esc(p.id)+'" aria-label="Open details for '+esc(p.name)+'">'+esc(p.name)+'</button></h3><div class="api-tags">'+tags+'</div>'+
+      '<p class="api-desc">'+esc(p.blurb||'Details not documented.')+'</p>'+
+      (placement==='new'?'<p class="check-label">Not tested for inference</p>':'')+
+      '<div class="api-card-meta"><span class="status-dot"></span>'+esc(A.statusLabel(p))+'<span>·</span><span>Research '+esc(p.evidence?.checkedAt?.slice(0,10)||'date unknown')+'</span></div>'+
+      '<div class="api-actions"><button type="button" class="button-primary" data-prov-open="'+esc(p.id)+'" aria-label="Details for '+esc(p.name)+'">Details</button><a class="button-secondary" data-track-action="docs" href="'+esc(docs)+'"'+external(docs)+' aria-label="Documentation for '+esc(p.name)+'">Docs</a>'+
+      (off||!signup?'<span class="api-signup is-disabled" aria-disabled="true">Disabled</span>':'<a class="api-signup" data-track-action="'+(p.installNeeded?'install':p.actionLabel==='View resource'?'resource':'signup')+'" href="'+esc(signup)+'" target="_blank" rel="noopener noreferrer" aria-label="'+esc(p.actionLabel||'Get started')+' for '+esc(p.name)+'">'+esc(p.actionLabel||'Get started')+'<i data-lucide="arrow-up-right"></i></a>')+'</div></li>';
+  }
+  function sorted(items) {
+    return state.sort==='name'?[...items].sort((a,b)=>a.name.localeCompare(b.name)):state.sort==='newest'?[...items].sort((a,b)=>A.addedTime(b)-A.addedTime(a)||a.name.localeCompare(b.name)):items;
   }
   function renderGrid() {
-    const collection = A.collections.find(c => c.key === state.collection);
-    let items = collection.items.filter(matches);
-    if (state.sort === 'newest') items = [...items].sort((a,b) => String(b.updatedAt || b.addedAt || '').localeCompare(String(a.updatedAt || a.addedAt || '')) || a.name.localeCompare(b.name));
-    if (state.sort === 'name') items = [...items].sort((a,b) => a.name.localeCompare(b.name));
-    $('[data-provider-grid]').innerHTML = items.length ? '<ol class="api-grid">' + items.map(p => cardMarkup(p)).join('') + '</ol>' : '';
-    $('[data-search-empty]').hidden = !!items.length;
-    $('[data-results-heading]').textContent = state.query ? 'Search results' : collection.title;
-    $('[data-results-count]').textContent = items.length;
-    $('[data-search-meta]').textContent = items.length + ' provider' + (items.length === 1 ? '' : 's') + (state.query ? ' matching “' + state.query + '”' : ' in this view');
-    $('[data-search-clear]').hidden = !state.query;
-    $$('[data-collection]').forEach(button => button.setAttribute('aria-current',String(button.dataset.collection === state.collection)));
-    const active = A.filters.flatMap(g => g.options.filter(o => state.filters[g.key].has(o.value)).map(o => ({...o, group:g.key})));
-    $('[data-active-filters]').hidden = !active.length;
-    $('[data-active-filters]').innerHTML = active.map(o => '<button type="button" class="active-filter" data-remove-filter="' + o.group + '" data-filter-value="' + esc(o.value) + '" aria-label="Remove ' + esc(o.label) + ' filter">' + esc(o.label) + '<i data-lucide="x"></i></button>').join('');
-    $('[data-filter-count]').hidden = !active.length; $('[data-filter-count]').textContent = active.length;
-    $('[data-live-count]').textContent = A.stats.live;
-    refreshIcons();
+    const force=filtering(), now=Date.now(), fresh=A.newItems(now).filter(matches), spot=A.spotlight(now);
+    const pins=A.pins.filter(matches), total=A.providers.filter(matches).length;
+    let html=pins.length?'<section class="directory-section pinned-section" aria-labelledby="pinned-title"><div class="section-heading"><div><h2 id="pinned-title">Pinned <span class="section-count">'+pins.length+'</span></h2><p>Selected by the directory owner.</p></div><i data-lucide="pin"></i></div><ol class="api-grid pinned-grid">'+pins.map(p=>cardMarkup(p,'pinned')).join('')+'</ol></section>':'';
+    if(fresh.length) html+='<section class="directory-section new-section" aria-labelledby="new-title"><div class="section-heading"><div><h2 id="new-title">New this week</h2><p>Checked public pages · added within 14 days · not tested for inference</p></div><div class="strip-controls"><button class="icon-button" type="button" data-new-scroll="-1" aria-label="Scroll new providers left"><i data-lucide="arrow-left"></i></button><button class="icon-button" type="button" data-new-scroll="1" aria-label="Scroll new providers right"><i data-lucide="arrow-right"></i></button></div></div><div class="new-strip" data-new-strip tabindex="0" role="region" aria-label="New providers; use left and right arrow keys to scroll"><ol class="api-grid">'+fresh.map(p=>cardMarkup(p,'new')).join('')+'</ol></div></section>';
+    const present=A.sections.filter(s=>s.items.some(matches));
+    if(present.length) html+='<nav class="category-nav" data-category-nav aria-label="Provider categories">'+present.map(s=>'<a class="category-link" href="#category-'+s.key+'" data-category-link="'+s.key+'">'+esc(s.title)+' <span>'+s.items.filter(matches).length+'</span></a>').join('')+'</nav>';
+    for(const section of present) {
+      const items=sorted(section.items.filter(matches));
+      const expanded=force||state.expanded.has(section.key), open=force||state.archives.has(section.key);
+      const visible=expanded?items:items.slice(0,6), panelId='panel-'+section.key;
+      html+='<section class="directory-section'+(section.archived?' archive-section':'')+'" id="category-'+section.key+'" data-section="'+section.key+'" aria-labelledby="title-'+section.key+'"><div class="section-heading"><div><h2 id="title-'+section.key+'">'+(section.archived?'<button class="archive-toggle" type="button" data-archive-toggle="'+section.key+'" aria-expanded="'+open+'" aria-controls="'+panelId+'">':'')+esc(section.title)+' <span class="section-count">'+items.length+'</span>'+(section.archived?'<i data-lucide="chevron-down"></i></button>':'')+'</h2><p>'+esc(section.description)+'</p></div>'+
+      (!force && !section.archived && items.length>6?'<button class="section-expand button-secondary" type="button" data-section-expand="'+section.key+'" aria-expanded="'+expanded+'" aria-controls="'+panelId+'">'+(expanded?'Show less':'Show all ('+items.length+')')+'</button>':'')+'</div><div id="'+panelId+'"'+(section.archived&&!open?' hidden':'')+'><ol class="api-grid">'+visible.map(p=>cardMarkup(p)).join('')+'</ol>'+
+      (!force&&section.archived&&items.length>6?'<button class="section-expand button-secondary" type="button" data-section-expand="'+section.key+'" aria-expanded="'+expanded+'" aria-controls="'+panelId+'">'+(expanded?'Show less':'Show all ('+items.length+')')+'</button>':'')+'</div></section>';
+      if(section.key==='recurring' && spot && matches(spot)) html+='<section class="directory-section spotlight-section" aria-label="Weekly spotlight"><div class="section-heading"><div><h2>Spotlight this week</h2><p>Successful usage verified · rotates Mondays, Manila time</p></div></div><ol class="api-grid">'+cardMarkup(spot,'spotlight')+'</ol></section>';
+    }
+    $('[data-provider-grid]').innerHTML=html;
+    $('[data-search-empty]').hidden=!!total;
+    $('[data-results-heading]').textContent=force?'Matching providers':'Explore providers';
+    $('[data-results-count]').textContent=total;
+    $('[data-search-meta]').textContent=total+' providers'+(force?' matching your search and filters; all matching sections expanded':' in the directory, including collapsed sections');
+    $('[data-search-clear]').hidden=!state.query;
+    $$('[data-quick-filter]').forEach(b=>b.setAttribute('aria-pressed',String(state.quick.has(b.dataset.quickFilter))));
+    const active=A.filters.flatMap(g=>g.options.filter(o=>state.filters[g.key].has(o.value)).map(o=>({...o,group:g.key})));
+    $('[data-active-filters]').hidden=!active.length;
+    $('[data-active-filters]').innerHTML=active.map(o=>'<button type="button" class="active-filter" data-remove-filter="'+o.group+'" data-filter-value="'+esc(o.value)+'">'+esc(o.label)+'<i data-lucide="x"></i></button>').join('');
+    const n=active.length+state.quick.size;
+    $('[data-filter-count]').hidden=!n; $('[data-filter-count]').textContent=n;
+    $('[data-live-count]').textContent=A.stats.live;
+    refreshIcons(); measureSticky();
   }
-  function resetFilters() { Object.values(state.filters).forEach(set => set.clear()); renderFilters(); renderGrid(); }
+  function measureSticky() {
+    const nav=$('[data-category-nav]');
+    if(!nav?.getBoundingClientRect || !shell.style.setProperty) return;
+    shell.style.setProperty('--category-height',nav.getBoundingClientRect().height+'px');
+    shell.classList.toggle('no-sticky',nav.getBoundingClientRect().height>window.innerHeight*.25||window.innerHeight<500);
+  }
+  function resetFilters() { Object.values(state.filters).forEach(set=>set.clear());state.quick.clear();renderFilters();renderGrid(); }
+
   function closeFilters() {
     if (!document.body.classList.contains('filters-open')) return;
     document.body.classList.remove('filters-open');
     $('[data-filter-backdrop]').hidden = true;
     $('[data-filters-toggle]').setAttribute('aria-expanded','false');
     $$('.topbar,.directory-intro,.directory-main,.footer').forEach(el => el.inert = false);
-    sidebar.removeAttribute('role'); sidebar.removeAttribute('aria-modal');
+    sidebar.setAttribute('role','complementary'); sidebar.removeAttribute('aria-modal');
     syncDialogBackground();
     restoreFocus(filterFocus); filterFocus = null;
   }
@@ -351,11 +356,10 @@
     syncDialogBackground();
     $('[data-filters-close]').focus();
   }
-  $('[data-collection-tabs]').innerHTML = A.collections.map(c => '<button class="collection-tab" type="button" data-collection="' + c.key + '" aria-current="' + (c.key === state.collection) + '">' + c.title + '</button>').join('');
   document.addEventListener('change',event => {
     if (event.target.matches('[data-filter-group]')) {
       const input = event.target, set = state.filters[input.dataset.filterGroup];
-      input.checked ? set.add(input.value) : set.delete(input.value); renderGrid();
+      input.checked ? set.add(input.value) : set.delete(input.value); track('filter_toggle',{key:input.dataset.filterGroup,active:input.checked});renderGrid();
     }
     if (event.target.matches('[data-sort-select]')) { state.sort = event.target.value; renderGrid(); }
   });
@@ -368,24 +372,34 @@
       else if (target.closest('[data-community-close]') || target === community.veil) closeNotice();
       return;
     }
+    const action=target.closest('[data-track-action]');
+    if(action) {const card=action.closest('[data-provider-id]');track('provider_click',{providerId:action.dataset.trackProvider||card?.dataset.providerId,action:action.dataset.trackAction,placement:action.closest('[data-prov-modal]')?'modal':card?.dataset.placement||'category'});}
+    const quick=target.closest('[data-quick-filter]');
+    if(quick) {const key=quick.dataset.quickFilter;state.quick.has(key)?state.quick.delete(key):state.quick.add(key);track('filter_toggle',{key,active:state.quick.has(key)});renderGrid();return;}
+    const disclosure=target.closest('[data-section-expand], [data-archive-toggle]');
+    if(disclosure) {if(filtering()) return;const archive=!!disclosure.dataset.archiveToggle,key=disclosure.dataset.archiveToggle||disclosure.dataset.sectionExpand,set=archive?state.archives:state.expanded;set.has(key)?set.delete(key):set.add(key);track('category_expand',{category:key,expanded:set.has(key)});renderGrid();$(archive?'[data-archive-toggle="'+key+'"]':'[data-section-expand="'+key+'"]')?.focus({preventScroll:true});return;}
+    const category=target.closest('[data-category-link]');
+    if(category) {track('category_nav',{category:category.dataset.categoryLink});if(['review','disabled'].includes(category.dataset.categoryLink)&&!state.archives.has(category.dataset.categoryLink)) {state.archives.add(category.dataset.categoryLink);renderGrid();}return;}
+    const scroll=target.closest('[data-new-scroll]');if(scroll){$('[data-new-strip]')?.scrollBy({left:Number(scroll.dataset.newScroll)*280,behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});return;}
     const opener = target.closest('[data-prov-open]');
-    if (opener) { event.preventDefault(); openProvider(opener.dataset.provOpen); return; }
+    if (opener) {track('provider_click',{providerId:opener.dataset.provOpen,action:'details',placement:opener.closest('[data-provider-id]')?.dataset.placement||'category'}); event.preventDefault(); openProvider(opener.dataset.provOpen); return; }
     if (target.closest('[data-prov-close]') || target === modal.veil) {closeModal();return;}
     if (target.closest('[data-guide-open]')) {openGuide();return;}
     if (target.closest('[data-guide-close]') || target === guide.veil) {closeGuide();return;}
     const copy = target.closest('[data-copy-code]'); if (copy) {copyGuideCode(copy);return;}
-    const tab = target.closest('[data-collection]'); if (tab) {state.collection=tab.dataset.collection;renderGrid();return;}
     if (target.closest('[data-search-clear]')) {searchInput.value='';state.query='';renderGrid();searchInput.focus();return;}
     if (target.closest('[data-filters-reset]')) {resetFilters();return;}
-    if (target.closest('[data-reset-all]')) {state.collection='all';state.query='';searchInput.value='';resetFilters();return;}
+    if (target.closest('[data-reset-all]')) {state.query='';searchInput.value='';resetFilters();return;}
     const remove = target.closest('[data-remove-filter]');
     if (remove) {state.filters[remove.dataset.removeFilter].delete(remove.dataset.filterValue);renderFilters();renderGrid();return;}
     if (target.closest('[data-filters-toggle]')) {openFilters();return;}
     if (target.closest('[data-filters-close]') || target === $('[data-filter-backdrop]')) {closeFilters();return;}
     const card = target.closest('[data-provider-id]');
-    if (card && !target.closest('a,button,input')) openProvider(card.dataset.providerId);
+    if (card && !target.closest('a,button,input')) {track('provider_click',{providerId:card.dataset.providerId,action:'details',placement:card.dataset.placement||'category'});openProvider(card.dataset.providerId);}
   });
   document.addEventListener('keydown',event => {
+    if(event.target.matches('[data-category-link]') && ['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) {const links=$$('[data-category-link]'),i=links.indexOf(event.target),n=event.key==='Home'?0:event.key==='End'?links.length-1:(i+(event.key==='ArrowRight'?1:-1)+links.length)%links.length;event.preventDefault();links[n].focus();return;}
+    if(event.target.matches('[data-new-strip]') && ['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) {event.preventDefault();event.target.scrollTo({left:event.key==='Home'?0:event.key==='End'?event.target.scrollWidth:event.target.scrollLeft+(event.key==='ArrowRight'?280:-280),behavior:'instant'});return;}
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault();
       if (!noticeIsOpen() && modal.veil.hidden && guide.veil.hidden && !document.body.classList.contains('filters-open')) searchInput.focus();
@@ -414,8 +428,17 @@
     const img=event.target;
     if(img instanceof HTMLImageElement && !img.src.includes('gorouterlogo.png')) img.src='assets/gorouterlogo.png';
   },true);
-  window.addEventListener('resize',() => {if(window.innerWidth>730) closeFilters();});
-  window.Views={openProvider,closeModal,openNotice};
+  window.addEventListener('resize',() => {if(window.innerWidth>730) closeFilters();measureSticky();});
+  let timer;
+  function scheduleRefresh() {
+    if(!window.setTimeout) return;
+    window.clearTimeout(timer);
+    const now=Date.now(), boundaries=[A.weekStart(now)+7*864e5,...A.providers.map(p=>A.addedTime(p)+14*864e5),...A.providers.map(p=>Date.parse(p.verification?.verifiedAt)+30*864e5)].filter(t=>t>now);
+    timer=window.setTimeout(()=>{renderGrid();scheduleRefresh();},Math.min(2147483647,Math.max(1000,Math.min(...boundaries)-now+50)));
+  }
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){renderGrid();scheduleRefresh();}});
+  scheduleRefresh();
+  window.Views={openProvider,closeModal,openNotice,state,renderGrid,cardMarkup};
   renderFilters();renderGrid();refreshIcons();
   // Keep the hidden markup fail-open: a notice error cannot lock the directory.
   try {

@@ -1,0 +1,8 @@
+{
+  "framework": null,
+  "buildCommand": "",
+  "installCommand": "",
+  "functions": {
+    "api/events.js": { "includeFiles": "js/providers.js" }
+  }
+}
