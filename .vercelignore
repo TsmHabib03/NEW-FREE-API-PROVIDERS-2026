@@ -3,6 +3,9 @@
 .vercel/
 .env*
 node_modules/
+design/
+.impeccable/
+.kilo/
 tests/
 *.md
 *.csv

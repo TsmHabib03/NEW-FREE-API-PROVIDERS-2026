@@ -400,7 +400,7 @@ test('notice initialization error leaves directory interactive', () => {
   assert.equal(h.context.window.Adapters.canonical.length,73); assert.ok(h.ids().includes('pixrouter'));
 });
 
-test('notice markup has exact approved copy, existing favicon, decorative mosaic and one CTA', () => {
+test('notice markup has exact approved copy, API Hub logo, decorative mosaic and one CTA', () => {
   const html = source('index.html');
   const notice = html.slice(html.indexOf('<div class="community-veil"'), html.indexOf('<script', html.indexOf('<div class="community-veil"')));
   const paragraphs = [...notice.matchAll(/<p class="community-[^"]+">([^<]+)<\/p>/g)].map(match => match[1]);
@@ -412,7 +412,7 @@ test('notice markup has exact approved copy, existing favicon, decorative mosaic
   assert.ok(notice.includes('role="dialog" aria-modal="true" aria-labelledby="community-title"'));
   assert.ok(notice.includes('class="community-mosaic" aria-hidden="true"'));
   assert.equal((notice.match(/<span><\/span>/g) || []).length, 24);
-  assert.ok(notice.includes('src="assets/gorouterlogo.png" alt=""'));
+  assert.ok(notice.includes('src="assets/api-hub/symbol-blue.svg" alt=""'));
   assert.equal((notice.match(/<button/g) || []).length, 2, 'X and a single acknowledgment CTA');
   assert.ok(notice.includes('Acknowledge &amp; Continue'));
   assert.ok(!notice.includes('data-community-browse'));

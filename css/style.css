@@ -71,8 +71,8 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:2px solid var(
 .topbar{position:sticky;top:0;z-index:30;height:68px;background:rgba(7,11,20,.86);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
 .topbar-inner{height:100%;max-width:1440px;margin:auto;padding:0 28px;display:flex;align-items:center;gap:28px}
 .brand{display:flex;align-items:center;gap:10px;min-height:44px;font-family:var(--font-display);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:var(--ink)}
-.brand-mark{display:grid;place-items:center;width:32px;height:32px;background:var(--logo-tile);border:1px solid rgba(9,14,26,.1);border-radius:8px;overflow:hidden;padding:0}
-.brand-mark img{display:block;width:100%;height:100%;object-fit:cover}
+.brand-mark{display:grid;place-items:center;width:32px;height:32px;flex-shrink:0}
+.brand-mark img{display:block;width:100%;height:100%;object-fit:contain}
 .topnav{display:flex;align-items:center;gap:20px;margin-left:16px;color:var(--muted);font-size:13px}
 .topnav a{display:inline-flex;align-items:center;min-height:44px}
 .topnav a:hover,.mobile-panel a:hover,.side-nav a:hover{color:var(--accent)}
