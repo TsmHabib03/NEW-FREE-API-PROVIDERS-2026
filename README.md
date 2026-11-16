@@ -32,6 +32,8 @@ The curated All providers and Top picks order starts with four desktop rows: **P
 
 Tokeness and TrueSOTA follow ThreeRouter and Qoder in All providers and Top picks. Their exact sign-up URLs are `https://tokeness.ai/sign-up?aff=ArdD` and `https://true-sota.com/register?aff=LNUW6HKJSM8W`, with the supplied SVG and PNG logos bundled locally. Free credits, models and client compatibility remain undocumented for FreeGG, XingChiAPI, Tokeness and TrueSOTA. HyxAPI, SeekAI, JustDoWork (justwoker) and KKToken are disabled by the maintainer; they remain in the offline directory with their original URLs preserved and their sign-up actions disabled.
 
+AetherAI and Byesu API were added on 2026-11-16 with the exact referral links `https://aether.cesiummc.space/sign-up?aff=XfVv` and `https://byesu.com/sign-up?aff=CCci`. AetherAI reuses the existing GoRouter logo; Byesu API uses the supplied JPG, bundled as `assets/byesu-logo.jpg`. Both appear in the directory and search with a New badge during their first week. Free credits, models and client compatibility remain undocumented.
+
 Zurelay documents prepaid API access with OpenAI/Anthropic endpoints; no free credits or referral bonus amounts are assumed. Qoder is a coding platform with IDE, CLI and JetBrains tools, so its primary action reads **Open activities** and its Docs link opens its own documentation. Referral offers and eligibility belong to the provider's current activities page. Optional `featured` metadata controls border highlighting; `actionLabel` and `productFeatures` control the action and product details without changing the exact outbound URLs.
 
 ```js

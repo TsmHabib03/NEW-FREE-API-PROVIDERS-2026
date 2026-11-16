@@ -47,6 +47,7 @@
    Tokeness and TrueSOTA were added on 2026-11-14; HyxAPI, SeekAI, JustDoWork and
    KKToken were disabled at the owner's request, with their original URLs preserved.
    FreeGG and XingChiAPI were added with owner-supplied links and logos on 2026-11-14.
+   AetherAI and Byesu API were added with owner-supplied links and logos on 2026-11-16.
    Round 16 replaced MegaNova AI and Plugsky with three owner-requested referral links.
    Round 14 added HyxAPI, xKiro and Three Router (owner-requested referral links).
    Round 13 added PixRouter (owner-requested invite link). Round 12 turns
@@ -478,6 +479,21 @@ window.PROVIDERS = [
     offer: "72-Hour Flash Referral Rush - +1M tokens per verified developer invitation; 100M-token prizes for the top 3 leaderboard members; 5 Invites = 10M Tokens.",
     event: { label: "72-HOUR FLASH RUSH", duration: "72-hour event", rewards: ["+1M tokens per verified developer invitation", "100M tokens each for the top 3 leaderboard members", "5 Invites = 10M Tokens"] },
     guide: null },
+  /* AetherAI and Byesu API — owner-requested additions on 2026-11-16. */
+  { id: "aetherai", name: "AetherAI", url: "https://aether.cesiummc.space/sign-up?aff=XfVv", logo: "assets/gorouterlogo.png",
+    status: "live", flags: [], addedAt: "2026-11-16", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Referral sign-up for AetherAI. Register, then check the dashboard for the current endpoint, key and model details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
+  { id: "byesu", name: "Byesu API", url: "https://byesu.com/sign-up?aff=CCci", logo: "assets/byesu-logo.jpg",
+    status: "live", flags: [], addedAt: "2026-11-16", rank: null,
+    kind: "gateway", protocol: [], freeShape: "unknown",
+    noCard: false, signupCredit: false, inviteOnly: false,
+    models: [], modelsNote: null,
+    blurb: "Referral sign-up for Byesu API. Create an account, then check the dashboard for the current endpoint, key and model details.",
+    offer: "Referral sign-up - check the dashboard for current terms", guide: null },
   /* FreeGG and XingChiAPI — owner-requested additions on 2026-11-14. */
   { id: "freegg", name: "FreeGG", url: "https://freegg.app/sign-up?aff=JkOS", logo: "assets/gorouterlogo.png",
     status: "live", flags: ["newapi"], addedAt: "2026-11-14", rank: null,
